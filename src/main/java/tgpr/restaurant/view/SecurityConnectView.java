@@ -1,0 +1,99 @@
+package tgpr.restaurant.view;
+
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.input.KeyStroke;
+import tgpr.restaurant.controller.SecurityConnectController;
+import tgpr.restaurant.controller.SecurityLoginController;
+
+import java.awt.*;
+import java.util.BitSet;
+import java.util.List;
+
+public class SecurityConnectView extends BasicWindow {
+    private final SecurityConnectController controller;
+    private final TextBox txtEmail = new TextBox(new TerminalSize(20,1));
+    private final TextBox txtPassword = new TextBox(new TerminalSize(20,1));
+    private Button btnLogin;
+
+    public SecurityConnectView(SecurityConnectController controller){
+        this.controller = controller;
+
+        //Titre
+        setTitle("Connexion Restaurant");
+        setHints(List.of(Hint.CENTERED));
+
+        Panel root = Panel.verticalPanel(1);
+        setComponent(root);
+
+
+        createFieldsPanel().addTo(root);
+        createButtonPanel().addTo(root).center();
+
+        Panel debug = Panel.verticalPanel(1);
+        createDebugPanel().addTo(debug);
+        debug.addTo(root).center();
+
+        btnLogin.takeFocus();
+    }
+
+    private Panel createFieldsPanel() {
+        Panel panel = Panel.gridPanel(2,
+                Margin.of(1, 1, 1, 0),
+                Spacing.of(1)).center();
+
+        new Label("Email:").addTo(panel);
+        txtEmail.addTo(panel).takeFocus();
+
+        new Label("Mot de passe:").addTo(panel);
+        txtPassword.setMask('*').addTo(panel);
+
+        return panel;
+    }
+
+    private Panel createButtonPanel(){
+        btnLogin = new Button("Connexion",this::login);
+        Panel panel = Panel.horizontalPanel(LinearLayout.Alignment.Center,
+                btnLogin,
+                new Button("Retour",this::retour),
+                new Button("Quitter",this::exit)
+        );
+
+        addShortcut(btnLogin, KeyStroke.fromString("<A-l>"));
+
+        return panel;
+    }
+
+    private Border createDebugPanel() {
+        Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,
+                new Button("Connexion admin par defaut"),
+                new Button("Connexion employe par defaut"),
+                new Button("Connexion client par defaut")
+        );
+        Border border = panel.withBorder(Borders.singleLine(" A des fins de debogage "));
+
+        //addShortcut(btnSeedData, KeyStroke.fromString("<A-r>"));
+
+        return border;
+    }
+
+    private void login() {
+        var errors = controller.login(txtEmail.getText(), txtPassword.getText());
+        if (!errors.isEmpty()) {
+            txtEmail.takeFocus();
+        }
+    }
+
+    private void exit() {
+        controller.exit();
+    }
+
+    private void retour(){
+        controller.retour();
+    }
+
+}

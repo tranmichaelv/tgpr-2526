@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static tgpr.framework.Tools.hash;
+
 public class User extends Model {
     public enum Fields {
         Id, LastName, FirstName, Email, Password, Phone, Role, Blocked
@@ -247,4 +249,19 @@ public class User extends Model {
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+
+    // Retourne un user si l'email correspont et que le mot de passe correspond a l'emain
+    public static User checkCredentials(String email, String password){
+        var user = User.getByEmail(email); // mets un user si l'email est present
+        if (user != null && user.password.equals(password))
+            return user;
+        return null;
+    }
+
+    // Cherche un user avec l'email correspondant au string
+    public static User getByEmail(String email) {
+        return queryOne(User.class,"select * from users where email=:email",
+                new Params("email", email)); // Mets le string email dans :email
+    }
+
 }

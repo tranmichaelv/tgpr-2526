@@ -5,7 +5,6 @@ import tgpr.framework.Model;
 import tgpr.restaurant.RestaurantApp;
 import tgpr.restaurant.view.SecurityLoginView;
 
-import java.util.List;
 
 public class SecurityLoginController extends Controller<SecurityLoginView> {
     private final SecurityLoginView view = new SecurityLoginView(this);
@@ -21,6 +20,14 @@ public class SecurityLoginController extends Controller<SecurityLoginView> {
 
     public void seedData() {
         Model.seedData(RestaurantApp.DATABASE_SCRIPT_FILE);
+    }
+
+    public void login(){
+        navigateTo(new SecurityConnectController());
+    }
+
+    public void register(){
+        navigateTo(new SecurityRegisterController());
     }
 
 }

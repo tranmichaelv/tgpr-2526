@@ -53,8 +53,8 @@ public class SecurityLoginView extends BasicWindow{
 
     //Se connecter - S'inscrire
     private Panel createLoginPanel() {
-        btnLogin = new Button("Se connecter");
-        Button inscription = new Button("S'inscrire");
+        btnLogin = new Button("Se connecter",this::login);
+        Button inscription = new Button("S'inscrire",this::register);
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,
                 btnLogin, inscription).center();
 
@@ -62,6 +62,10 @@ public class SecurityLoginView extends BasicWindow{
         addShortcut(inscription, KeyStroke.fromString("<A-i>"));
 
         return panel;
+    }
+
+    private void login() {
+        controller.login();
     }
 
     // Reservation
@@ -119,6 +123,10 @@ public class SecurityLoginView extends BasicWindow{
 
     private void exit() {
         controller.exit();
+    }
+
+    private void register(){
+        controller.register();
     }
 
 }
