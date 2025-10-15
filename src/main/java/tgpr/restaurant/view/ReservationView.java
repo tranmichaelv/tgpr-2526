@@ -39,5 +39,22 @@ public class ReservationView extends BasicWindow {
 
         Panel root = Panel.verticalPanel(1);
         setComponent(root);
+        empty().addTo(root); // tool d'éspacement vertical
+        for (Label label : headerIfGuest()) {
+            label.addTo(root);
+        }  // à réaliser pour headerIfGuest : implémentation sur les conditions d'affichage (sur le modèle)
+    }
+
+    private List<Label> headerIfGuest() { // création List des deux labels composant le "header" (reminder du login à effectuér)
+        List<Label> headerIfGuest = new ArrayList<>();
+        headerIfGuest.add(new Label("Réservation en tant qu'invité"));
+        headerIfGuest.add(new Label("Vous pourrez confirmer votre réservation après vous être connecté"));
+        headerIfGuest.get(0).setForegroundColor(TextColor.ANSI.BLACK_BRIGHT); // changement de la couleur, conformément au screenshot fourni par le prof
+        return headerIfGuest;
+    }
+
+    private Label empty() {
+        Label inf = new Label("");
+        return inf;
     }
 }
