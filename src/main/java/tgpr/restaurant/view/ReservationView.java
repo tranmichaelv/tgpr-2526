@@ -7,6 +7,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.restaurant.controller.ReservationController;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,21 +41,50 @@ public class ReservationView extends BasicWindow {
         Panel root = Panel.verticalPanel(1);
         setComponent(root);
         empty().addTo(root); // tool d'éspacement vertical
+        createHeader(headerIfGuest()).addTo(root);
+        createGridLayout().addTo(root);
+    }
+
+    private Label empty() {
+        return new Label("");
+    }
+
+    private Panel createHeader(List<Label> headerIfGuest) {
+        Panel createHeader = new Panel();
         for (Label label : headerIfGuest()) {
-            label.addTo(root);
-        }  // à réaliser pour headerIfGuest : implémentation sur les conditions d'affichage (sur le modèle)
+            label.addTo(createHeader);
+        }
+        return createHeader;// à réaliser pour headerIfGuest : implémentation sur les conditions d'affichage (sur le modèle)
     }
 
     private List<Label> headerIfGuest() { // création List des deux labels composant le "header" (reminder du login à effectuér)
         List<Label> headerIfGuest = new ArrayList<>();
         headerIfGuest.add(new Label("Réservation en tant qu'invité"));
         headerIfGuest.add(new Label("Vous pourrez confirmer votre réservation après vous être connecté"));
-        headerIfGuest.get(0).setForegroundColor(TextColor.ANSI.BLACK_BRIGHT); // changement de la couleur, conformément au screenshot fourni par le prof
+        headerIfGuest.getFirst().setForegroundColor(TextColor.ANSI.BLACK_BRIGHT); // changement de la couleur, conformément au screenshot fourni par le prof
         return headerIfGuest;
     }
 
-    private Label empty() {
-        Label inf = new Label("");
-        return inf;
+    private Panel createGridLayout () {
+        Panel createGridLayout = new Panel();
+        createGridLayout.setLayoutManager(new GridLayout(2)); // deux colonnes
+
+        // première ligne
+        createGridLayout.addComponent(new Label("Nombre de personnes: "));
+        createGridLayout.addComponent(new TextBox());
+
+        // deuxième ligne
+        createGridLayout.addComponent(new Label("Service: "));
+        ComboBox<String> multipleOpt = new ComboBox<>();
+        multipleOpt.addItem("midi");
+        multipleOpt.addItem("soir");
+        multipleOpt.setSelectedItem("midi");
+        multipleOpt.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> invalidate()); // pour le changement d'option
+        createGridLayout.addComponent(multipleOpt);
+
+        // troisième ligne
+        createGridLayout.addComponent(new Label("Table assignée: "));
+        createGridLayout.addComponent(new Label("work in progress")); // récupération d'une (ou plusieurs) Table disponible avec requête SQL
+        return createGridLayout;
     }
 }
