@@ -5,13 +5,9 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.restaurant.controller.SecurityConnectController;
-import tgpr.restaurant.controller.SecurityLoginController;
 
-import java.awt.*;
-import java.util.BitSet;
 import java.util.List;
 
 public class SecurityConnectView extends BasicWindow {

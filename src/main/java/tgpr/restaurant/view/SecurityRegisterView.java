@@ -27,12 +27,6 @@ public class SecurityRegisterView extends BasicWindow {
     private final Label lblErrorConfirmPassword = new Label("Confirmation requise");
     private final Label lblErrorNumber = new Label("Téléphone requis");
 
-//    private final Label lblErrorLastName = new Label("");
-//    private final Label lblErrorSurname = new Label("");
-//    private final Label lblErrorEmail = new Label("");
-//    private final Label lblErrorPassword = new Label("");
-//    private final Label lblErrorConfirmPassword = new Label("");
-//    private final Label lblErrorNumber = new Label("");
 
     public SecurityRegisterView(SecurityRegisterController controller) {
         this.controller = controller;

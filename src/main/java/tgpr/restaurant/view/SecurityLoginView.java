@@ -2,25 +2,18 @@ package tgpr.restaurant.view;
 
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
-import org.w3c.dom.ls.LSOutput;
 import tgpr.restaurant.controller.SecurityLoginController;
 
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 
 public class SecurityLoginView extends BasicWindow{
 
     private final SecurityLoginController controller;
-
-    //Temporaire en attandant de faire l'heure
-    private final TextBox txtPseudo = new TextBox();
-
     private Button btnLogin;
-
 
     public SecurityLoginView(SecurityLoginController controller) {
         this.controller = controller;

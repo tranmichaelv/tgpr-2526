@@ -11,7 +11,6 @@ import tgpr.restaurant.view.SecurityRegisterView;
 import java.util.List;
 
 import static tgpr.framework.Model.execute;
-import static tgpr.framework.Model.queryList;
 
 public class SecurityRegisterController extends Controller<SecurityRegisterView> {
 

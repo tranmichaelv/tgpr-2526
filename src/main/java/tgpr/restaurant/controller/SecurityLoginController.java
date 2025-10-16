@@ -7,7 +7,6 @@ import tgpr.restaurant.view.SecurityLoginView;
 
 
 public class SecurityLoginController extends Controller<SecurityLoginView> {
-    private final SecurityLoginView view = new SecurityLoginView(this);
 
     public void exit() {
         System.exit(0);
