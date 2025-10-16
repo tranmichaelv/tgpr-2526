@@ -2,9 +2,13 @@ package tgpr.restaurant.view;
 
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
+import org.w3c.dom.ls.LSOutput;
 import tgpr.restaurant.controller.SecurityLoginController;
 
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 
@@ -105,17 +109,22 @@ public class SecurityLoginView extends BasicWindow{
         return panel;
     }
 
-    // ############# A faire ########################################################
+    // Set Date
     private Panel createDatePanel() {
+        // Recupere la date et l'heure
+        LocalDateTime localDate = LocalDateTime.now();
+        // Formatte l'heure de facon donne
+        DateTimeFormatter myFormatDate = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String formattedDate = localDate.format(myFormatDate);
+
         Panel panel = Panel.gridPanel(2,
                 Margin.of(1, 1, 1,0),
-                Spacing.of(1)).center();
-        Label date = new Label("Date/Heure simulée : ").addTo(panel);
-        txtPseudo.addTo(panel).takeFocus();
+                Spacing.of(1),
+                new Label("Date/Heure simulée : "),
+                new TextBox(formattedDate)).center();
 
         return panel;
     }
-    //#############################################################################
 
     private void seedData() {
         controller.seedData();
