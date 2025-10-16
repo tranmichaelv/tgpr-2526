@@ -12,20 +12,20 @@ import java.util.ArrayList;
 import java.util.List;
 
  /*
-        Planning pour la réalisation de cette view (ref.: screenshots --> diapositives 4 et 5)
+        Gameplan (ref.: screenshots --> pages 4 and 5)
         PHASE 1
-            a) réalisation des 3 lignes suivants:
-                - fields nb. personnes
+            a) realizing the 3 following fields:
+                - nb. people
                 - service
-                - Table assignée
-            * Utilisation du gridPanel pour la disposition en deux colonnes (à tester)
+                - Table assigned
+            * gridPanel to place elements in two columns
         PHASE 2
-            a) réalisation du calendrier (a chercher s'il existe dans la librairie Lanterna)
-                * implémentation des buttons pour "précedent" et "suivant"
+            a) Calendar (check if calendar tool exists in Lanterna's library)
+                * implementing buttons "précédent" and "suivant"
         PHASE 3
-            a) Buttons "Annuler" et "Confirmer la réservation"
+            a) Buttons "Annuler" and "Confirmer la réservation"
 
-        N.B.: le planning pourrait être sujet à changement après consultation avec les dévs s'occupant de la partie "Reservation" (dans ce cas çi Maddy)
+        N.B.: planning may be updated after briefing with my colleague(s) involved in Reservation branch (Maddy)
 */
 
 public class ReservationView extends BasicWindow {
@@ -43,6 +43,7 @@ public class ReservationView extends BasicWindow {
         empty().addTo(root); // tool d'éspacement vertical
         createHeader(headerIfGuest()).addTo(root);
         createGridLayout().addTo(root);
+        createCalendar().addTo(root);
     }
 
     private Label empty() {
@@ -65,7 +66,7 @@ public class ReservationView extends BasicWindow {
         return headerIfGuest;
     }
 
-    private Panel createGridLayout () {
+    private Panel createGridLayout() {
         Panel createGridLayout = new Panel();
         createGridLayout.setLayoutManager(new GridLayout(2)); // deux colonnes
 
@@ -84,7 +85,17 @@ public class ReservationView extends BasicWindow {
 
         // troisième ligne
         createGridLayout.addComponent(new Label("Table assignée: "));
-        createGridLayout.addComponent(new Label("work in progress")); // récupération d'une (ou plusieurs) Table disponible avec requête SQL
+        createGridLayout.addComponent(new Label("work in progress: tableId")); // récupération d'une (ou plusieurs) Table disponible avec requête SQL
         return createGridLayout;
+    }
+
+    private Panel createCalendar() {
+        Panel createCalendar = new Panel();
+        createCalendar.setLayoutManager(new LinearLayout(Direction.HORIZONTAL)).center();
+        createCalendar.addComponent(new Button("précedent"));
+        createCalendar.addComponent(new Label("work in progress: calendar"));
+        createCalendar.addComponent(new Button("suivant"));
+
+        return createCalendar;
     }
 }
