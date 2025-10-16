@@ -39,13 +39,14 @@ public class SecurityRegisterController extends Controller<SecurityRegisterView>
         errors.add(UserValidator.isValidNumber(number));
 
         if(errors.isEmpty()){
-            execute("insert into users (id, last_name, first_name, email, password, phone, role, blocked) " +
-                    "value(:lastname,:surname,:email,:password,:number,client,0)",
-                    new Params("lastname", lastname)
-                            .add("surname", surname)
+            execute("insert into users (last_name, first_name, email, password, phone, role) " +
+                    "values(:last_name,:first_name,:email,:password,:phone,:role)",
+                    new Params("last_name", lastname)
+                            .add("first_name", surname)
                             .add("email",email)
                             .add("password", password)
-                            .add("number", number)
+                            .add("phone", number)
+                            .add("role","client")
                     );
             var user = User.getByEmail(email); // mets un user si l'email est present
             if (user != null)
