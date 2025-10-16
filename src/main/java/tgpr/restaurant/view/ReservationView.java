@@ -8,8 +8,13 @@ import com.googlecode.lanterna.gui2.*;
 import tgpr.restaurant.controller.ReservationController;
 
 import java.lang.reflect.Array;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
  /*
         Gameplan (ref.: screenshots --> pages 4 and 5)
@@ -31,7 +36,8 @@ import java.util.List;
 
 public class ReservationView extends BasicWindow {
     private final ReservationController controller;
-    private final String[] days = {"lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"};
+    private YearMonth currentMonth = YearMonth.now(); // variable useful for the calendar
+
     public ReservationView(ReservationController controller) {
 
         this.controller = controller;
@@ -101,9 +107,11 @@ public class ReservationView extends BasicWindow {
         Panel createCalendar = new Panel();
         createCalendar.setLayoutManager(new LinearLayout(Direction.HORIZONTAL)).center();
         createCalendar.addComponent(new Button("précedent"));
-        createCalendar.addComponent(new Label("work in progress: calendar"));
+        Label thisMonthAndYear = new Label(currentMonth.getMonth() + " " + currentMonth.getYear()); // gets current month (uppercase String in English) and current year; example : OCTOBER 2025
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRENCH); // switching from uppercase English to lowercase French (OCTOBER 2025 into octobre 2025)
+        thisMonthAndYear.setText(currentMonth.atDay(1).format(formatter)); // formalizing new pattern
+        createCalendar.addComponent(thisMonthAndYear);
         createCalendar.addComponent(new Button("suivant"));
-
         return createCalendar;
     }
 }
