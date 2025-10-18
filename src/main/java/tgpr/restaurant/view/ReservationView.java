@@ -1,18 +1,15 @@
 package tgpr.restaurant.view;
 
-import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
+import org.springframework.cglib.core.Local;
 import tgpr.restaurant.controller.ReservationController;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,7 +50,8 @@ public class ReservationView extends BasicWindow {
 
         createHeader(headerIfGuest()).addTo(root);
         createGridLayout().addTo(root);
-        createCalendar().addTo(root);
+        createCalendarHeader().addTo(root);
+        root.addComponent(createStaticCalendarGrid());
 
         root.addComponent(new EmptySpace(new TerminalSize(0,1)));
     }
@@ -103,15 +101,39 @@ public class ReservationView extends BasicWindow {
         return createGridLayout;
     }
 
-    private Panel createCalendar() {
-        Panel createCalendar = new Panel();
-        createCalendar.setLayoutManager(new LinearLayout(Direction.HORIZONTAL)).center();
-        createCalendar.addComponent(new Button("précedent"));
+    // Calendar's header showing prec and next buttons, alongside the month (adapted with DateTimeFormatter) and the year
+    private Panel createCalendarHeader() {
+        Panel createCalendarHeader = new Panel();
+        createCalendarHeader.setLayoutManager(new LinearLayout(Direction.HORIZONTAL)).center();
+        createCalendarHeader.addComponent(new Button("précedent"));
         Label thisMonthAndYear = new Label(currentMonth.getMonth() + " " + currentMonth.getYear()); // gets current month (uppercase String in English) and current year; example : OCTOBER 2025
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRENCH); // switching from uppercase English to lowercase French (OCTOBER 2025 into octobre 2025)
         thisMonthAndYear.setText(currentMonth.atDay(1).format(formatter)); // formalizing new pattern
-        createCalendar.addComponent(thisMonthAndYear);
-        createCalendar.addComponent(new Button("suivant"));
-        return createCalendar;
+        createCalendarHeader.addComponent(thisMonthAndYear);
+        createCalendarHeader.addComponent(new Button("suivant"));
+        return createCalendarHeader;
+    }
+
+    // Static calendar grid (columns : 7)
+    private Panel createStaticCalendarGrid() {
+        Panel grid = new Panel(new GridLayout(7)).center();
+        String[] days = {"Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"};
+
+        // adding each day to the grid
+        for (String day : days) {
+            grid.addComponent(new Label(day));
+        }
+
+        List<LocalDate> calendarDays = controller.getCalendarDays(currentMonth);
+        // adding each day to the grid with a foreach loop
+        for (LocalDate date : calendarDays) {
+            Label dayLabel = new Label(String.valueOf(date.getDayOfMonth()));
+            // Coloring days that are not from the current month
+            if (!date.getMonth().equals(currentMonth.getMonth())) {
+                dayLabel.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT);
+            }
+            grid.addComponent(dayLabel);
+        }
+        return grid;
     }
 }
