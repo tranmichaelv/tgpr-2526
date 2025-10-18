@@ -7,21 +7,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
-
-public class ReservationController extends Controller<ReservationView> {
-    public static final int gridSize = 42; // 6 rows, 7 columns
-    private final ReservationView view = new ReservationView(this);
-
-    @Override
-    public ReservationView getView() {
-        return new ReservationView(this);
-    }
-
-    // method to print days in the calendar
-    public List<LocalDate> getCalendarDays(YearMonth month) {
-        List<LocalDate> days = new ArrayList<>();
-
-        /*
+/*
             In a 5×7 grid (5 rows, 7 columns), we expect to see:
                 - all the days of the current month;
                 - the days from the previous (needed to fill the grid).
@@ -29,6 +15,7 @@ public class ReservationController extends Controller<ReservationView> {
             For example:
             a) With October 1st being a Wednesday, we need to fill the previous Monday and Tuesday with September 29th and 30th, respectively.
 
+            N.B: for few months, a 6th row may be necessary (that's why gridSize below is 42)
                         here begins october
                                 |
                                 v
@@ -41,18 +28,32 @@ public class ReservationController extends Controller<ReservationView> {
                                                  ^
                                                  |
                                    here ends october (and starts november)
-        */
+*/
 
-        LocalDate firstOfMonth = month.atDay(1);
-        int startDayOfWeek = firstOfMonth.getDayOfWeek().getValue();
+public class ReservationController extends Controller<ReservationView> {
 
-        // calculating days needed for the previous month
-        int nbDaysPrec = startDayOfWeek - 1;
+    private final ReservationView view = new ReservationView(this); // ReservationView has now access to this controller's methods
+    private YearMonth currentMonth = YearMonth.now();
+
+    @Override
+    public ReservationView getView() {
+        return view;
+    }
+
+    // method to print days in the calendar
+    public List<LocalDate> getCalendarDays(YearMonth month) {
+        List<LocalDate> days = new ArrayList<>();
+
+        LocalDate firstDayOfMonth = month.atDay(1);
+        int startDayOfWeek = firstDayOfMonth.getDayOfWeek().getValue(); // getting the week day of the first day of a month (ex.: 1 = monday)
+
+        // calculating qty needed to fill first row with previous month's days
+        int daysFromPreviousMonth = startDayOfWeek - 1;
 
         // adding previous month's days
         YearMonth prevMonth = month.minusMonths(1);
-        int lenghtPrevMonth = prevMonth.lengthOfMonth();
-        for (int i = nbDaysPrec; i > 0; i--) {
+        int lenghtPrevMonth = prevMonth.lengthOfMonth(); // 30 (nb. days)
+        for (int i = daysFromPreviousMonth; i > 0; i--) { // decrementing i while going towards the end of the previous month
             days.add(prevMonth.atDay(lenghtPrevMonth - i + 1));
         }
 
@@ -63,5 +64,21 @@ public class ReservationController extends Controller<ReservationView> {
         }
 
         return days;
-    };
+    }
+
+    public YearMonth getCurrentMonth() {
+        // guaranteed initialization of currentMonth
+        if (currentMonth == null) {
+            currentMonth = YearMonth.now();
+        }
+        return currentMonth;
+    }
+
+    public void goToPreviousMonth() {
+        currentMonth = currentMonth.minusMonths(1);
+    }
+
+    public void goToNextMonth() {
+        currentMonth = currentMonth.plusMonths(1);
+    }
 }

@@ -3,11 +3,9 @@ package tgpr.restaurant.view;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
-import org.springframework.cglib.core.Local;
 import tgpr.restaurant.controller.ReservationController;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +30,10 @@ import java.util.Locale;
 
 
 public class ReservationView extends BasicWindow {
+    public static final String[] DAYS = new String[]{"Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"};
     private final ReservationController controller;
-    private YearMonth currentMonth = YearMonth.now(); // variable useful for the calendar
+    private Label monthLabel;
+    private Panel calendarGrid;
 
     public ReservationView(ReservationController controller) {
 
@@ -48,15 +48,16 @@ public class ReservationView extends BasicWindow {
 
         root.addComponent(new EmptySpace(new TerminalSize(0,1))); // upper padding
 
-        createHeader(headerIfGuest()).addTo(root);
+        createHeader().addTo(root);
         createGridLayout().addTo(root);
         createCalendarHeader().addTo(root);
-        root.addComponent(createStaticCalendarGrid());
+        root.addComponent(createCalendarGridPanel());
+        root.addComponent(buttonsAtBottom());
 
         root.addComponent(new EmptySpace(new TerminalSize(0,1)));
     }
 
-    private Panel createHeader(List<Label> headerIfGuest) {
+    private Panel createHeader() {
         Panel createHeader = new Panel();
         for (Label label : headerIfGuest()) {
             label.addTo(createHeader);
@@ -80,8 +81,7 @@ public class ReservationView extends BasicWindow {
         createGridLayout.addComponent(new Label("Nombre de personnes: "));
         createGridLayout.addComponent(new TextBox());
 
-        createGridLayout.addComponent(new EmptySpace());
-        createGridLayout.addComponent(new EmptySpace()); // cheating out row skip. To refractor later
+        createGridLayout.addComponent(new EmptySpace(), GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER, true, false, 2, 1)); // to skip row
 
         // 2nd row
         createGridLayout.addComponent(new Label("Service: "));
@@ -89,51 +89,79 @@ public class ReservationView extends BasicWindow {
         multipleOpt.addItem("midi");
         multipleOpt.addItem("soir");
         multipleOpt.setSelectedItem("midi");
-        multipleOpt.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> invalidate()); // to change options in ComboBox
         createGridLayout.addComponent(multipleOpt);
 
-        createGridLayout.addComponent(new EmptySpace());
-        createGridLayout.addComponent(new EmptySpace()); // cheating out row skip. To refractor later
+        createGridLayout.addComponent(new EmptySpace(), GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER, true, false, 2, 1));
 
         // 3rd row
         createGridLayout.addComponent(new Label("Table assignée: "));
-        createGridLayout.addComponent(new Label("work in progress: tableId")); // getting the table(s) with an SQL query (model)
+        createGridLayout.addComponent(new Label("work in progress: tableId")); // will be re-worked after linking it with the model
         return createGridLayout;
     }
 
     // Calendar's header showing prec and next buttons, alongside the month (adapted with DateTimeFormatter) and the year
     private Panel createCalendarHeader() {
-        Panel createCalendarHeader = new Panel();
-        createCalendarHeader.setLayoutManager(new LinearLayout(Direction.HORIZONTAL)).center();
-        createCalendarHeader.addComponent(new Button("précedent"));
-        Label thisMonthAndYear = new Label(currentMonth.getMonth() + " " + currentMonth.getYear()); // gets current month (uppercase String in English) and current year; example : OCTOBER 2025
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRENCH); // switching from uppercase English to lowercase French (OCTOBER 2025 into octobre 2025)
-        thisMonthAndYear.setText(currentMonth.atDay(1).format(formatter)); // formalizing new pattern
-        createCalendarHeader.addComponent(thisMonthAndYear);
-        createCalendarHeader.addComponent(new Button("suivant"));
-        return createCalendarHeader;
+        Panel header = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
+
+        Button prec = (new Button("précedent", () -> {
+            controller.goToPreviousMonth();
+            refreshCalendar();
+        }));
+        Button next = (new Button("suivant", () -> {
+            controller.goToNextMonth();
+            refreshCalendar();
+        }));
+        monthLabel = new Label(controller.getCurrentMonth().atDay(1).format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRENCH))); // gets current month (uppercase, English) and current year (OCTOBER 2025), then converted (lowercase, French --> octobre 2025)
+
+        header.addComponent(prec);
+        header.addComponent(monthLabel);
+        header.addComponent(next);
+
+        return header;
     }
 
-    // Static calendar grid (columns : 7)
-    private Panel createStaticCalendarGrid() {
-        Panel grid = new Panel(new GridLayout(7)).center();
-        String[] days = {"Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"};
 
-        // adding each day to the grid
-        for (String day : days) {
-            grid.addComponent(new Label(day));
+    private void buildCalendarGrid() {
+        calendarGrid.removeAllComponents();
+
+        // printing each day (lun, mar, ...)
+        for (String day : DAYS) {
+            calendarGrid.addComponent(new Label(day));
         }
 
-        List<LocalDate> calendarDays = controller.getCalendarDays(currentMonth);
-        // adding each day to the grid with a foreach loop
+        // printing each day from current and (if needed) previous month
+        List<LocalDate> calendarDays = controller.getCalendarDays(controller.getCurrentMonth());
         for (LocalDate date : calendarDays) {
             Label dayLabel = new Label(String.valueOf(date.getDayOfMonth()));
-            // Coloring days that are not from the current month
-            if (!date.getMonth().equals(currentMonth.getMonth())) {
+            if (!date.getMonth().equals(controller.getCurrentMonth().getMonth())) {
                 dayLabel.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT);
             }
-            grid.addComponent(dayLabel);
+            calendarGrid.addComponent(dayLabel);
         }
-        return grid;
+    }
+
+
+    // method refresh to scroll calendar
+    private void refreshCalendar() {
+        monthLabel.setText(controller.getCurrentMonth().atDay(1).format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRENCH)));
+        buildCalendarGrid();
+        invalidate();
+    }
+
+    // calendar grid (columns : 7)
+    private Panel createCalendarGridPanel() {
+        calendarGrid = new Panel(new GridLayout(7)).center();
+        buildCalendarGrid();
+        return calendarGrid;
+    }
+
+    // buttons "Annuler" and "Confirmer la réservation". Will be reworked later (to match model's logic)
+    private Panel buttonsAtBottom() {
+        Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
+        Button cancel = new Button("Annuler");
+        Button confirm = new Button("Confirmer la réservation");
+        buttons.addComponent(cancel);
+        buttons.addComponent(confirm);
+        return buttons;
     }
 }
