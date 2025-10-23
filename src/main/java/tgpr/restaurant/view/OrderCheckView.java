@@ -11,9 +11,10 @@ public class OrderCheckView extends BasicWindow {
     public OrderCheckView(OrderCheckController controller){
         this.controller = controller;
 
-        setTitle("Action sur la commande");
+        Panel root = new Panel(new BorderLayout());
+        Panel fillPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
 
-        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+        setTitle("Action sur la commande");
         root.addComponent(new Label("Que voulez-vous faire avec cette commande"));
         root.addComponent(new EmptySpace(TerminalSize.ONE));
 
@@ -22,9 +23,15 @@ public class OrderCheckView extends BasicWindow {
         actionListBox.addItem("Enregistrer le paiement", controller::openRegisterPaymentView);
         actionListBox.addItem("Voir les détails", controller::openDetailsView);
         actionListBox.addItem("Annuler", controller::openCancelOrderView);
-        root.addComponent(actionListBox);
 
-        root.addComponent(buttonCancel());
+        fillPanel.addComponent(actionListBox);
+
+        root.addComponent(fillPanel, BorderLayout.Location.CENTER);
+
+        Panel bottomPanel = new Panel(new BorderLayout());
+        bottomPanel.addComponent(buttonCancel(), BorderLayout.Location.RIGHT);
+        root.addComponent(bottomPanel, BorderLayout.Location.BOTTOM);
+
         setComponent(root);
     }
     // cree le bouton cancel
