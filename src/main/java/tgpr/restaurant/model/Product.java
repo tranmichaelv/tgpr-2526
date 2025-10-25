@@ -60,7 +60,7 @@ public class Product extends Model {
     }
 
     public List<MenuItem> getMenuMenuItems() {
-        return queryList(MenuItem.class, "select * from menu_items where menu=:id",
+        return queryList(MenuItem.class, "select * from menu_items where menu=:id order by order_in_menu",
             new Params("id", id));
     }
 
@@ -231,12 +231,12 @@ public class Product extends Model {
 
     public static List<Product> getOrderProductAndMenu() {
         return queryList(Product.class,
-                "select * from products" +
-                        "order by name;");
+                "select * from products " +
+                        "order by type, name;");
     }
 
     public String getPriceFormatted(){
-        return String.valueOf(price) + "0 €";
+        return String.format("%.2f €", price);
     }
 
 }

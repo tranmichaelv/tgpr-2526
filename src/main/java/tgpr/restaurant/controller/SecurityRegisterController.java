@@ -48,7 +48,7 @@ public class SecurityRegisterController extends Controller<SecurityRegisterView>
     public void validate(String lastname, String firstname, String email, String password, String number){
 
         // change le numero pour le mettre au format demande
-        // si commence par +32 le change pour qu'il commence par 0
+        // si commence par +32 le change pour qu'il commence par 0.
         if(number.startsWith("+32")) {
             number = number.replace("+32", "0");
         }

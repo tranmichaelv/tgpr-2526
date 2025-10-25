@@ -2,7 +2,6 @@ package tgpr.restaurant.controller;
 
 import com.googlecode.lanterna.gui2.Panel;
 import tgpr.framework.Controller;
-import tgpr.restaurant.model.Product;
 import tgpr.restaurant.view.CartMenuManagementView;
 
 

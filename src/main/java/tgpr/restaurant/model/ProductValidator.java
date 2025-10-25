@@ -18,9 +18,9 @@ public class ProductValidator {
     }
 
     public static Error isValidPrice(String price){
-        if(!price.isBlank()) {
+        if(!price.isEmpty()) {
             try {
-                var priceInt = parseInt(price);
+                double priceInt = Double.parseDouble(price);
                 if (priceInt <= 0) {
                     return new Error("Prix nul impossible", Product.Fields.Price);
                 }

@@ -9,11 +9,9 @@ import tgpr.restaurant.model.MenuItem;
 import java.util.List;
 
 public class MenuActionsView extends DialogWindow {
-    private MenuActionsController controller;
-    private final MenuItem menu;
+    private final MenuActionsController controller;
 
     public MenuActionsView(MenuActionsController controller, MenuItem menu) {
-        this.menu = menu;
         super("Actions pour:" + menu.getProductName());
         this.controller = controller;
 

@@ -1,33 +1,78 @@
 package tgpr.restaurant.view;
 
-import com.googlecode.lanterna.gui2.Label;
-import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.Spacing;
-import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.restaurant.controller.MenuChangeOrderController;
+import tgpr.restaurant.model.MenuItem;
+
+import java.util.List;
 
 public class MenuChangeOrderView extends DialogWindow {
     private final MenuChangeOrderController controller;
-    private String menuName;
+    private final String productName;
     private final int orderInMenu;
+    private TextBox txtnumberToChange;
+    private final Label lblErrorNumberToChange = new Label("");
+    private final Button btnAccept = new Button("OK",this::changeOrder);
 
-    public MenuChangeOrderView(MenuChangeOrderController controller, String menuName, int orderInMenu) {
+    public MenuChangeOrderView(MenuChangeOrderController controller, String productName, int orderInMenu) {
         super("Changer l'ordre");
         this.controller = controller;
-        this.menuName = menuName;
+        this.productName = productName;
         this.orderInMenu = orderInMenu;
 
-        Panel root = Panel.verticalPanel(1);
-        root.addComponent(createBodyPanel());
+        setHints(List.of(Hint.CENTERED, Hint.MODAL));
+        setCloseWindowWithEscape(true);
+
+        Panel root = Panel.gridPanel(1, Margin.of(1,0,1,0));
         setComponent(root);
+
+        root.addComponent(createBodyPanel());
+        root.addComponent(createButtonPanel());
+
+
+        txtnumberToChange.takeFocus();
     }
 
     private Panel createBodyPanel(){
-        Panel panel = Panel.verticalPanel(1,
-                new Label("Nouvel ordre pour '" + menuName + "' :"),
-                new TextBox(String.valueOf(orderInMenu))
-        );
+        String texte = "Nouvel ordre pour '" + productName + "' :";
+        int texteLength = texte.length();
+
+        Label lbltexte = new Label(texte);
+        txtnumberToChange = new TextBox(new TerminalSize(texteLength,1), String.valueOf(orderInMenu))
+                .setTextChangeListener((txt, byUser) -> check());
+
+        Panel panel = Panel.verticalPanel();
+
+        lbltexte.addTo(panel);
+        panel.addEmpty();
+        txtnumberToChange.addTo(panel);
+        lblErrorNumberToChange.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
         return panel;
+    }
+
+    private Panel createButtonPanel(){
+        return Panel.horizontalPanel(LinearLayout.Alignment.End,
+                btnAccept,
+                new Button("Cancel", this::cancel)
+        );
+    }
+
+    private void check(){
+        var error = controller.check(txtnumberToChange.getText());
+        lblErrorNumberToChange.setText(error.getFirstErrorMessage(MenuItem.Fields.OrderInMenu));
+
+        btnAccept.setEnabled(error.isEmpty());
+    }
+
+    private void cancel(){
+        close();
+    }
+
+    private void changeOrder(){
+        controller.changeOrder(txtnumberToChange.getText());
+        close();
     }
 }

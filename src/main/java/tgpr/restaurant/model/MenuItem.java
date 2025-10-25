@@ -87,6 +87,18 @@ public class MenuItem extends Model {
         this.orderInMenu = orderInMenu;
     }
 
+    public MenuItem getMenuIdByOrderInMenu(int orderInMenu, int menu){
+        return queryOne(MenuItem.class, "select * from menu_items " +
+                        "where order_in_menu=:order_in_menu and menu=:menu",
+                new Params("order_in_menu", orderInMenu).add("menu", menu));
+    }
+
+    public static List<MenuItem> getAllInMenu(int menu){
+        return queryList(MenuItem.class, "select * from menu_items " +
+                        "where menu=:menu",
+                new Params("menu", menu));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

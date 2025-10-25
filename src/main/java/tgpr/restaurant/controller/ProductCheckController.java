@@ -1,6 +1,5 @@
 package tgpr.restaurant.controller;
 
-import com.googlecode.lanterna.gui2.ObjectTable;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.Product;
 import tgpr.restaurant.view.ProductCheckView;

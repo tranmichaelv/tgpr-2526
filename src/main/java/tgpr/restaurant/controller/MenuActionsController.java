@@ -3,9 +3,8 @@ package tgpr.restaurant.controller;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.MenuItem;
 import tgpr.restaurant.view.MenuActionsView;
-import tgpr.restaurant.view.MenuChangeView;
 
-import javax.swing.text.View;
+import java.util.List;
 
 
 public class MenuActionsController extends Controller<MenuActionsView> {
@@ -23,11 +22,23 @@ public class MenuActionsController extends Controller<MenuActionsView> {
     }
 
     public void delete(){
+        int orderInMenu = menu.getOrderInMenu();
         menu.delete();
+        List<MenuItem> menuList = getMenuList();
+        if(menuList.size() > 1){
+            for(int i = orderInMenu - 1; i <= menuList.size(); ++i ){
+                MenuItem currentMenu =  menuList.get(i);
+                currentMenu.setOrderInMenu(i);
+                currentMenu.save();
+            }
+        }
     }
 
+    public List<MenuItem> getMenuList(){
+        return MenuItem.getAllInMenu(menu.getMenuId());
+    }
     public void changeOrder(){
-        navigateTo(new MenuChangeOrderController(menu.getMenuName(), menu.getOrderInMenu()));
+        navigateTo(new MenuChangeOrderController(menu));
     }
 
 }

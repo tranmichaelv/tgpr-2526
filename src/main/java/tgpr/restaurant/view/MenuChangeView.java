@@ -2,12 +2,10 @@ package tgpr.restaurant.view;
 
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import tgpr.framework.ViewManager;
 import tgpr.restaurant.controller.MenuChangeController;
 import tgpr.restaurant.model.MenuItem;
 import tgpr.restaurant.model.Product;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +17,9 @@ public class MenuChangeView extends DialogWindow {
     private ComboBox<String> cboAddProduct;
     private final Map<String, Product> productMap = new HashMap<>();
 
+    private final Label lblTotalProduits = new Label("");
+    private final Label lblPrixMenu = new Label("");
+    private final Label lblDifference = new Label("");
 
     public MenuChangeView(MenuChangeController controller, Product menu) {
         super("Gerer les composant du menu: " + menu.getName());
@@ -29,9 +30,6 @@ public class MenuChangeView extends DialogWindow {
         setCloseWindowWithEscape(true);
 
         Panel root = Panel.gridPanel(1, Margin.of(0,1,0,1));
-
-        setComponent(root);
-
         setComponent(root);
 
         creaTable().addTo(root);
@@ -53,6 +51,9 @@ public class MenuChangeView extends DialogWindow {
         tableProduct.add(products);
         // requis à cause d'un bug quand on ferme la fenêtre popup avec la touche Escape
         tableProduct.invalidate();
+
+        // met à jour les prix
+        updatePriceLabels();
     }
 
     private Component creaTable() {
@@ -86,13 +87,27 @@ public class MenuChangeView extends DialogWindow {
     }
 
     private Panel createPricePanel(){
-        return Panel.verticalPanel(LinearLayout.Alignment.Beginning,
+
+        Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Beginning,
                 new Label("─".repeat(60)),
-                new Label("Total de produits:" + totalPriceMenu() + "0 €"),
-                new Label("Prix du menu: " + menu.getPrice() + "0 €"),
-                new Label("Difference (avantage client): " + (totalPriceMenu() - menu.getPrice()) + "0 €"),
+                lblTotalProduits,
+                lblPrixMenu,
+                lblDifference,
                 new Label("─".repeat(60))
         );
+
+        updatePriceLabels(); // initialise les valeurs
+        return panel;
+    }
+
+    private void updatePriceLabels() {
+        double totalProduct = totalPriceMenu();
+        double menuPrice = menu.getPrice();
+        double difference = totalProduct - menuPrice;
+
+        lblTotalProduits.setText("Total de produits : " + String.format("%.2f €", totalProduct));
+        lblPrixMenu.setText("Prix du menu : " + String.format("%.2f €", menuPrice));
+        lblDifference.setText("Différence (avantage client) : " + String.format("%.2f €", difference));
     }
 
     private Panel createAddProductPanel(){
@@ -149,11 +164,13 @@ public class MenuChangeView extends DialogWindow {
     public void deleteMenu(){
         controller.deleteMenu();
         close();
+        reloadData();
     }
 
     public void archiveMenu(){
         controller.archiveMenu();
         close();
+        reloadData();
     }
 
 }

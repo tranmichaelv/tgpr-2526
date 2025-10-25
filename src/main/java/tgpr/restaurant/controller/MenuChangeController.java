@@ -11,11 +11,9 @@ import java.util.List;
 public class MenuChangeController extends Controller<MenuChangeView> {
     private final MenuChangeView view;
     private final Product product;
-    private List<MenuItem> menu;
 
     public MenuChangeController(Product product) {
         this.product = product;
-        this.menu = product.getMenuMenuItems();
         view = new MenuChangeView(this, product);
     }
 
@@ -51,7 +49,7 @@ public class MenuChangeController extends Controller<MenuChangeView> {
 
     public double totalPriceMenu(){
         double price = 0;
-        for(MenuItem product : menu){
+        for(MenuItem product : getAllProductInMenu()){
             price += product.getProduct().getPrice();
         }
         return price;
@@ -66,12 +64,15 @@ public class MenuChangeController extends Controller<MenuChangeView> {
     }
 
     public int numberOfProductsInMenu(){
-        return menu.size();
+        return getAllProductInMenu().size();
     }
 
     public void addProductToMenu(int productToAddId){
-        this.menu = product.getMenuMenuItems();
         MenuItem newMenu = new MenuItem(getProductId(), productToAddId, numberOfProductsInMenu() + 1);
         newMenu.save();
+    }
+
+    public List<MenuItem> getAllProductInMenu(){
+        return MenuItem.getAllInMenu(product.getId());
     }
 }

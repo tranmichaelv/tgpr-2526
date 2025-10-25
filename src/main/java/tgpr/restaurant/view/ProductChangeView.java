@@ -135,7 +135,9 @@ public class ProductChangeView extends DialogWindow {
         boolean hasErrors =
                 !lblErrorName.getText().isEmpty() ||
                         !lblErrorPrice.getText().isEmpty() ||
-                        !lblErrorDescription.getText().isEmpty();
+                        !lblErrorDescription.getText().isEmpty() ||
+                        txtname.getText().isEmpty() ||
+                        txtprice.getText().isEmpty();
 
         // Si aucun message d’erreur → bouton actif
         btnSave.setEnabled(!hasErrors);
