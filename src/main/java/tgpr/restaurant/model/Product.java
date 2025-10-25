@@ -6,11 +6,13 @@ import tgpr.framework.Params;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class Product extends Model {
@@ -210,4 +212,31 @@ public class Product extends Model {
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+
+    // retourne la liste de tous les produits qui ne sont pas de type "menu" et
+    // ordonnés par type et par nom
+    public static List<Product> getOrderProduct() {
+        return queryList(Product.class,
+                "select * " +
+                        "from products where type != 'menu' and archived is false " +
+                        "order by type, name;");
+    }
+
+    public static List<Product> getOrderMenu() {
+        return queryList(Product.class,
+                "select * from products " +
+                        "where type = 'menu' and archived is false " +
+                        "order by name;");
+    }
+
+    public static List<Product> getOrderProductAndMenu() {
+        return queryList(Product.class,
+                "select * from products" +
+                        "order by name;");
+    }
+
+    public String getPriceFormatted(){
+        return String.valueOf(price) + "0 €";
+    }
+
 }

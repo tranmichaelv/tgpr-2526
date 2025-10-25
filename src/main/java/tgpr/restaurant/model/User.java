@@ -264,4 +264,12 @@ public class User extends Model {
                 new Params("email", email)); // Mets le string email dans :email
     }
 
+    public boolean isBoss(){
+        return this.role == Role.Boss;
+    }
+
+    public String trimNumber(String number){
+        return number.trim().replaceAll("/|\\s|-","");
+    }
+
 }

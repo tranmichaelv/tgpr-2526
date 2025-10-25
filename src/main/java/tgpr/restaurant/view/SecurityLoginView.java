@@ -12,25 +12,24 @@ import java.util.List;
 public class SecurityLoginView extends BasicWindow{
 
     private final SecurityLoginController controller;
-    private final TextBox txtPseudo = new TextBox();
     private Button btnLogin;
 
     public SecurityLoginView(SecurityLoginController controller) {
         this.controller = controller;
 
-        //Titre
+        // titre
         setTitle("Restaurant - page d'acceuil");
         setHints(List.of(Hint.CENTERED));
 
 
-        //Premier panel qui permet de mettre les marges
+        // premier panel qui permet de mettre les marges
         Panel margin = Panel.gridPanel(1,Margin.of(1,1,1,0));
         setComponent(margin);
 
-        //Second panel qui va tout aligner
+        // second panel qui va tout aligner
         Panel root = Panel.verticalPanel(1);
 
-        //Rajoute tout les classes crees dans le second panel
+        // rajoute toutes les classes crees dans le second panel
         createLoginPanel().addTo(root);
         createReservationPanel().addTo(root);
         createShopPanel().addTo(root);
@@ -44,11 +43,11 @@ public class SecurityLoginView extends BasicWindow{
     }
 
     /*
-        Differentes classes on ete crees pour separer les differentes sections comme
+        differentes classes ont été crees pour separer les differentes sections comme
         indiques sur les screenshot pour l'instant juste la vue est faite
      */
 
-    //Se connecter - S'inscrire
+    // se connecter - S'inscrire
     private Panel createLoginPanel() {
         btnLogin = new Button("Se connecter",this::login);
         Button inscription = new Button("S'inscrire",this::register);
@@ -65,7 +64,7 @@ public class SecurityLoginView extends BasicWindow{
         controller.login();
     }
 
-    // Reservation
+    // reservation
     private Panel createReservationPanel(){
         Button reservation = new Button("Reserver une table");
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,
@@ -76,9 +75,9 @@ public class SecurityLoginView extends BasicWindow{
         return panel;
     }
 
-    // Panier - Menu
+    // panier - Menu
     private Panel createShopPanel() {
-        Button carte = new Button("Parcourir la carte");
+        Button carte = new Button("Parcourir la carte"); // test a enlever
         Button panier = new Button("Mon panier");
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,
                 carte, panier).center();
@@ -89,7 +88,7 @@ public class SecurityLoginView extends BasicWindow{
         return panel;
     }
 
-    // Reset - Exit
+    // reset - Exit
     private Panel createDebugPanel() {
         Button reset = new Button("Renitialiser la BD", this::seedData);
         Button exit = new Button("Quitter", this::exit);
@@ -103,13 +102,12 @@ public class SecurityLoginView extends BasicWindow{
     }
 
     private Panel createDatePanel() {
-        Panel panel = Panel.gridPanel(2,
+
+        return Panel.gridPanel(2,
                 Margin.of(1, 1, 1,0),
                 Spacing.of(1),
                 new Label("Date/Heure simulée : "),
                 new TextBox(Time.date())).center();
-
-        return panel;
     }
 
     private void seedData() {
