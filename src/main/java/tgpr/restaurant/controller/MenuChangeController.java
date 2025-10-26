@@ -1,7 +1,9 @@
 package tgpr.restaurant.controller;
 
 import tgpr.framework.Controller;
+import tgpr.framework.ErrorList;
 import tgpr.restaurant.model.MenuItem;
+import tgpr.restaurant.model.MenuItemValidator;
 import tgpr.restaurant.model.Product;
 import tgpr.restaurant.view.MenuChangeView;
 
@@ -10,10 +12,10 @@ import java.util.List;
 
 public class MenuChangeController extends Controller<MenuChangeView> {
     private final MenuChangeView view;
-    private final Product product;
+    private final Product menu;
 
     public MenuChangeController(Product product) {
-        this.product = product;
+        this.menu = product;
         view = new MenuChangeView(this, product);
     }
 
@@ -27,7 +29,7 @@ public class MenuChangeController extends Controller<MenuChangeView> {
 //    }
 
     public void deleteMenu(){
-        this.product.delete();
+        this.menu.delete();
     }
 
 //    public void save(){
@@ -35,12 +37,12 @@ public class MenuChangeController extends Controller<MenuChangeView> {
 //    }
 
     public void archiveMenu(){
-        this.product.setArchived(true);
-        this.product.save();
+        this.menu.setArchived(true);
+        this.menu.save();
     }
 
     public List<MenuItem> listMenuItems(){
-        return product.getMenuMenuItems();
+        return menu.getMenuMenuItems();
     }
 
     public void menuActions(MenuItem menu){
@@ -60,7 +62,7 @@ public class MenuChangeController extends Controller<MenuChangeView> {
     }
 
     public int getProductId(){
-        return product.getId();
+        return menu.getId();
     }
 
     public int numberOfProductsInMenu(){
@@ -72,7 +74,13 @@ public class MenuChangeController extends Controller<MenuChangeView> {
         newMenu.save();
     }
 
+    public ErrorList checkDouble(Product selectedProduct){
+        var errors = new ErrorList();
+        errors.add(MenuItemValidator.checkDouble(selectedProduct ,getAllProductInMenu()));
+        return errors;
+    }
+
     public List<MenuItem> getAllProductInMenu(){
-        return MenuItem.getAllInMenu(product.getId());
+        return MenuItem.getAllInMenu(menu.getId());
     }
 }

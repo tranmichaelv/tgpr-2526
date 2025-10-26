@@ -1,5 +1,6 @@
 package tgpr.restaurant.view;
 
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.restaurant.controller.MenuChangeController;
@@ -20,6 +21,9 @@ public class MenuChangeView extends DialogWindow {
     private final Label lblTotalProduits = new Label("");
     private final Label lblPrixMenu = new Label("");
     private final Label lblDifference = new Label("");
+    private final Label lblErrorDoubleProduct = new Label("");
+
+    private final Button btnAdd = new Button("Ajouter",this::addProductToMenu);
 
     public MenuChangeView(MenuChangeController controller, Product menu) {
         super("Gerer les composant du menu: " + menu.getName());
@@ -118,13 +122,16 @@ public class MenuChangeView extends DialogWindow {
             cboAddProduct.addItem(display);
         }
 
+        cboAddProduct.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> checkDouble());
+
 
 
         Panel panel = Panel.horizontalPanel(3);
 
         panel.addComponent(new Label("Ajouter produit:"));
         panel.addComponent(cboAddProduct);
-        panel.addComponent(new Button("Ajouter",this::addProductToMenu));
+        panel.addComponent(btnAdd);
+        lblErrorDoubleProduct.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
 
         return panel;
     }
@@ -161,6 +168,16 @@ public class MenuChangeView extends DialogWindow {
 //        close();
 //    }
 
+    public void checkDouble(){
+        String selectedDisplay = cboAddProduct.getSelectedItem();
+        Product selectedProduct = productMap.get(selectedDisplay);
+
+        var errors = controller.checkDouble(selectedProduct);
+
+        lblErrorDoubleProduct.setText(errors.getFirstErrorMessage(MenuItem.Fields.Product));
+
+        btnAdd.setEnabled(errors.isEmpty());
+    }
     public void deleteMenu(){
         controller.deleteMenu();
         close();

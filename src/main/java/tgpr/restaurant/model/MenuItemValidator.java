@@ -2,6 +2,8 @@ package tgpr.restaurant.model;
 
 import tgpr.framework.Error;
 
+import java.util.List;
+
 
 public class MenuItemValidator {
 
@@ -17,6 +19,15 @@ public class MenuItemValidator {
             }
         } else {
             return new Error("Ne peut pas etre nul", MenuItem.Fields.OrderInMenu);
+        }
+        return Error.NOERROR;
+    }
+
+    public static Error checkDouble(Product product, List<MenuItem> list){
+        for(MenuItem item : list){
+            if(item.getProductId() == product.getId()){
+                return new Error("Ce produit est déjà dans le menu", MenuItem.Fields.Product);
+            }
         }
         return Error.NOERROR;
     }
