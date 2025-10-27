@@ -5,6 +5,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.restaurant.controller.ReservationController;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.Locale;
 
 public class ReservationView extends BasicWindow {
     public static final String[] DAYS = new String[]{"Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"};
+    public static final LocalDate today = LocalDate.now();
     private final ReservationController controller;
     private Label monthLabel;
     private Panel calendarGrid;
@@ -111,7 +113,8 @@ public class ReservationView extends BasicWindow {
             controller.goToNextMonth();
             refreshCalendar();
         }));
-        monthLabel = new Label(controller.getCurrentMonth().atDay(1).format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRENCH))); // gets current month (uppercase, English) and current year (OCTOBER 2025), then converted (lowercase, French --> octobre 2025)
+        monthLabel = new Label(controller.getCurrentMonth().atDay(1).format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRENCH)));
+        // gets current month (uppercase, English) and current year (OCTOBER 2025), then converted (lowercase, French --> octobre 2025)
 
         header.addComponent(prec);
         header.addComponent(monthLabel);
@@ -132,12 +135,17 @@ public class ReservationView extends BasicWindow {
         // printing each day from current and (if needed) previous month
         List<LocalDate> calendarDays = controller.getCalendarDays(controller.getCurrentMonth());
         for (LocalDate date : calendarDays) {
-            Label dayLabel = new Label(String.valueOf(date.getDayOfMonth()));
-            if (!date.getMonth().equals(controller.getCurrentMonth().getMonth())) {
-                dayLabel.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT);
+            Button dayButton = new Button(String.valueOf(date.getDayOfMonth()), () -> {
+                System.out.println("Date selected: " + date); // en vue de la mise à jour dynamique de la table assignée
+            });
+//            if (current date is before today OR current day of week is monday) {
+            if (date.isBefore(today) || date.getDayOfWeek() == DayOfWeek.MONDAY) {
+                dayButton.setEnabled(false);
             }
-            calendarGrid.addComponent(dayLabel);
+            dayButton.setPreferredSize(new TerminalSize(6,1));
+            calendarGrid.addComponent(dayButton);
         }
+
     }
 
 

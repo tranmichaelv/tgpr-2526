@@ -52,7 +52,7 @@ public class ReservationController extends Controller<ReservationView> {
 
         // adding previous month's days
         YearMonth prevMonth = month.minusMonths(1);
-        int lenghtPrevMonth = prevMonth.lengthOfMonth(); // 30 (nb. days)
+        int lenghtPrevMonth = prevMonth.lengthOfMonth();
         for (int i = daysFromPreviousMonth; i > 0; i--) { // decrementing i while going towards the end of the previous month
             days.add(prevMonth.atDay(lenghtPrevMonth - i + 1));
         }
@@ -62,7 +62,6 @@ public class ReservationController extends Controller<ReservationView> {
         for (int i = 1; i <= lenghtOfCurrentMonth; i++) {
             days.add(month.atDay(i));
         }
-
         return days;
     }
 
