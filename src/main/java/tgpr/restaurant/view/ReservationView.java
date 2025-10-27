@@ -37,6 +37,7 @@ public class ReservationView extends BasicWindow {
     private Label monthLabel;
     private Panel calendarGrid;
 
+
     public ReservationView(ReservationController controller) {
 
         this.controller = controller;
@@ -136,7 +137,7 @@ public class ReservationView extends BasicWindow {
         List<LocalDate> calendarDays = controller.getCalendarDays(controller.getCurrentMonth());
         for (LocalDate date : calendarDays) {
             Button dayButton = new Button(String.valueOf(date.getDayOfMonth()), () -> {
-                System.out.println("Date selected: " + date); // en vue de la mise à jour dynamique de la table assignée
+                System.out.println("Date selected: " + date);
             });
 //            if (current date is before today OR current day of week is monday) {
             if (date.isBefore(today) || date.getDayOfWeek() == DayOfWeek.MONDAY) {
