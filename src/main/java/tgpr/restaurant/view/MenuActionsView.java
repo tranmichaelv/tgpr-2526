@@ -3,7 +3,6 @@ package tgpr.restaurant.view;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.restaurant.controller.MenuActionsController;
-import tgpr.restaurant.controller.MenuCheckController;
 import tgpr.restaurant.model.MenuItem;
 
 import java.util.List;

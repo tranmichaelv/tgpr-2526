@@ -222,6 +222,8 @@ public class Product extends Model {
                         "order by type, name;");
     }
 
+    // retourne la liste de tous les produits qui sont de type menu et
+    // ordonné par nom
     public static List<Product> getOrderMenu() {
         return queryList(Product.class,
                 "select * from products " +
@@ -229,14 +231,23 @@ public class Product extends Model {
                         "order by name;");
     }
 
+    // retourne la liste de tous les produits et
+    // ordonnés par nom
     public static List<Product> getOrderProductAndMenu() {
         return queryList(Product.class,
                 "select * from products " +
                         "order by type, name;");
     }
 
+    // formate le prix au decimal avec le signe € à la fin
     public String getPriceFormatted(){
         return String.format("%.2f €", price);
     }
 
+    // verifie si le product existe
+    public boolean existsInDatabase() {
+        var c = queryList(Product.class, "select * from products where id=:id",
+                new Params("id", id));
+        return !c.isEmpty();
+    }
 }

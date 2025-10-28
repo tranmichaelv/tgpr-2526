@@ -10,11 +10,8 @@ import java.util.List;
 
 public class CartMenuManagementView extends DialogWindow {
 
-    private final CartMenuManagementController controller;
-
     public CartMenuManagementView(CartMenuManagementController controller) {
         super("Gestion de la carte");
-        this.controller = controller;
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
         setCloseWindowWithEscape(true);
@@ -32,11 +29,5 @@ public class CartMenuManagementView extends DialogWindow {
         root.addComponent(controller.getMenuCheckView());
 
     }
-
-
-    public void addNewMenu(){
-        controller.addNewMenu();
-    }
-
 
 }

@@ -58,6 +58,7 @@ public class MenuChangeView extends DialogWindow {
 
         // met à jour les prix
         updatePriceLabels();
+        updateTitle();
     }
 
     private Component creaTable() {
@@ -102,6 +103,10 @@ public class MenuChangeView extends DialogWindow {
 
         updatePriceLabels(); // initialise les valeurs
         return panel;
+    }
+
+    private void updateTitle(){
+        setTitle("Gérer les composants du menu : " + menu.getName());
     }
 
     private void updatePriceLabels() {
@@ -152,21 +157,11 @@ public class MenuChangeView extends DialogWindow {
                 new Button("Fermer", this::close),
                 new Button("Supprimer selectionne"),
                 new Button("Changer ordre"),
-                new Button("Modifier menu"),
+                new Button("Modifier menu",this::changeMenu),
                 new Button("Archiver menu",this::archiveMenu),
                 new Button("Supprimer menu",this::deleteMenu)
         );
     }
-
-//    public void save(){
-//        controller.save();
-//        close();
-//    }
-
-//    public void deleteItem(){
-//        controller.deleteItem();
-//        close();
-//    }
 
     public void checkDouble(){
         String selectedDisplay = cboAddProduct.getSelectedItem();
@@ -180,13 +175,18 @@ public class MenuChangeView extends DialogWindow {
     }
     public void deleteMenu(){
         controller.deleteMenu();
-        close();
         reloadData();
+        close();
     }
 
     public void archiveMenu(){
         controller.archiveMenu();
+        reloadData();
         close();
+    }
+
+    public void changeMenu(){
+        controller.changeMenu();
         reloadData();
     }
 

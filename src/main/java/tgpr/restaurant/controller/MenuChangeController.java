@@ -24,17 +24,9 @@ public class MenuChangeController extends Controller<MenuChangeView> {
         return view;
     }
 
-//    public void deleteItem(){
-//        this.menu.delete();
-//    }
-
     public void deleteMenu(){
         this.menu.delete();
     }
-
-//    public void save(){
-//        this.menu.save();
-//    }
 
     public void archiveMenu(){
         this.menu.setArchived(true);
@@ -83,4 +75,13 @@ public class MenuChangeController extends Controller<MenuChangeView> {
     public List<MenuItem> getAllProductInMenu(){
         return MenuItem.getAllInMenu(menu.getId());
     }
+
+    public void changeMenu(){
+        navigateTo(new MenuAddControler(menu));
+
+        if(menu.getArchived() || !menu.existsInDatabase()){
+            view.close();
+        }
+    }
+
 }

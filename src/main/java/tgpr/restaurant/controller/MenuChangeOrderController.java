@@ -22,26 +22,30 @@ public class MenuChangeOrderController extends Controller<MenuChangeOrderView> {
     }
 
     public void changeOrder(String numberToChange){
+        // l'orderInMenu du produit à changer
         int curentOrderInMenu = menu.getOrderInMenu();
-        int number = Integer.parseInt(numberToChange);
+        // nombre entrer
+        int numberInput = Integer.parseInt(numberToChange);
+
+        // sauvegarde temporaire pour éviter conflit
         int temporaryNumber = 99999;
-        // sauvegarde temporaire pour éviter conflit unique
         menu.setOrderInMenu(temporaryNumber);
         menu.save();
+
         List<MenuItem> list = MenuItem.getAllInMenu(menu.getMenuId());
 
-        if(number <= curentOrderInMenu) {
-            for (int i = list.size() - 2; i >= number - 1; i--) {
+        if(numberInput <= curentOrderInMenu) {
+            for (int i = list.size() - 2; i >= numberInput - 1; i--) {
                 list.get(i).setOrderInMenu(i + 2);
                 list.get(i).save();
             }
         } else {
-            for(int i = curentOrderInMenu - 1; i < number; i++){
+            for(int i = curentOrderInMenu - 1; i < numberInput; i++){
                 list.get(i).setOrderInMenu(i + 1);
                 list.get(i).save();
             }
         }
-        menu.setOrderInMenu(number);
+        menu.setOrderInMenu(numberInput);
         menu.save();
     }
 

@@ -22,8 +22,4 @@ public class CartMenuManagementController extends Controller<CartMenuManagementV
         return menuCheckController.getView();
     }
 
-    public void addNewMenu(){
-
-    }
-
 }

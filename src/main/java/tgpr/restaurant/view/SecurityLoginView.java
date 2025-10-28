@@ -26,18 +26,8 @@ public class SecurityLoginView extends BasicWindow{
         Panel margin = Panel.gridPanel(1,Margin.of(1,1,1,0));
         setComponent(margin);
 
-        // second panel qui va tout aligner
-        Panel root = Panel.verticalPanel(1);
-
-        // rajoute toutes les classes crees dans le second panel
-        createLoginPanel().addTo(root);
-        createReservationPanel().addTo(root);
-        createShopPanel().addTo(root);
-        createDebugPanel().addTo(root);
-        createDatePanel().addTo(root);
-
-        //Rajoute le panel dans la marge
-        root.addTo(margin);
+        // rajoute le panel dans le panel contenant la marge
+        margin.addComponent(createFieldsPanel());
 
         btnLogin.takeFocus();
     }
@@ -46,6 +36,19 @@ public class SecurityLoginView extends BasicWindow{
         differentes classes ont été crees pour separer les differentes sections comme
         indiques sur les screenshot pour l'instant juste la vue est faite
      */
+
+    // rajoute toutes les classes crees dans le panel
+    private Panel createFieldsPanel(){
+        Panel root = Panel.verticalPanel(1);
+
+        createLoginPanel().addTo(root);
+        createReservationPanel().addTo(root);
+        createShopPanel().addTo(root);
+        createDebugPanel().addTo(root);
+        createDatePanel().addTo(root);
+
+        return root;
+    }
 
     // se connecter - S'inscrire
     private Panel createLoginPanel() {
@@ -58,10 +61,6 @@ public class SecurityLoginView extends BasicWindow{
         addShortcut(inscription, KeyStroke.fromString("<A-i>"));
 
         return panel;
-    }
-
-    private void login() {
-        controller.login();
     }
 
     // reservation
@@ -92,8 +91,11 @@ public class SecurityLoginView extends BasicWindow{
     private Panel createDebugPanel() {
         Button reset = new Button("Renitialiser la BD", this::seedData);
         Button exit = new Button("Quitter", this::exit);
+
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,
-                reset,exit).center();
+                reset,
+                exit
+        ).center();
 
         addShortcut(reset, KeyStroke.fromString("<A-r>"));
         addShortcut(exit, KeyStroke.fromString("<A-e>"));
@@ -102,12 +104,15 @@ public class SecurityLoginView extends BasicWindow{
     }
 
     private Panel createDatePanel() {
-
         return Panel.gridPanel(2,
                 Margin.of(1, 1, 1,0),
                 Spacing.of(1),
                 new Label("Date/Heure simulée : "),
                 new TextBox(Time.date())).center();
+    }
+
+    private void login() {
+        controller.login();
     }
 
     private void seedData() {

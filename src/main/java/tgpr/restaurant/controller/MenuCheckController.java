@@ -24,9 +24,7 @@ public class MenuCheckController extends Controller<MenuCheckView> {
     }
 
     public void addNewMenu(){
-        //...
-        //...
-        //...
+        navigateTo(new MenuAddControler(new Product()));
     }
 
 }

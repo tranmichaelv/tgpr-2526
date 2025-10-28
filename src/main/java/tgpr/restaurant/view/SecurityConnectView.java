@@ -42,12 +42,12 @@ public class SecurityConnectView extends BasicWindow {
     private Panel createFieldsPanel() {
         Panel panel = Panel.gridPanel(2,
                 Margin.of(1, 1, 1, 0),
-                Spacing.of(1)).center();
+                Spacing.of(1));
 
-        new Label("Email:").addTo(panel);
+        new Label("Email :").addTo(panel);
         txtEmail.addTo(panel).takeFocus();
 
-        new Label("Mot de passe:").addTo(panel);
+        new Label("Mot de passe :").addTo(panel);
         txtPassword.setMask('*').addTo(panel);
 
         return panel;

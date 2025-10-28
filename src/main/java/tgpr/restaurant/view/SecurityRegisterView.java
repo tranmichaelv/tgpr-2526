@@ -49,39 +49,39 @@ public class SecurityRegisterView extends BasicWindow {
         Panel panel = Panel.gridPanel(2,
                 Margin.of(1, 1, 1, 0));
 
-        new Label("Nom:").addTo(panel);
+        new Label("Nom :").addTo(panel);
         txtLastName.addTo(panel)
                 .setTextChangeListener((txt, byUser) -> check());
         panel.addEmpty();  // Espace vide entre les labels
         lblErrorLastName.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
 
-        new Label("Prénom:").addTo(panel);
+        new Label("Prénom :").addTo(panel);
         txtFirstName.addTo(panel)
                 .setTextChangeListener((txt, byUser) -> check());
         panel.addEmpty();
         lblErrorFirstName.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
 
-        new Label("Email:").addTo(panel);
+        new Label("Email :").addTo(panel);
         txtEmail.addTo(panel)
                 .setTextChangeListener((txt, byUser) -> check());
         panel.addEmpty();
         lblErrorEmail.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
 
-        new Label("Mot de passe:").addTo(panel);
+        new Label("Mot de passe :").addTo(panel);
         txtPassword.addTo(panel)
                 .setMask('*')
                 .setTextChangeListener((txt, byUser) -> check());
         panel.addEmpty();
         lblErrorPassword.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
 
-        new Label("Confirmer mot de passe:").addTo(panel);
+        new Label("Confirmer mot de passe :").addTo(panel);
         txtConfirmPassword.addTo(panel)
                 .setMask('*')
                 .setTextChangeListener((txt, byUser) -> check());
         panel.addEmpty();
         lblErrorPasswordConfirm.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
 
-        new Label("Téléphone:").addTo(panel);
+        new Label("Téléphone :").addTo(panel);
         txtNumber.addTo(panel)
                 .setTextChangeListener((txt, byUser) -> check());
         panel.addEmpty();
@@ -91,8 +91,7 @@ public class SecurityRegisterView extends BasicWindow {
     }
 
     private Panel createButtonPanel(){
-        btnRegistration = new Button("Connexion", this::validate);
-//        Panel panel = Panel.gridPanel(3, Margin.of(0,1,0,0),
+        btnRegistration = new Button("S'inscrire", this::validate);
         Panel panel = Panel.horizontalPanel(
                 btnRegistration,
                 new Button("Retour",this::retour),
