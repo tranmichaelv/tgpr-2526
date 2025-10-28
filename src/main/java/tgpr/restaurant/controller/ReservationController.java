@@ -47,15 +47,9 @@ public class ReservationController extends Controller<ReservationView> {
         LocalDate firstDayOfMonth = month.atDay(1);
         int startDayOfWeek = firstDayOfMonth.getDayOfWeek().getValue(); // getting the week day of the first day of a month (ex.: 1 = monday)
 
-        // calculating qty needed to fill first row with previous month's days
-        int daysFromPreviousMonth = startDayOfWeek - 1;
-
-        // adding previous month's days
-        YearMonth prevMonth = month.minusMonths(1);
-        int lenghtPrevMonth = prevMonth.lengthOfMonth();
-        for (int i = daysFromPreviousMonth; i > 0; i--) { // decrementing i while going towards the end of the previous month
-            days.add(prevMonth.atDay(lenghtPrevMonth - i + 1));
-        }
+        for (int i = 1; i < startDayOfWeek; i++) {
+            days.add(null);
+        } // for loop allowing us to reach the day of the week where the month starts
 
         // adding current month's days
         int lenghtOfCurrentMonth = month.lengthOfMonth();

@@ -37,10 +37,10 @@ public class ReservationView extends BasicWindow {
     private Label monthLabel;
     private Panel calendarGrid;
 
-
     public ReservationView(ReservationController controller) {
 
         this.controller = controller;
+
 
         setTitle("Réserver une table");
         setHints(List.of(Hint.CENTERED));
@@ -130,25 +130,52 @@ public class ReservationView extends BasicWindow {
 
         // printing each day (lun, mar, ...)
         for (String day : DAYS) {
-            calendarGrid.addComponent(new Label(day));
+            calendarGrid.addComponent(new Label(day).centerCenter());
         }
 
         // printing each day from current and (if needed) previous month
         List<LocalDate> calendarDays = controller.getCalendarDays(controller.getCurrentMonth());
         for (LocalDate date : calendarDays) {
+            if (date == null) {
+                // skipping empty cases (to reach the day of the week where the month starts)
+                Label empty = new Label(" ");
+                empty.setPreferredSize(new TerminalSize(8, 1));
+                calendarGrid.addComponent(empty);
+                continue;
+            }
+
             Button dayButton = new Button(String.valueOf(date.getDayOfMonth()), () -> {
                 System.out.println("Date selected: " + date);
             });
+
+
+            // Overriding default renderer for buttons ("<" + string.content + ">") with setRenderer method below
+            dayButton.setRenderer(new Button.DefaultButtonRenderer() {
+                @Override
+                public void drawComponent(TextGUIGraphics graphics, Button button) {
+                    graphics.setBackgroundColor(button.isFocused() ? TextColor.ANSI.BLUE_BRIGHT : TextColor.ANSI.WHITE);
+                    graphics.setForegroundColor(TextColor.ANSI.BLACK);
+                    graphics.fill(' '); // filling empty spaces
+
+                    String label = button.getLabel();
+                    int x = (graphics.getSize().getColumns() - label.length()) / 2; // to fix the text in the center of the button (no matter its area)
+                    graphics.putString(x, 0, label);
+                }
+            });
+
+
 //            if (current date is before today OR current day of week is monday) {
             if (date.isBefore(today) || date.getDayOfWeek() == DayOfWeek.MONDAY) {
                 dayButton.setEnabled(false);
+                calendarGrid.addComponent(dayButton.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER))
+                        .setPreferredSize(new TerminalSize(5, 1)));
+            } else {
+                calendarGrid.addComponent(dayButton.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER))
+                        .setPreferredSize(new TerminalSize(5, 1))
+                        .withBorder(Borders.singleLine()));
             }
-            dayButton.setPreferredSize(new TerminalSize(6,1));
-            calendarGrid.addComponent(dayButton);
         }
-
     }
-
 
     // method refresh to scroll calendar
     private void refreshCalendar() {
