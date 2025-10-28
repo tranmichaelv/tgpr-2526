@@ -6,11 +6,13 @@ import tgpr.framework.Params;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class Product extends Model {
@@ -58,7 +60,7 @@ public class Product extends Model {
     }
 
     public List<MenuItem> getMenuMenuItems() {
-        return queryList(MenuItem.class, "select * from menu_items where menu=:id",
+        return queryList(MenuItem.class, "select * from menu_items where menu=:id order by order_in_menu",
             new Params("id", id));
     }
 
@@ -209,5 +211,43 @@ public class Product extends Model {
         int c = execute("delete from products where id=:id",
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
+    }
+
+    // retourne la liste de tous les produits qui ne sont pas de type "menu" et
+    // ordonnés par type et par nom
+    public static List<Product> getOrderProduct() {
+        return queryList(Product.class,
+                "select * " +
+                        "from products where type != 'menu' and archived is false " +
+                        "order by type, name;");
+    }
+
+    // retourne la liste de tous les produits qui sont de type menu et
+    // ordonné par nom
+    public static List<Product> getOrderMenu() {
+        return queryList(Product.class,
+                "select * from products " +
+                        "where type = 'menu' and archived is false " +
+                        "order by name;");
+    }
+
+    // retourne la liste de tous les produits et
+    // ordonnés par nom
+    public static List<Product> getOrderProductAndMenu() {
+        return queryList(Product.class,
+                "select * from products " +
+                        "order by type, name;");
+    }
+
+    // formate le prix au decimal avec le signe € à la fin
+    public String getPriceFormatted(){
+        return String.format("%.2f €", price);
+    }
+
+    // verifie si le product existe
+    public boolean existsInDatabase() {
+        var c = queryList(Product.class, "select * from products where id=:id",
+                new Params("id", id));
+        return !c.isEmpty();
     }
 }
