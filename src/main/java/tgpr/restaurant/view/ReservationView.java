@@ -24,6 +24,7 @@ public class ReservationView extends BasicWindow {
     private ComboBox<String> midiSoir;
     private Label tableLabel;
     private LocalDate selectedDate;
+    private Button confirm;
 
     public ReservationView(ReservationController controller) {
 
@@ -187,7 +188,11 @@ public class ReservationView extends BasicWindow {
     private Panel buttonsAtBottom() {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
         Button cancel = new Button("Annuler");
-        Button confirm = new Button("Confirmer la réservation");
+        confirm = new Button("Confirmer la réservation", () -> {
+            ReservationConfirmationView dialog = new ReservationConfirmationView();
+            dialog.showDialog(getTextGUI());
+        });
+        confirm.setEnabled(false);
         buttons.addComponent(cancel);
         buttons.addComponent(confirm);
         return buttons;
@@ -196,6 +201,7 @@ public class ReservationView extends BasicWindow {
     // method allowing dynamic update of tableLabel
     public void updateTableLabel(String text) {
         tableLabel.setText(text);
+        confirm.setEnabled(!"(non attribuée)".equals(text) && !"(aucune table disponible)".equals(text));
         invalidate();
     }
 
