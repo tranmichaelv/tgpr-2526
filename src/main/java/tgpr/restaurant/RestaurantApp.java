@@ -3,6 +3,9 @@ package tgpr.restaurant;
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
 import tgpr.framework.Tools;
+import tgpr.restaurant.controller.OrderChangeController;
+import tgpr.restaurant.controller.OrderCreateController;
+import tgpr.restaurant.controller.OrderListController;
 import tgpr.restaurant.controller.TestController;
 import tgpr.restaurant.model.User;
 
@@ -19,7 +22,7 @@ public class RestaurantApp {
              */
 
             // récupére un utilisateur
-            var user = User.getByKey(1);
+            /*var user = User.getByKey(1);
             // et ses réservations en tant que client
             var reservations = user.getClientReservations();
             // affiche les réservations
@@ -29,7 +32,15 @@ public class RestaurantApp {
                         " à une table de " + r.getTable().getCapacity() + " places.");
             }
 
-            Controller.navigateTo(new TestController());
+            Controller.navigateTo(new TestController());*/
+
+            // Page Ajouter commande
+            //Controller.navigateTo(new OrderCreateController());
+
+            // Page Pour afficher la liste des commande
+            //Controller.navigateTo(new OrderChangeController());
+
+            Controller.navigateTo(new OrderListController());
         }
     }
 }
