@@ -3,6 +3,7 @@ package tgpr.restaurant.view;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationController;
 
 import java.time.DayOfWeek;
@@ -11,24 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
- /*
-        Gameplan (ref.: screenshots --> pages 4 and 5)
-        PHASE 1
-            a) realizing the 3 following fields:
-                - nb. people
-                - service
-                - Table assigned
-            * gridPanel to place elements in two columns
-        PHASE 2
-            a) Calendar (check if calendar tool exists in Lanterna's library)
-                * implementing buttons "précédent" and "suivant"
-        PHASE 3
-            a) Buttons "Annuler" and "Confirmer la réservation"
-
-        N.B.: planning may be updated after briefing with my colleague(s) involved in Reservation branch (Maddy)
-*/
-
+import java.util.regex.Pattern;
 
 public class ReservationView extends BasicWindow {
     public static final String[] DAYS = new String[]{"Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"};
@@ -36,6 +20,10 @@ public class ReservationView extends BasicWindow {
     private final ReservationController controller;
     private Label monthLabel;
     private Panel calendarGrid;
+    private TextBox nbGuests;
+    private ComboBox<String> midiSoir;
+    private Label tableLabel;
+    private LocalDate selectedDate;
 
     public ReservationView(ReservationController controller) {
 
@@ -82,23 +70,26 @@ public class ReservationView extends BasicWindow {
 
         // 1st row
         createGridLayout.addComponent(new Label("Nombre de personnes: "));
-        createGridLayout.addComponent(new TextBox());
+        nbGuests = new TextBox();
+        nbGuests.setValidationPattern(Pattern.compile("[1-9][0-9]*")); // only integers allowed
+        createGridLayout.addComponent(nbGuests);
 
         createGridLayout.addComponent(new EmptySpace(), GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER, true, false, 2, 1)); // to skip row
 
         // 2nd row
         createGridLayout.addComponent(new Label("Service: "));
-        ComboBox<String> multipleOpt = new ComboBox<>();
-        multipleOpt.addItem("midi");
-        multipleOpt.addItem("soir");
-        multipleOpt.setSelectedItem("midi");
-        createGridLayout.addComponent(multipleOpt);
+        midiSoir = new ComboBox<>();
+        midiSoir.addItem("midi");
+        midiSoir.addItem("soir");
+        midiSoir.setSelectedItem("midi");
+        createGridLayout.addComponent(midiSoir);
 
         createGridLayout.addComponent(new EmptySpace(), GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER, true, false, 2, 1));
 
         // 3rd row
         createGridLayout.addComponent(new Label("Table assignée: "));
-        createGridLayout.addComponent(new Label("work in progress: tableId")); // will be re-worked after linking it with the model
+        tableLabel = new Label("(non attribuée)");
+        createGridLayout.addComponent(tableLabel);
         return createGridLayout;
     }
 
@@ -145,7 +136,8 @@ public class ReservationView extends BasicWindow {
             }
 
             Button dayButton = new Button(String.valueOf(date.getDayOfMonth()), () -> {
-                System.out.println("Date selected: " + date);
+                selectedDate = date;
+                controller.assignTable(nbGuests.getText(), midiSoir.getSelectedItem(), selectedDate); // calling assignTable method in ReservationController
             });
 
 
@@ -199,5 +191,16 @@ public class ReservationView extends BasicWindow {
         buttons.addComponent(cancel);
         buttons.addComponent(confirm);
         return buttons;
+    }
+
+    // method allowing dynamic update of tableLabel
+    public void updateTableLabel(String text) {
+        tableLabel.setText(text);
+        invalidate();
+    }
+
+    // Method to show errors
+    public void showError(String message) {
+        MessageDialog.showMessageDialog(getTextGUI(), "Erreur", message);
     }
 }

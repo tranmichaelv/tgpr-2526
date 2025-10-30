@@ -1,16 +1,21 @@
 package tgpr.restaurant.controller;
 
 import tgpr.framework.Controller;
+import tgpr.restaurant.model.Reservation;
+import tgpr.restaurant.model.Service;
+import tgpr.restaurant.model.Table;
 import tgpr.restaurant.view.ReservationView;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.SQLException;
+import java.util.Locale;
 /*
             In a 5×7 grid (5 rows, 7 columns), we expect to see:
                 - all the days of the current month;
-                - the days from the previous (needed to fill the grid).
 
             For example:
             a) With October 1st being a Wednesday, we need to fill the previous Monday and Tuesday with September 29th and 30th, respectively.
@@ -20,7 +25,7 @@ import java.util.List;
                                 |
                                 v
                 lun     mar    mer     jeu     ven     sam     dim
-                *29*    *30*    1       2       3       4       5
+                                1       2       3       4       5
                 6       7       8       9       10      11      12
                 13      14      15      16      17      18      19
                 20      21      22      23      24      25      26
@@ -40,7 +45,7 @@ public class ReservationController extends Controller<ReservationView> {
         return view;
     }
 
-    // method to print days in the calendar
+        // method to print days in the calendar
     public List<LocalDate> getCalendarDays(YearMonth month) {
         List<LocalDate> days = new ArrayList<>();
 
@@ -73,5 +78,41 @@ public class ReservationController extends Controller<ReservationView> {
 
     public void goToNextMonth() {
         currentMonth = currentMonth.plusMonths(1);
+    }
+
+    // method getting query result from model and displaying assigned table to the view
+    public void assignTable(String nbGuestsText, String serviceName, LocalDate selectedDate) {
+        try {
+            int numberOfPeople = Integer.parseInt(nbGuestsText);
+
+            // Although view prevents us from selecting dates before today or mondays, it's safer to double-check in the controller as well
+            if (selectedDate == null || selectedDate.isBefore(LocalDate.now())) {
+                view.showError("Veuillez sélectionner une date valide.");
+                return;
+            }
+
+            // converting the day of the week in french lowercase (as it is displayed in "week_day" column in "services" table)
+            String weekDay = selectedDate.getDayOfWeek()
+                    .getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
+
+            // calling getByNameAndDay method in Service model
+            Service service = Service.getByNameAndDay(serviceName, weekDay);
+
+            // Managing sunday case (it has a "midi" service only"
+            if (service == null) {
+                view.showError("Pas de service de " + serviceName + " le " + weekDay);
+                return;
+            }
+
+            // checking if there are tables available left
+            Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
+            if (table == null) {
+                view.updateTableLabel("(aucune table disponible)");
+            } else {
+                view.updateTableLabel("Table " + table.getId() + " (" + table.getCapacity() + "p)");
+            }
+        } catch (NumberFormatException e) {
+            view.showError("Veuillez entrer un nombre valide.");
+        }
     }
 }
