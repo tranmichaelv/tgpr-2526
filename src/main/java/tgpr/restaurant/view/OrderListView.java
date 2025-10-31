@@ -8,7 +8,9 @@ import tgpr.restaurant.controller.OrderListController;
 import tgpr.restaurant.model.Order;
 
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OrderListView extends BasicWindow {
 
@@ -28,11 +30,14 @@ public class OrderListView extends BasicWindow {
         Panel orders = new Panel(new LinearLayout(Direction.VERTICAL));
         orders.addComponent(new Label("COMMANDES"));
         //orders.setFillColorOverride(TextColor.ANSI.BLUE);
-        // Underline
+
 
         orders.addComponent(new EmptySpace(new TerminalSize(0,1)));
         CheckBox showAllOrders = new CheckBox("Afficher aussi les commandes terminées (payées)                           ");
         orders.addComponent(showAllOrders);
+
+        // Faut rajouter la condition pour les commandes payées qui doivent être affichés aussi
+
         orders.addComponent(new EmptySpace(new TerminalSize(0,1)));
         root.addComponent(orders);
 
@@ -52,7 +57,7 @@ public class OrderListView extends BasicWindow {
         dateLabel.addStyle(SGR.UNDERLINE);
         //headersLine.addComponent(new EmptySpace(new TerminalSize(0,0)));
 
-        Label tableLabel = new Label("Table     ");
+        Label tableLabel = new Label("Table  ");
         headersLine.addComponent(tableLabel);
         tableLabel.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT);
         tableLabel.addStyle(SGR.UNDERLINE);
@@ -70,7 +75,7 @@ public class OrderListView extends BasicWindow {
         persLabel.addStyle(SGR.UNDERLINE);
         //headersLine.addComponent(new EmptySpace(new TerminalSize(2,0)));
 
-        Label typeLabel = new Label("Type   ");
+        Label typeLabel = new Label("Type     ");
         headersLine.addComponent(typeLabel);
         typeLabel.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT);
         typeLabel.addStyle(SGR.UNDERLINE);
@@ -98,37 +103,40 @@ public class OrderListView extends BasicWindow {
 
         root.addComponent(headersLine);
 
+        Map<Order, String> displayMap = new HashMap<>();
         ComboBox<String> ordersInfoBox = new ComboBox<>();
-        try {
-            for (Order order : ordersList){
-                String allInfos = toString(order);
-                ordersInfoBox.addItem(allInfos);
-            }
-        } catch (Exception ex){
-            System.out.println(" ");
+        for (Order order : ordersList){
+            String display = toString(order);
+            displayMap.put(order, display);
+            ordersInfoBox.addItem(display);
         }
-
         root.addComponent(ordersInfoBox);
     }
 
+    public String getType(boolean type){
+        return type ? "A emporter" : "Sur place";
+    }
+
+    public String getonline(boolean online) {
+        return online ? "Oui" : "Non";
+    }
     public String toString(Order order) {
-        String res = "";
-        //String fullName, date, service , pers, type, online, amount, paiement;
-        String fullName = order.getClient().getFirstName() + "," + order.getClient().getLastName();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        String fullName = order.getClient().getFirstName() + " " + order.getClient().getLastName();
         String date = order.getOrderDate().format(formatter);
-        //String table = Integer.toString(order.getTableId()); // j'ai pas encore trouvé la solution pour afficher ca
-        String service = String.valueOf(order.getService().getName());
+        String table = String.valueOf(order.getTableId());
+        String service = order.getService().getName();
         String pers = String.valueOf(order.getEffectivePeopleCount());
-        String type = String.valueOf(order.getTakeAway()); // La même chose pour ca
-        String online = String.valueOf(order.getOnline()); // La même
-        String amount = String.valueOf(order.getDiscount()); // La même
-        String paiement = String.valueOf(order.getDiscount()); // La même
+        boolean type = order.getTakeAway();
+        boolean online = order.getOnline();
+        String amount = String.valueOf(order.getDiscount()); // j'ai pas réussi à récup le prix
+        String paiement = "En cours";
 
-        res = fullName + " " + date +  " " + "Table" + service + " " + pers + " "+ type  + " "
-                + online + " " + amount + " " + paiement ;
-
-        // un petit soucis au niveau de l'affichage (Espacement)
-        return res;
+        // Format à largeur fixe pour chaque champ
+        return String.format(
+                "%-20s %-11s %-7s %-8s %-4s %-7s %-10s %-10s %-10s",
+                fullName, date, table, service, pers, getType(type), getonline(online), amount, paiement
+        );
     }
 }
