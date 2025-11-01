@@ -1,0 +1,31 @@
+package tgpr.restaurant.controller;
+
+import tgpr.framework.Controller;
+import tgpr.restaurant.model.Panier;
+import tgpr.restaurant.model.Product;
+import tgpr.restaurant.view.MenuDetailView;
+
+public class MenuDetailController extends Controller<MenuDetailView> {
+
+    private final Product produit;
+
+    public MenuDetailController(Product produit) {
+        this.produit = produit;
+    }
+
+    @Override
+    public MenuDetailView getView() {
+        return new MenuDetailView(this, produit);
+    }
+
+    // Ajouter le menu au panier
+    public void ajouterAuPanier() {
+        Panier.ajouterProduit(produit);
+        Controller.showInfo(produit.getName() + " a été ajouté au panier !");
+    }
+
+    // Retour au menu principal
+    public void retour() {
+        navigateBack();
+    }
+}
