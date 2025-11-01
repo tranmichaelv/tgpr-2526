@@ -114,7 +114,7 @@ public class MenuView extends BasicWindow {
         root.addComponent(listBox);
 
         Panel buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        buttonPanel.addComponent(new Button("Mon Panier", controller::getView));     //ouvrirPanier
+        buttonPanel.addComponent(new Button("Mon Panier", controller::ouvrirPanier));
         buttonPanel.addComponent(new Button("Retour", this::close));
         root.addComponent(buttonPanel);
 

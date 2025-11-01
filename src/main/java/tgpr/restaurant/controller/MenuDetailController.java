@@ -12,6 +12,9 @@ public class MenuDetailController extends Controller<MenuDetailView> {
     public MenuDetailController(Product produit) {
         this.produit = produit;
     }
+    public void ouvrirPanier() {
+        navigateTo(new PanierController());
+    }
 
     @Override
     public MenuDetailView getView() {
@@ -28,4 +31,9 @@ public class MenuDetailController extends Controller<MenuDetailView> {
     public void retour() {
         navigateBack();
     }
+
+
+
+
+
 }

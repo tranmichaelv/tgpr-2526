@@ -236,7 +236,7 @@ public class Product extends Model {
 
 
 
-
+    //---------------
     public double getTotalPrice() {
         if (type == Type.Menu) {
             var items = getMenuMenuItems();

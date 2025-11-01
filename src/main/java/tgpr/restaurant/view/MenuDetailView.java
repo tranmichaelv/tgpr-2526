@@ -44,8 +44,34 @@ public class MenuDetailView extends BasicWindow {
         new EmptySpace().addTo(root);
         root.addComponent(new Label("  ______________________________________"));
 
+
+
+        // probleme
         double totalPlats = produit.getTotalPrice();
         double economie = produit.getEconomy();
+
+        // Calcul du total et de l’économie selon le menu choisi
+//        double totalPlats;
+//        double economie;
+//
+//        switch (produit.getName().toLowerCase().trim()) {
+//            case "menu classique":
+//                totalPlats = 33.00;
+//                break;
+//            case "menu végétarien":
+//                totalPlats = 27.50;
+//                break;
+//            case "menu enfant":
+//                totalPlats = 15.50;
+//                break;
+//            default:
+//                totalPlats = produit.getPrice(); // fallback (au cas où)
+//        }
+//
+//        economie = totalPlats - produit.getPrice();
+
+
+
 
         root.addComponent(new Label("  Total des plats à l’unité: " + String.format("%.2f", totalPlats) + " €"));
         root.addComponent(new Label("  Économie réalisée: " + String.format("%.2f", economie) + " €"));
@@ -55,7 +81,7 @@ public class MenuDetailView extends BasicWindow {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttons.addComponent(new Button("Ajouter à mon panier",
                 controller::ajouterAuPanier));
-        //buttons.addComponent(new Button("Mon Panier", controller::ouvrirPanier));
+        buttons.addComponent(new Button("Mon Panier", controller::ouvrirPanier));
         buttons.addComponent(new Button("Retour", controller::retour));
         root.addComponent(buttons);
     }

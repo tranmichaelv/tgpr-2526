@@ -19,9 +19,9 @@ public class MenuController extends Controller<MenuView> {
     }
 
 
-//    public void ouvrirPanier() {
-//        navigateTo(new PanierController());
-//    }
+    public void ouvrirPanier() {
+        navigateTo(new PanierController());
+    }
 
 
     public void afficherPopupProduit(Product produit) {
