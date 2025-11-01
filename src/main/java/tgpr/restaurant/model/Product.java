@@ -6,9 +6,6 @@ import tgpr.framework.Params;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +31,8 @@ public class Product extends Model {
 		this.price = price;
 		this.type = type;
     }
+
+
 
     public Product(String name, String description, double price, Type type, boolean archived) {
         this.name = name;
@@ -122,18 +121,35 @@ public class Product extends Model {
         this.archived = archived;
     }
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        Product product = (Product) o;
+//        return id == product.id;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id);
+//    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return id == product.id;
+        return Double.compare(product.price, price) == 0 &&
+                Objects.equals(name, product.name) &&
+                type == product.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(name, price, type);
     }
+
 
     @Override
     public String toString() {
@@ -210,4 +226,34 @@ public class Product extends Model {
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+
+
+
+
+
+
+
+
+
+
+
+    public double getTotalPrice() {
+        if (type == Type.Menu) {
+            var items = getMenuMenuItems();
+            return items.stream()
+                    .mapToDouble(item -> item.getProduct().getPrice())
+                    .sum();
+        }
+        return price;
+    }
+
+    public double getEconomy() {
+        if (type == Type.Menu)
+            return getTotalPrice() - price;
+        return 0;
+    }
+
+
+
+
 }
