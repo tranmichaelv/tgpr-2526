@@ -14,9 +14,9 @@ public class MenuController extends Controller<MenuView> {
         return new MenuView(this);
     }
 
-//    public void afficherDetailsMenu(Product produit) {
-//        navigateTo(new MenuDetailController(produit));
-//    }
+    public void afficherDetailsMenu(Product produit) {
+        navigateTo(new MenuDetailController(produit));
+    }
 
 
 //    public void ouvrirPanier() {

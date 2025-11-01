@@ -24,16 +24,16 @@ public class MenuView extends BasicWindow {
         listBox.addItem("  === MENUS ===", () -> {});
         listBox.addItem("  Menu classique - 25.00 €", () -> {
             Product menu = new Product("Menu classique", 25.00, Product.Type.Menu);
-            //controller.afficherDetailsMenu(menu);
+            controller.afficherDetailsMenu(menu);
         });
 
         listBox.addItem("  Menu végétarien - 23.00 €", () -> {
             Product menu = new Product("Menu végétarien", 23.00, Product.Type.Menu);
-//            controller.afficherDetailsMenu(menu);
+            controller.afficherDetailsMenu(menu);
         });
         listBox.addItem("  Menu enfant - 12.00 €", () -> {
             Product menu = new Product("Menu végétarien", 12.00, Product.Type.Menu);
-            //controller.afficherDetailsMenu(menu);
+            controller.afficherDetailsMenu(menu);
         });
         listBox.addItem(" ", () -> {});
         listBox.addItem("  === ENTRÉES ===", () -> {});

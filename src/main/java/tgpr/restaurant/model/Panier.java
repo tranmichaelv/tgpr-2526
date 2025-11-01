@@ -20,17 +20,6 @@ public class Panier {
     }
 
 
-
-//    public static void ajouterProduit(Product produit) {
-//        String key = produit.getName() + "_" + produit.getPrice() + "_" + produit.getType();
-//
-//        if (produits.containsKey(key)) {
-//            produits.get(key).quantite++;
-//        } else {
-//            produits.put(key, new PanierItem(produit, 1));
-//        }
-//    }
-
     public static void ajouterProduit(Product produit) {
         if (produit == null) return;
 
@@ -48,19 +37,16 @@ public class Panier {
 
 
 
-
-
     public static void vider() {
         produits.clear();
     }
+
 
     public static boolean estVide() {
         return produits.isEmpty();
     }
 
-//    public static Map<Product, Integer> getProduits() {
-//        return produits;
-//    }
+
 
     public static Map<Product, Integer> getProduits() {
         Map<Product, Integer> map = new LinkedHashMap<>();
@@ -71,11 +57,7 @@ public class Panier {
     }
 
 
-//    public static double getTotal() {
-//        return produits.entrySet().stream()
-//                .mapToDouble(e -> e.getKey().getPrice() * e.getValue())
-//                .sum();
-//    }
+
 
     public static double getTotal() {
         return produits.values().stream()
