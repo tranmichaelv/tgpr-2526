@@ -2,10 +2,7 @@ package tgpr.restaurant;
 
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
-import tgpr.restaurant.controller.OrderAddController;
-import tgpr.restaurant.controller.OrderChangeController;
-import tgpr.restaurant.controller.OrderDeleteController;
-import tgpr.restaurant.controller.OrderPayController;
+import tgpr.restaurant.controller.*;
 
 public class RestaurantApp {
     public final static String DATABASE_SCRIPT_FILE = "/database/tgpr-2526-c03.sql";
@@ -19,8 +16,9 @@ public class RestaurantApp {
          //   Controller.navigateTo(new TestController());
             //   Controller.navigateTo(new OrderPayController());
              //   Controller.navigateTo(new OrderChangeController());
-             //   Controller.navigateTo(new OrderAddController());
-            Controller.navigateTo(new OrderDeleteController());
+             //  Controller.navigateTo(new OrderAddController());
+          //  Controller.navigateTo(new OrderDeleteController());
+            Controller.navigateTo(new OrderDetailsController());
         }
     }
 }
