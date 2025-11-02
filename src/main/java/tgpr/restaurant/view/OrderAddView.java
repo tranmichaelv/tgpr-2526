@@ -3,52 +3,20 @@ package tgpr.restaurant.view;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.restaurant.controller.OrderAddController;
+import tgpr.restaurant.model.OrderAddOrDelete;
 
-public class OrderAddView extends BasicWindow {
+public class OrderAddView extends OrderAddOrDelete<OrderAddController> {
 
-    private final OrderAddController controller;
+    public OrderAddView(OrderAddController controller) {
+        super(controller, "Confirmation", "Voulez-vous créer cette commande ?", "Yes");
+    }
 
-    private double sousTotal;
-    private double reduction;
-    private double total;
+    @Override
+    protected void onYes() {
 
-    public OrderAddView(OrderAddController controller){
-        this.controller = controller;
-
-        setTitle("Confirmation");
-
-        Panel root = new Panel(new BorderLayout());
-
-        // Informations de la commande
-        Panel content = new Panel(new LinearLayout(Direction.VERTICAL));
-        content.addComponent(new Label("Voulez-vous créer cette commande ?"));
-        content.addComponent(new EmptySpace(new TerminalSize(0,1)));
-
-        content.addComponent(new Label("Client:"));
-        content.addComponent(new Label("Table:"));
-        content.addComponent(new Label("Service:"));
-        content.addComponent(new Label("Personnes effectives:"));
-        content.addComponent(new EmptySpace(new TerminalSize(0,1)));
-
-        // affichage du prix
-        String recap = String.format("Sous-total: %.2f €  -  Réduction: %.2f €  =  Total: %.2f €",
-                sousTotal, reduction, total);
-        content.addComponent(new Label(recap));
-        content.addComponent(new EmptySpace());
-
-        root.addComponent(content, BorderLayout.Location.CENTER);
-
-        // Boutton à droite
-        Panel bottomPanel = new Panel(new BorderLayout());
-        Panel rightButtons = new Panel(new LinearLayout(Direction.HORIZONTAL));
-
-        rightButtons.addComponent(new Button("Yes")); // crée la commande
-        rightButtons.addComponent(new Button("No", this::close));
-
-        bottomPanel.addComponent(rightButtons, BorderLayout.Location.RIGHT);
-        root.addComponent(bottomPanel, BorderLayout.Location.BOTTOM);
-
-        setComponent(root);
+        // à completer -> doit ajouter la commande dans la BD
+        close();
     }
 }
+
 

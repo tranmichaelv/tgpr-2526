@@ -17,8 +17,8 @@ public class RestaurantApp {
             //   Controller.navigateTo(new OrderPayController());
              //   Controller.navigateTo(new OrderChangeController());
              //  Controller.navigateTo(new OrderAddController());
-          //  Controller.navigateTo(new OrderDeleteController());
-            Controller.navigateTo(new OrderDetailsController());
+           Controller.navigateTo(new OrderDeleteController());
+          //  Controller.navigateTo(new OrderDetailsController());
         }
     }
 }
