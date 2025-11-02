@@ -31,9 +31,4 @@ public class MenuDetailController extends Controller<MenuDetailView> {
     public void retour() {
         navigateBack();
     }
-
-
-
-
-
 }

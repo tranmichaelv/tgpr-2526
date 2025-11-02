@@ -5,6 +5,9 @@ import com.googlecode.lanterna.gui2.*;
 import tgpr.restaurant.controller.MenuController;
 import tgpr.restaurant.model.Product;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class MenuView extends BasicWindow {
 
     private final MenuController controller;
@@ -15,104 +18,75 @@ public class MenuView extends BasicWindow {
 
         Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
 
-        Panel pour = new Panel(new LinearLayout(Direction.VERTICAL));
-        pour.addComponent(new Label("↑↓ pour naviguer, Entrée: menus→détails, autres→ description"));
-        pour.addComponent(new EmptySpace(new TerminalSize(0, 1)));
-        root.addComponent(pour);
+        Panel header = new Panel(new LinearLayout(Direction.VERTICAL));
+        header.addComponent(new Label("↑↓ pour naviguer, Entrée: menus→détails, autres→description"));
+        header.addComponent(new EmptySpace(new TerminalSize(0, 1)));
+        root.addComponent(header);
 
         ActionListBox listBox = new ActionListBox(new TerminalSize(60, 20));
-        listBox.addItem("  === MENUS ===", () -> {});
-        listBox.addItem("  Menu classique - 25.00 €", () -> {
-            Product menu = new Product("Menu classique", 25.00, Product.Type.Menu);
-            controller.afficherDetailsMenu(menu);
-        });
 
-        listBox.addItem("  Menu végétarien - 23.00 €", () -> {
-            Product menu = new Product("Menu végétarien", 23.00, Product.Type.Menu);
-            controller.afficherDetailsMenu(menu);
-        });
-        listBox.addItem("  Menu enfant - 12.00 €", () -> {
-            Product menu = new Product("Menu végétarien", 12.00, Product.Type.Menu);
-            controller.afficherDetailsMenu(menu);
-        });
+        // === MENUS ===
+        listBox.addItem("  === MENUS ===", () -> {});
+        List<Product> menus = Product.getAll().stream()
+                .filter(p -> p.getType() == Product.Type.Menu && !p.getArchived())
+                .collect(Collectors.toList());
+
+        for (Product menu : menus) {
+            listBox.addItem("  " + menu.getName() + " - " + String.format("%.2f", menu.getPrice()) + " €",
+                    () -> controller.afficherDetailsMenu(menu));
+        }
+
+        // === ENTRÉES ===
         listBox.addItem(" ", () -> {});
         listBox.addItem("  === ENTRÉES ===", () -> {});
+        List<Product> entrees = Product.getAll().stream()
+                .filter(p -> p.getType() == Product.Type.Starter && !p.getArchived())
+                .collect(Collectors.toList());
 
-        listBox.addItem("  Salade César - 8.50 €", () -> {
-            Product salade = new Product("Salade César", 8.50, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
+        for (Product entree : entrees) {
+            listBox.addItem("  " + entree.getName() + " - " + String.format("%.2f", entree.getPrice()) + " €",
+                    () -> controller.afficherPopupProduit(entree));
+        }
 
-        listBox.addItem("  Soupe du jour - 6.00 €", () -> {
-            Product salade = new Product("Salade du jour", 6.00, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
-
-        listBox.addItem("  Bruschetta - 7.00 €", () -> {
-            Product salade = new Product("Bruschetta", 7.00, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
+        // === PLATS PRINCIPAUX ===
         listBox.addItem(" ", () -> {});
-
         listBox.addItem("  === PLATS PRINCIPAUX ===", () -> {});
+        List<Product> plats = Product.getAll().stream()
+                .filter(p -> p.getType() == Product.Type.Main && !p.getArchived())
+                .collect(Collectors.toList());
 
-        listBox.addItem("  Steak frites - 18.00 €", () -> {
-            Product salade = new Product("Steak frites", 18.00, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
+        for (Product plat : plats) {
+            listBox.addItem("  " + plat.getName() + " - " + String.format("%.2f", plat.getPrice()) + " €",
+                    () -> controller.afficherPopupProduit(plat));
+        }
 
-        listBox.addItem("  Poulet rôti - 16.50 €", () -> {
-            Product salade = new Product("Poulet rôti", 16.50, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
-
-        listBox.addItem("  Lasagnes - 15.00 €", () -> {
-            Product salade = new Product("Lasagnes", 15.00, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
-
-        listBox.addItem("  Lasagnes végétariennes - 15.00 €", () -> {
-            Product salade = new Product("Lasagnes végétariennes", 15.00, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
-        listBox.addItem("  Spaghetti bolognaise - 10.00 €", () -> {
-            Product salade = new Product("Spaghetti bolognaise", 10.00, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
-
+        // === DESSERTS ===
         listBox.addItem(" ", () -> {});
         listBox.addItem("  === DESSERTS ===", () -> {});
-        listBox.addItem("  Tiramisu - 6.50 €", () -> {
-            Product salade = new Product("Tiramisu", 6.50, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
+        List<Product> desserts = Product.getAll().stream()
+                .filter(p -> p.getType() == Product.Type.Dessert && !p.getArchived())
+                .collect(Collectors.toList());
 
-        listBox.addItem("  Mousse au chocolat - 5.50 €", () -> {
-            Product salade = new Product("Mousse au chocolat", 5.50, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
+        for (Product dessert : desserts) {
+            listBox.addItem("  " + dessert.getName() + " - " + String.format("%.2f", dessert.getPrice()) + " €",
+                    () -> controller.afficherPopupProduit(dessert));
+        }
 
-        listBox.addItem("  Crème brûlée - 6.00 €", () -> {
-            Product salade = new Product("Crème brûlée", 6.00, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
-
-        listBox.addItem("  Salade de fruits - 5.50 €", () -> {
-            Product salade = new Product("Salade de fruits", 5.50, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
-
+        // === BOISSONS ===
         listBox.addItem(" ", () -> {});
         listBox.addItem("  === BOISSONS ===", () -> {});
-        listBox.addItem("  Coca-Cola - 2.50 €", () -> {
-            Product salade = new Product("Coca-Cola", 2.50, Product.Type.Starter);
-            controller.afficherPopupProduit(salade);
-        });
+        List<Product> boissons = Product.getAll().stream()
+                .filter(p -> p.getType() == Product.Type.Drink && !p.getArchived())
+                .collect(Collectors.toList());
 
-
+        for (Product boisson : boissons) {
+            listBox.addItem("  " + boisson.getName() + " - " + String.format("%.2f", boisson.getPrice()) + " €",
+                    () -> controller.afficherPopupProduit(boisson));
+        }
 
         root.addComponent(listBox);
 
+        // --- BOUTONS ---
         Panel buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttonPanel.addComponent(new Button("Mon Panier", controller::ouvrirPanier));
         buttonPanel.addComponent(new Button("Retour", this::close));

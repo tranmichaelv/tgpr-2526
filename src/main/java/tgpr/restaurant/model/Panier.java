@@ -6,7 +6,7 @@ import java.util.Map;
 public class Panier {
 
     // Map contenant les produits ajoutés au panier.
-    // La clé est une chaîne unique pour chaque produit, et la valeur est un objet PanierItem.
+    // La clé est une chaîne unique pour chaque produit, et la valeur est un objet PanierItem
     private static final Map<String, PanierItem> produits = new LinkedHashMap<>();
 
     // Classe interne représentant un article dans le panier avec le produit et sa quantité.

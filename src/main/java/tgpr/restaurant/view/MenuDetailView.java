@@ -3,7 +3,9 @@ package tgpr.restaurant.view;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.restaurant.controller.MenuDetailController;
+import tgpr.restaurant.model.MenuItem;
 import tgpr.restaurant.model.Product;
+
 import java.util.List;
 
 public class MenuDetailView extends BasicWindow {
@@ -21,69 +23,76 @@ public class MenuDetailView extends BasicWindow {
         Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
         setComponent(root);
 
+        // --- Informations générales sur le menu ---
         root.addComponent(new Label("  MENU: " + produit.getName()));
-        root.addComponent(new Label("  Entrée, plat et dessert au choix"));
+        if (produit.getDescription() != null && !produit.getDescription().isBlank()) {
+            root.addComponent(new Label("  " + produit.getDescription()));
+        }
         root.addComponent(new EmptySpace());
-        root.addComponent(new Label("      Prix du menu: " + produit.getPrice() + " €"));
-        root.addComponent(new Label("         ÉCONOMIE: 8.00 €"));
+        root.addComponent(new Label("      Prix du menu: " + String.format("%.2f", produit.getPrice()) + " €"));
         root.addComponent(new EmptySpace());
         root.addComponent(new Label("          Plats inclus dans ce menu :"));
 
-        ActionListBox listBox = new ActionListBox(new TerminalSize(60, 10));
-        listBox.addItem("  === ENTRÉES ===", () -> {});
-        listBox.addItem("   Salade César - 8.50 €", () -> {});
-        listBox.addItem("   Salade avec poulet, croutons et parmesan", () -> {});
-        listBox.addItem("  === PLATS PRINCIPAUX ===", () -> {});
-        listBox.addItem("   Steak frites - 18.00 €", () -> {});
-        listBox.addItem("   Steck grillé servi avec frites ", () -> {});
-        listBox.addItem("  === DESSERTS ===", () -> {});
-        listBox.addItem("   Tiramisu - 6.50 €", () -> {});
-        listBox.addItem("   Dessert italien au café et mascarpone", () -> {});
-        root.addComponent(listBox);
+        // --- Liste des plats récupérés depuis la base de données ---
+        ActionListBox listBox = new ActionListBox(new TerminalSize(60, 12));
+        var items = produit.getMenuMenuItems();
 
+        if (items == null || items.isEmpty()) {
+            listBox.addItem("   Aucun élément trouvé dans ce menu.", () -> {});
+        } else {
+
+            // === ENTRÉES ===
+            listBox.addItem("  === ENTRÉES ===", () -> {});
+            for (MenuItem item : items) {
+                Product p = item.getProduct();
+                if (p.getType() == Product.Type.Starter) {
+                    listBox.addItem("   " + p.getName() + " - " + String.format("%.2f", p.getPrice()) + " €", () -> {});
+                    if (p.getDescription() != null && !p.getDescription().isBlank())
+                        listBox.addItem("     " + p.getDescription(), () -> {});
+                }
+            }
+
+            // === PLATS PRINCIPAUX ===
+            listBox.addItem("  === PLATS PRINCIPAUX ===", () -> {});
+            for (MenuItem item : items) {
+                Product p = item.getProduct();
+                if (p.getType() == Product.Type.Main) {
+                    listBox.addItem("   " + p.getName() + " - " + String.format("%.2f", p.getPrice()) + " €", () -> {});
+                    if (p.getDescription() != null && !p.getDescription().isBlank())
+                        listBox.addItem("     " + p.getDescription(), () -> {});
+                }
+            }
+
+            // === DESSERTS ===
+            listBox.addItem("  === DESSERTS ===", () -> {});
+            for (MenuItem item : items) {
+                Product p = item.getProduct();
+                if (p.getType() == Product.Type.Dessert) {
+                    listBox.addItem("   " + p.getName() + " - " + String.format("%.2f", p.getPrice()) + " €", () -> {});
+                    if (p.getDescription() != null && !p.getDescription().isBlank())
+                        listBox.addItem("     " + p.getDescription(), () -> {});
+                }
+            }
+        }
+
+        root.addComponent(listBox);
         new EmptySpace().addTo(root);
         root.addComponent(new Label("  ______________________________________"));
 
-
-
-        // probleme
+        // --- Totaux dynamiques ---
         double totalPlats = produit.getTotalPrice();
         double economie = produit.getEconomy();
 
-        // Calcul du total et de l’économie selon le menu choisi
-//        double totalPlats;
-//        double economie;
-//
-//        switch (produit.getName().toLowerCase().trim()) {
-//            case "menu classique":
-//                totalPlats = 33.00;
-//                break;
-//            case "menu végétarien":
-//                totalPlats = 27.50;
-//                break;
-//            case "menu enfant":
-//                totalPlats = 15.50;
-//                break;
-//            default:
-//                totalPlats = produit.getPrice(); // fallback (au cas où)
-//        }
-//
-//        economie = totalPlats - produit.getPrice();
-
-
-
-
-        root.addComponent(new Label("  Total des plats à l’unité: " + String.format("%.2f", totalPlats) + " €"));
-        root.addComponent(new Label("  Économie réalisée: " + String.format("%.2f", economie) + " €"));
+        root.addComponent(new Label("  Total des plats à l’unité : " + String.format("%.2f", totalPlats) + " €"));
+        root.addComponent(new Label("  Économie réalisée : " + String.format("%.2f", economie) + " €"));
 
         new EmptySpace().addTo(root);
 
+        // --- Boutons d’action ---
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        buttons.addComponent(new Button("Ajouter à mon panier",
-                controller::ajouterAuPanier));
+        buttons.addComponent(new Button("Ajouter à mon panier", controller::ajouterAuPanier));
         buttons.addComponent(new Button("Mon Panier", controller::ouvrirPanier));
         buttons.addComponent(new Button("Retour", controller::retour));
         root.addComponent(buttons);
     }
-
 }
