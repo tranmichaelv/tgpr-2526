@@ -1,7 +1,12 @@
 package tgpr.restaurant.controller;
 
 import tgpr.framework.Controller;
+import tgpr.framework.ErrorList;
+import tgpr.framework.Error;
 import tgpr.restaurant.model.ClosingPeriod;
+import tgpr.restaurant.model.ClosingPeriodValidator;
+import tgpr.restaurant.model.Product;
+import tgpr.restaurant.model.ProductValidator;
 import tgpr.restaurant.view.ClosingChangeview;
 
 import java.time.LocalDate;
@@ -31,6 +36,12 @@ public class ClosingChangeController extends Controller<ClosingChangeview> {
 
         ClosingPeriod closingPeriod = new ClosingPeriod(startDateFormatted, endDateFormatted, reason);
         closingPeriod.save();
+    }
+
+    public Error checkStartDate(LocalDate startDate, LocalDate endDate) {
+        return ClosingPeriodValidator.isValidStartDate(startDate, endDate);
+
+
     }
 }
 

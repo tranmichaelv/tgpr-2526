@@ -147,6 +147,14 @@ public class ClosingChangeview extends DialogWindow {
         reloadData();
     }
 
+    private void updateSaveAndChangeButton(){
+        boolean hasErrors =
+                txtStartDate.getText().isEmpty() ||
+                        txtEndDate.getText().isEmpty() ||
+                        txtReason.getText().isEmpty();
+
+    }
+
     private void changeAndAdd(){
         controller.add(
                 txtStartDate.getText(),
