@@ -130,6 +130,9 @@ public class Product extends Model {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
         return id == product.id;
+        //return Double.compare(product.price, price) == 0 &&
+        //                Objects.equals(name, product.name) &&
+        //                type == product.type;
     }
 
     @Override
@@ -250,4 +253,34 @@ public class Product extends Model {
                 new Params("id", id));
         return !c.isEmpty();
     }
+
+
+
+
+
+
+
+
+
+
+    //---------------
+    public double getTotalPrice() {
+        if (type == Type.Menu) {
+            var items = getMenuMenuItems();
+            return items.stream()
+                    .mapToDouble(item -> item.getProduct().getPrice())
+                    .sum();
+        }
+        return price;
+    }
+
+    public double getEconomy() {
+        if (type == Type.Menu)
+            return getTotalPrice() - price;
+        return 0;
+    }
+
+
+
+
 }
