@@ -121,8 +121,12 @@ public class MenuView extends BasicWindow {
     private Panel createButton(){
         Panel buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttonPanel.addComponent(new Button("Mon Panier", controller::ouvrirPanier));
-        buttonPanel.addComponent(new Button("Retour", this::close));
+        buttonPanel.addComponent(new Button("Retour", this::back));
 
         return buttonPanel;
+    }
+
+    private void back(){
+        controller.back();
     }
 }

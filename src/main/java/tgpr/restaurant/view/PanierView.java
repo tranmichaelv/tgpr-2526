@@ -6,6 +6,7 @@ import tgpr.framework.Controller;
 import tgpr.restaurant.controller.PanierController;
 import tgpr.restaurant.model.Panier;
 import tgpr.restaurant.model.Product;
+import tgpr.restaurant.model.Security;
 
 import java.util.List;
 import java.util.Map;
@@ -38,8 +39,10 @@ public class PanierView extends BasicWindow {
         } else {
             ActionListBox connection = new ActionListBox(new TerminalSize(60, 3));
             connection.addItem("=== COMMANDE ===", () -> {});
-            // si pas connecte alors
-            //listBox.addItem("Connexion requise pour passer commande", () -> {});
+            if(!Security.isLogged()) {
+                // si pas connecte alors
+                connection.addItem("Connexion requise pour passer commande", this::connect);
+            }
             root.addComponent(connection);
 
             ActionListBox listBox = new ActionListBox(new TerminalSize(60, 3));
@@ -102,5 +105,9 @@ public class PanierView extends BasicWindow {
     private void commander() {
         // si user connecte alors commande sinon mets le message
         Controller.showInfo("Vous devez vous connecter pour passer une commande !");
+    }
+
+    private void connect(){
+        controller.connect();
     }
 }

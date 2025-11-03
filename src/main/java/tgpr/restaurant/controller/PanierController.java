@@ -63,5 +63,9 @@ public class PanierController extends Controller<PanierView> {
         tgpr.framework.ViewManager.showModal(popup);
     }
 
+    public void connect(){
+        navigateTo(new SecurityConnectController());
+    }
+
 
 }

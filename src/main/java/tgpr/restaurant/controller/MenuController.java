@@ -65,4 +65,8 @@ public class MenuController extends Controller<MenuView> {
 
         tgpr.framework.ViewManager.showModal(popup);
     }
+
+    public void back(){
+        navigateTo(new SecurityLoginController());
+    }
 }

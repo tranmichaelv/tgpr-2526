@@ -36,7 +36,7 @@ public abstract class PanelProductAndMenu<E> extends Panel {
     // initialise la table
     public void initTable(int rows){
         tableProduct = createTable();
-        tableProduct.sizeTo(ViewManager.getTerminalColumns(), rows);
+        tableProduct.sizeTo(100, rows);
         tableProduct.setSelectAction(this::onProductSelected);
         tableProduct.addTo(this);
         reloadData();

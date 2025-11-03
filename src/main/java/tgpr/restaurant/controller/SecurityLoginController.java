@@ -3,6 +3,7 @@ package tgpr.restaurant.controller;
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
 import tgpr.restaurant.RestaurantApp;
+import tgpr.restaurant.view.PanierView;
 import tgpr.restaurant.view.SecurityLoginView;
 
 
@@ -28,5 +29,9 @@ public class SecurityLoginController extends Controller<SecurityLoginView> {
     public void register(){
         navigateTo(new SecurityRegisterController());
     }
+
+    public void menu(){navigateTo(new MenuController());}
+
+    public void cart(){navigateTo(new PanierController());}
 
 }
