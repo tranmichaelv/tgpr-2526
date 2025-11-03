@@ -20,79 +20,114 @@ public class MenuDetailView extends BasicWindow {
 
         setHints(List.of(Hint.CENTERED));
 
-        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+        Panel root = Panel.gridPanel(1,
+                Margin.of(2,1,0,0),
+                Spacing.of(1));
         setComponent(root);
 
-        // --- Informations générales sur le menu ---
-        root.addComponent(new Label("  MENU: " + produit.getName()));
-        if (produit.getDescription() != null && !produit.getDescription().isBlank()) {
-            root.addComponent(new Label("  " + produit.getDescription()));
-        }
-        root.addComponent(new EmptySpace());
-        root.addComponent(new Label("      Prix du menu: " + String.format("%.2f", produit.getPrice()) + " €"));
-        root.addComponent(new EmptySpace());
-        root.addComponent(new Label("          Plats inclus dans ce menu :"));
+        root.addComponent(createText());
+        root.addComponent(createBody());
+        root.addComponent(createPrice());
+        root.addComponent(createButton());
+    }
 
+    private Panel createText(){
+        Panel panel = Panel.verticalPanel();
+
+        // --- Informations générales sur le menu ---
+        panel.addComponent(new Label("MENU: " + produit.getName()));
+        panel.addEmpty();
+        panel.addEmpty();
+        if (produit.getDescription() != null && !produit.getDescription().isBlank()) {
+            panel.addComponent(new Label(produit.getDescription()));
+            panel.addEmpty();
+        }
+        panel.addComponent(new Label("    Prix du menu: " + String.format("%.2f", produit.getPrice()) + " €"));
+        panel.addComponent(new Label("       ECONOMIE: " + String.format("%.2f", produit.getEconomy()) + " €"));
+        panel.addEmpty();
+        panel.addEmpty();
+        panel.addComponent(new Label("        Plats inclus dans ce menu :"));
+
+        return panel;
+    }
+
+    private ActionListBox createBody() {
         // --- Liste des plats récupérés depuis la base de données ---
-        ActionListBox listBox = new ActionListBox(new TerminalSize(60, 12));
+        ActionListBox listBox = new ActionListBox(new TerminalSize(45, 10));
         var items = produit.getMenuMenuItems();
 
         if (items == null || items.isEmpty()) {
-            listBox.addItem("   Aucun élément trouvé dans ce menu.", () -> {});
+            listBox.addItem("   Aucun élément trouvé dans ce menu.", () -> {
+            });
         } else {
 
             // === ENTRÉES ===
-            listBox.addItem("  === ENTRÉES ===", () -> {});
+            listBox.addItem("=== ENTRÉES ===", () -> {
+            });
             for (MenuItem item : items) {
                 Product p = item.getProduct();
                 if (p.getType() == Product.Type.Starter) {
-                    listBox.addItem("   " + p.getName() + " - " + String.format("%.2f", p.getPrice()) + " €", () -> {});
+                    listBox.addItem("  • " + p.getName() + " - " + String.format("%.2f", p.getPrice()) + " €", () -> {
+                    });
                     if (p.getDescription() != null && !p.getDescription().isBlank())
-                        listBox.addItem("     " + p.getDescription(), () -> {});
+                        listBox.addItem("    " + p.getDescription(), () -> {
+                        });
                 }
             }
 
             // === PLATS PRINCIPAUX ===
-            listBox.addItem("  === PLATS PRINCIPAUX ===", () -> {});
+            listBox.addItem("=== PLATS PRINCIPAUX ===", () -> {
+            });
             for (MenuItem item : items) {
                 Product p = item.getProduct();
                 if (p.getType() == Product.Type.Main) {
-                    listBox.addItem("   " + p.getName() + " - " + String.format("%.2f", p.getPrice()) + " €", () -> {});
+                    listBox.addItem("  • " + p.getName() + " - " + String.format("%.2f", p.getPrice()) + " €", () -> {
+                    });
                     if (p.getDescription() != null && !p.getDescription().isBlank())
-                        listBox.addItem("     " + p.getDescription(), () -> {});
+                        listBox.addItem("    " + p.getDescription(), () -> {
+                        });
                 }
             }
 
             // === DESSERTS ===
-            listBox.addItem("  === DESSERTS ===", () -> {});
+            listBox.addItem("=== DESSERTS ===", () -> {
+            });
             for (MenuItem item : items) {
                 Product p = item.getProduct();
                 if (p.getType() == Product.Type.Dessert) {
-                    listBox.addItem("   " + p.getName() + " - " + String.format("%.2f", p.getPrice()) + " €", () -> {});
+                    listBox.addItem("  • " + p.getName() + " - " + String.format("%.2f", p.getPrice()) + " €", () -> {
+                    });
                     if (p.getDescription() != null && !p.getDescription().isBlank())
-                        listBox.addItem("     " + p.getDescription(), () -> {});
+                        listBox.addItem("    " + p.getDescription(), () -> {
+                        });
                 }
             }
         }
+        return listBox;
+    }
 
-        root.addComponent(listBox);
-        new EmptySpace().addTo(root);
-        root.addComponent(new Label("  ______________________________________"));
+    private Panel createPrice(){
+
+        Panel panel = new Panel();
+
+        panel.addComponent(new Label("―".repeat(40)));
 
         // --- Totaux dynamiques ---
         double totalPlats = produit.getTotalPrice();
         double economie = produit.getEconomy();
 
-        root.addComponent(new Label("  Total des plats à l’unité : " + String.format("%.2f", totalPlats) + " €"));
-        root.addComponent(new Label("  Économie réalisée : " + String.format("%.2f", economie) + " €"));
+        panel.addComponent(new Label("Total des plats à l’unité : " + String.format("%.2f", totalPlats) + " €"));
+        panel.addComponent(new Label("Économie réalisée : " + String.format("%.2f", economie) + " €"));
 
-        new EmptySpace().addTo(root);
+        return panel;
+    }
 
-        // --- Boutons d’action ---
+    // --- Boutons d’action ---
+    private Panel createButton(){
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttons.addComponent(new Button("Ajouter à mon panier", controller::ajouterAuPanier));
         buttons.addComponent(new Button("Mon Panier", controller::ouvrirPanier));
         buttons.addComponent(new Button("Retour", controller::retour));
-        root.addComponent(buttons);
+        return buttons;
     }
 }

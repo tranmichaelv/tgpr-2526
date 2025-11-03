@@ -6,7 +6,6 @@ import tgpr.restaurant.controller.MenuController;
 import tgpr.restaurant.model.Product;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MenuView extends BasicWindow {
 
@@ -16,82 +15,114 @@ public class MenuView extends BasicWindow {
         this.controller = controller;
         setTitle("Restaurant - Carte du restaurant");
 
-        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+        setHints(List.of(Hint.CENTERED, Hint.MODAL));
 
+        Panel root = Panel.gridPanel(1,
+                Margin.of(2, 0, 5, 0),
+                Spacing.of(1));
+        setComponent(root);
+
+        root.addComponent(createHeader());
+        root.addComponent(createMenu());
+        root.addComponent(createButton());
+    }
+
+    private Panel createHeader(){
         Panel header = new Panel(new LinearLayout(Direction.VERTICAL));
         header.addComponent(new Label("↑↓ pour naviguer, Entrée: menus→détails, autres→description"));
-        header.addComponent(new EmptySpace(new TerminalSize(0, 1)));
-        root.addComponent(header);
+        header.addEmpty();
+        return header;
+    }
 
+    private ActionListBox createMenu(){
         ActionListBox listBox = new ActionListBox(new TerminalSize(60, 20));
-
         // === MENUS ===
-        listBox.addItem("  === MENUS ===", () -> {});
+        int cpt = 0;
+        listBox.addItem("=== MENUS ===", () -> {
+        });
         List<Product> menus = Product.getAll().stream()
                 .filter(p -> p.getType() == Product.Type.Menu && !p.getArchived())
-                .collect(Collectors.toList());
+                .toList();
 
         for (Product menu : menus) {
-            listBox.addItem("  " + menu.getName() + " - " + String.format("%.2f", menu.getPrice()) + " €",
+            cpt += 1;
+            listBox.addItem("  " + cpt + ". " + menu.getName() + " - " + String.format("%.2f", menu.getPrice()) + " €",
                     () -> controller.afficherDetailsMenu(menu));
         }
 
         // === ENTRÉES ===
-        listBox.addItem(" ", () -> {});
-        listBox.addItem("  === ENTRÉES ===", () -> {});
+        cpt = 0;
+        listBox.addItem(" ", () -> {
+        });
+        listBox.addItem("=== ENTRÉES ===", () -> {
+        });
         List<Product> entrees = Product.getAll().stream()
                 .filter(p -> p.getType() == Product.Type.Starter && !p.getArchived())
-                .collect(Collectors.toList());
+                .toList();
 
         for (Product entree : entrees) {
-            listBox.addItem("  " + entree.getName() + " - " + String.format("%.2f", entree.getPrice()) + " €",
+            cpt += 1;
+            listBox.addItem("  " + cpt + ". " + entree.getName() + " - " + String.format("%.2f", entree.getPrice()) + " €",
                     () -> controller.afficherPopupProduit(entree));
         }
 
         // === PLATS PRINCIPAUX ===
-        listBox.addItem(" ", () -> {});
-        listBox.addItem("  === PLATS PRINCIPAUX ===", () -> {});
+        cpt = 0;
+        listBox.addItem(" ", () -> {
+        });
+        listBox.addItem("=== PLATS PRINCIPAUX ===", () -> {
+        });
         List<Product> plats = Product.getAll().stream()
                 .filter(p -> p.getType() == Product.Type.Main && !p.getArchived())
-                .collect(Collectors.toList());
+                .toList();
 
         for (Product plat : plats) {
-            listBox.addItem("  " + plat.getName() + " - " + String.format("%.2f", plat.getPrice()) + " €",
+            cpt += 1;
+            listBox.addItem("  " + cpt + ". " + plat.getName() + " - " + String.format("%.2f", plat.getPrice()) + " €",
                     () -> controller.afficherPopupProduit(plat));
         }
 
         // === DESSERTS ===
-        listBox.addItem(" ", () -> {});
-        listBox.addItem("  === DESSERTS ===", () -> {});
+        cpt = 0;
+        listBox.addItem(" ", () -> {
+        });
+        listBox.addItem("=== DESSERTS ===", () -> {
+        });
         List<Product> desserts = Product.getAll().stream()
                 .filter(p -> p.getType() == Product.Type.Dessert && !p.getArchived())
-                .collect(Collectors.toList());
+                .toList();
 
         for (Product dessert : desserts) {
-            listBox.addItem("  " + dessert.getName() + " - " + String.format("%.2f", dessert.getPrice()) + " €",
+            cpt += 1;
+            listBox.addItem("  " + cpt + ". " + dessert.getName() + " - " + String.format("%.2f", dessert.getPrice()) + " €",
                     () -> controller.afficherPopupProduit(dessert));
         }
 
         // === BOISSONS ===
-        listBox.addItem(" ", () -> {});
-        listBox.addItem("  === BOISSONS ===", () -> {});
+        cpt = 0;
+        listBox.addItem(" ", () -> {
+        });
+        listBox.addItem("=== BOISSONS ===", () -> {
+        });
         List<Product> boissons = Product.getAll().stream()
                 .filter(p -> p.getType() == Product.Type.Drink && !p.getArchived())
-                .collect(Collectors.toList());
+                .toList();
 
         for (Product boisson : boissons) {
-            listBox.addItem("  " + boisson.getName() + " - " + String.format("%.2f", boisson.getPrice()) + " €",
+            cpt += 1;
+            listBox.addItem("  " + cpt + ". " + boisson.getName() + " - " + String.format("%.2f", boisson.getPrice()) + " €",
                     () -> controller.afficherPopupProduit(boisson));
         }
 
-        root.addComponent(listBox);
+        return listBox;
+    }
 
-        // --- BOUTONS ---
+    // --- BOUTONS ---
+    private Panel createButton(){
         Panel buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttonPanel.addComponent(new Button("Mon Panier", controller::ouvrirPanier));
         buttonPanel.addComponent(new Button("Retour", this::close));
-        root.addComponent(buttonPanel);
 
-        setComponent(root);
+        return buttonPanel;
     }
 }

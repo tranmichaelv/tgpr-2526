@@ -7,6 +7,7 @@ import tgpr.restaurant.controller.PanierController;
 import tgpr.restaurant.model.Panier;
 import tgpr.restaurant.model.Product;
 
+import java.util.List;
 import java.util.Map;
 
 public class PanierView extends BasicWindow {
@@ -18,7 +19,8 @@ public class PanierView extends BasicWindow {
         this.controller = controller;
         setTitle("Restaurant - Mon Panier");
 
-        root = new Panel(new LinearLayout(Direction.VERTICAL));
+        setHints(List.of(Hint.CENTERED,Hint.MODAL));
+        root = Panel.gridPanel(1, Margin.of(2,2,0,0));
         setComponent(root);
 
         afficherContenu();
@@ -28,19 +30,24 @@ public class PanierView extends BasicWindow {
         root.removeAllComponents();
 
         root.addComponent(new Label("↑↓ pour naviguer, Entrée: modifier quantité, Suppr: supprimer"));
-        root.addComponent(new EmptySpace(new TerminalSize(0, 1)));
-        root.addComponent(new Label("=== COMMANDE ==="));
-        root.addComponent(new Label("Connexion requise pour passer commande"));
-        root.addComponent(new EmptySpace(new TerminalSize(0, 1)));
+        root.addEmpty();
+        root.addEmpty();
 
         if (Panier.estVide()) {
             root.addComponent(new Label("Votre panier est vide pour le moment."));
         } else {
-            root.addComponent(new Label("=== ARTICLES ==="));
-            root.addComponent(new EmptySpace(new TerminalSize(0, 1)));
+            ActionListBox connection = new ActionListBox(new TerminalSize(60, 3));
+            connection.addItem("=== COMMANDE ===", () -> {});
+            // si pas connecte alors
+            //listBox.addItem("Connexion requise pour passer commande", () -> {});
+            root.addComponent(connection);
 
-            ActionListBox listBox = new ActionListBox(new TerminalSize(60, 10));
+            ActionListBox listBox = new ActionListBox(new TerminalSize(60, 3));
             int index = 1;
+
+
+            listBox.addItem("=== ARTICLES ===", () -> {
+            });
 
             for (Map.Entry<Product, Integer> entry : Panier.getProduits().entrySet()) {
                 Product produit = entry.getKey();
@@ -63,7 +70,7 @@ public class PanierView extends BasicWindow {
     }
 
     private Panel creerBoutons() {
-        Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL));
+        Panel buttons = Panel.horizontalPanel();
 
         Button retour = new Button("Retour", controller::retour);
         buttons.addComponent(retour);
@@ -93,6 +100,7 @@ public class PanierView extends BasicWindow {
     }
 
     private void commander() {
+        // si user connecte alors commande sinon mets le message
         Controller.showInfo("Vous devez vous connecter pour passer une commande !");
     }
 }
