@@ -103,8 +103,12 @@ public class PanierView extends BasicWindow {
     }
 
     private void commander() {
-        // si user connecte alors commande sinon mets le message
-        Controller.showInfo("Vous devez vous connecter pour passer une commande !");
+        if(Security.isLogged()){
+            // si user connecte alors commande sinon mets le message
+            Controller.showInfo("C'est bon !");
+        } else {
+            Controller.showInfo("Vous devez vous connecter pour passer une commande !");
+        }
     }
 
     private void connect(){

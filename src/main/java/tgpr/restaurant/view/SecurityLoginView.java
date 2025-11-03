@@ -76,8 +76,8 @@ public class SecurityLoginView extends BasicWindow{
 
     // panier - Menu
     private Panel createShopPanel() {
-        Button carte = new Button("Parcourir la carte"); // test a enlever
-        Button panier = new Button("Mon panier");
+        Button carte = new Button("Parcourir la carte",this::menu); // test a enlever
+        Button panier = new Button("Mon panier",this::cart);
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,
                 carte, panier).center();
 
@@ -127,6 +127,13 @@ public class SecurityLoginView extends BasicWindow{
         controller.register();
     }
 
+    private void cart(){
+        controller.cart();
+    }
+
+    private void menu(){
+        controller.menu();
+    }
 }
 
 

@@ -67,6 +67,6 @@ public class MenuController extends Controller<MenuView> {
     }
 
     public void back(){
-        navigateTo(new SecurityLoginController());
+        navigateBack();
     }
 }

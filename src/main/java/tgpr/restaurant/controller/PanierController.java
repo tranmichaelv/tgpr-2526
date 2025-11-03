@@ -13,7 +13,7 @@ public class PanierController extends Controller<PanierView> {
     }
 
     public void retour() {
-        navigateTo(new MenuController());
+        navigateBack();
     }
 
     public void modifierQuantite(Product produit) {
