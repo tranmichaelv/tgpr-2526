@@ -7,34 +7,32 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 public class ReservationConfirmationView extends DialogWindow {
 
 
-        public ReservationConfirmationView() {
+        public ReservationConfirmationView(LocalDate date, int numberOfPeople, String service, String tableInfo) {
             super("Réservation préparée");
             setHints(List.of(Hint.CENTERED));
 
             Panel content = Panel.verticalPanel(1);
 
-            // Titolo
+            // title
             content.addComponent(new Label("Réservation préparée:"));
-            content.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
-            // Dettagli prenotazione (inizialmente placeholder)
-            content.addComponent(new Label("Date: "));
-            content.addComponent(new Label("Nombre de personnes: "));
-            content.addComponent(new Label("Service: "));
-            content.addComponent(new Label("Table: "));
-            content.addComponent(new EmptySpace(new TerminalSize(0, 1)));
-
-            // Messaggio finale
+            // details about booked table
+            content.addComponent(new Label("Date: " +  date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+            content.addComponent(new Label("Nombre de personnes: " + numberOfPeople));
+            content.addComponent(new Label("Service: " + service));
+            content.addComponent(new Label("Table: " + tableInfo));
             content.addComponent(new Label("Vous allez être redirigé vers la page de connexion pour confirmer votre réservation."));
-            content.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
-            // Pulsante OK
-            Button okButton = new Button("OK", this::close);
+            // OK button (redirection)
+            Button okButton = new Button("OK", this::close).left();
             content.addComponent(okButton);
 
             setComponent(content);

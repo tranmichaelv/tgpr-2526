@@ -189,7 +189,11 @@ public class ReservationView extends BasicWindow {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
         Button cancel = new Button("Annuler");
         confirm = new Button("Confirmer la réservation", () -> {
-            ReservationConfirmationView dialog = new ReservationConfirmationView();
+            int numberOfPeople = Integer.parseInt(nbGuests.getText());
+            String service = midiSoir.getSelectedItem();
+            String tableInfo = tableLabel.getText();
+
+            ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, service, tableInfo);
             dialog.showDialog(getTextGUI());
         });
         confirm.setEnabled(false);
