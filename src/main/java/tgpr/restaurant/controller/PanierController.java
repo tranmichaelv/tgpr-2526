@@ -12,7 +12,7 @@ public class PanierController extends Controller<PanierView> {
         return new PanierView(this);
     }
 
-    public void retour() {
+    public void back() {
         navigateBack();
     }
 

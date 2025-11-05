@@ -23,7 +23,7 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
 
     // retour
     public void back(){
-        navigateTo(new SecurityLoginController());
+        navigateBack();
     }
 
     // login il faut mettre la suite

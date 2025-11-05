@@ -75,7 +75,7 @@ public class PanierView extends BasicWindow {
     private Panel creerBoutons() {
         Panel buttons = Panel.horizontalPanel();
 
-        Button retour = new Button("Retour", controller::retour);
+        Button retour = new Button("Retour", this::back);
         buttons.addComponent(retour);
 
         if (!Panier.estVide()) {
@@ -113,5 +113,9 @@ public class PanierView extends BasicWindow {
 
     private void connect(){
         controller.connect();
+    }
+
+    private void back(){
+        controller.back();
     }
 }
