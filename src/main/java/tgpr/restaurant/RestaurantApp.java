@@ -2,12 +2,9 @@ package tgpr.restaurant;
 
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
-import tgpr.framework.Tools;
-import tgpr.restaurant.controller.OrderChangeController;
-import tgpr.restaurant.controller.OrderCreateController;
-import tgpr.restaurant.controller.OrderListController;
-import tgpr.restaurant.controller.TestController;
-import tgpr.restaurant.model.User;
+import tgpr.restaurant.controller.OrderListClientController;
+import tgpr.restaurant.controller.OrderListEmployeeController;
+import tgpr.restaurant.view.OrderListEmployeeView;
 
 public class RestaurantApp {
     public final static String DATABASE_SCRIPT_FILE = "/database/tgpr-2526-c03.sql";
@@ -40,7 +37,8 @@ public class RestaurantApp {
             // Page Pour afficher la liste des commande
             //Controller.navigateTo(new OrderChangeController());
 
-            Controller.navigateTo(new OrderListController());
+            Controller.navigateTo(new OrderListClientController());
+            //Controller.navigateTo(new OrderListEmployeeController());
         }
     }
 }

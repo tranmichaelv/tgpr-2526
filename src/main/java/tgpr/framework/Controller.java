@@ -3,8 +3,6 @@ package tgpr.framework;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
-import tgpr.restaurant.controller.OrderCreateController;
-import tgpr.restaurant.controller.OrderListController;
 
 import java.util.List;
 
@@ -12,26 +10,6 @@ import java.util.List;
  * Classe abstraite de base pour les contrôleurs.
  */
 public abstract class Controller<V> {
-
-
-    //  Ajouter juste temporairement pour pouvoir tester
-    public static void navigateTo(OrderListController orderListController) {
-
-        Model.clearCache();
-
-        Object view = orderListController.getView();
-        if (view instanceof DialogWindow dialogWindow) {
-            ViewManager.showModal(dialogWindow);
-        } else if (view instanceof Window window) {
-            ViewManager.navigateTo(window);
-        } else {
-            throw new RuntimeException("You may not navigate to a controller that isn't associated to a Window");
-        }
-
-        // on efface également le cache des objets du modèle quand on a fini d'afficher une fenêtre
-        Model.clearCache();
-    }
-
     /**
      * Permet de récupérer la vue associée au contrôleur. Cette méthode doit être surchargée dans les classes
      * héritantes.
@@ -47,7 +25,7 @@ public abstract class Controller<V> {
      *
      * @param controller le contrôleur vers lequel on veut naviguer
      */
-    public static <T> void navigateTo(OrderCreateController controller) {
+    public static <T> void navigateTo(Controller<?> controller) {
         // on efface le cache des objets du modèle à chaque fois qu'on navigue vers un contrôleur
         Model.clearCache();
 
