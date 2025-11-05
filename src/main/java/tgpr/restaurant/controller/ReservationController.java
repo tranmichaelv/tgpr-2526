@@ -81,38 +81,36 @@ public class ReservationController extends Controller<ReservationView> {
     }
 
     // method getting query result from model and displaying assigned table to the view
-    public void assignTable(String nbGuestsText, String serviceName, LocalDate selectedDate) {
+    public boolean assignTable(String nbGuestsText, String serviceName, LocalDate selectedDate) {
         try {
             int numberOfPeople = Integer.parseInt(nbGuestsText);
 
-            // Although view prevents us from selecting dates before today or mondays, it's safer to double-check in the controller as well
             if (selectedDate == null || selectedDate.isBefore(LocalDate.now())) {
                 view.showError("Veuillez sélectionner une date valide.");
-                return;
+                return false;
             }
 
-            // converting the day of the week in french lowercase (as it is displayed in "week_day" column in "services" table)
             String weekDay = selectedDate.getDayOfWeek()
                     .getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
 
-            // calling getByNameAndDay method in Service model
             Service service = Service.getByNameAndDay(serviceName, weekDay);
 
-            // Managing sunday case (it has a "midi" service only"
             if (service == null) {
                 view.showError("Pas de service de " + serviceName + " le " + weekDay);
-                return;
+                return false;
             }
 
-            // checking if there are tables available left
             Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
             if (table == null) {
                 view.updateTableLabel("(aucune table disponible)");
+                return false;
             } else {
                 view.updateTableLabel("Table " + table.getId() + " (" + table.getCapacity() + "p)");
+                return true;
             }
         } catch (NumberFormatException e) {
             view.showError("Veuillez entrer un nombre valide.");
+            return false;
         }
     }
 }
