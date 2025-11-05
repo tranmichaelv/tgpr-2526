@@ -2,7 +2,6 @@ package tgpr.restaurant.model;
 
 import tgpr.framework.Error;
 
-import static java.lang.Integer.parseInt;
 
 public class ProductValidator {
 
