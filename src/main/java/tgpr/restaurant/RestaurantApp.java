@@ -21,7 +21,8 @@ public class RestaurantApp {
             Order test = Order.getByKey(1);
 
            // Controller.navigateTo(new TestController());
-            Controller.navigateTo(new OrderAddController(test));
+           // Controller.navigateTo(new OrderAddController(test));
+            Controller.navigateTo(new OrderDeleteController(test));
 
         }
     }
