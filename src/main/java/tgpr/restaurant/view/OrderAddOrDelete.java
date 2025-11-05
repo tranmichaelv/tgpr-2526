@@ -1,4 +1,4 @@
-package tgpr.restaurant.model;
+package tgpr.restaurant.view;
 
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.TerminalSize;
@@ -61,7 +61,3 @@ public abstract class OrderAddOrDelete<T> extends BasicWindow {
     // méthode pour mon boutton Yes
     protected abstract void onYes();
 }
-
-
-
-

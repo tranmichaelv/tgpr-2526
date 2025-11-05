@@ -1,9 +1,6 @@
 package tgpr.restaurant.view;
 
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.*;
 import tgpr.restaurant.controller.OrderAddController;
-import tgpr.restaurant.model.OrderAddOrDelete;
 
 public class OrderAddView extends OrderAddOrDelete<OrderAddController> {
 
