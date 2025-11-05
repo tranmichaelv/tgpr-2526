@@ -10,10 +10,11 @@ public class OrderDeleteView extends OrderAddOrDelete<OrderDeleteController> {
                 "Voulez-vous annuler cette commande ?",
                 "Yes");
     }
+
+    // méthode qui supprime la commande
     @Override
     protected void onYes() {
-
-        // à compléter -> doit supprimer la commande dans la BD
+        controller.deleteOrder();
         close();
     }
 }
