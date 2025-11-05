@@ -21,6 +21,11 @@ public class ClosingChangeview extends DialogWindow {
     private TextBox txtReason;
 
     private Label lblTitle;
+    private final Label lblErrorStartDate = new Label("");
+    private final Label lblErrorEndDate = new Label("");
+    private final Label lblErrorReason = new Label("");
+
+    private boolean isFilling = false;
 
     public ClosingChangeview(ClosingChangeController controller) {
         super("Gestion de la periode de fermeture");
@@ -56,7 +61,6 @@ public class ClosingChangeview extends DialogWindow {
 
     private Component creaTable() {
         // crée une table avec differentes colonnes
-
         tableClosingPeriod = new ObjectTable<>(
                 new ColumnSpec<>("Date debut", ClosingPeriod::getStartDateFormatted).setWidth(12),
                 new ColumnSpec<>("Date fin", ClosingPeriod::getEndDateFormatted).setWidth(12),
@@ -70,6 +74,7 @@ public class ClosingChangeview extends DialogWindow {
 
             // récupère l'objet couramment sélectionné en naviguant dessus
             closingPeriod = tableClosingPeriod.getSelected();
+            // remplis-les different txtbox avec les donnees
             fillFieldsPanel(closingPeriod);
             // stocke les changements dans la liste et le renvoi
             reloadData();
@@ -92,24 +97,34 @@ public class ClosingChangeview extends DialogWindow {
         panel.addComponent(lblTitle);
 
         Panel fields = Panel.gridPanel(2,
-                Margin.of(1,1,1,1), Spacing.of(1));
+                Margin.of(1,1,1,1));
 
         fields.addComponent(new Label("Date de debut (JJ/MM/AAAA) : "));
         txtStartDate = new TextBox(new TerminalSize(12,1));
-        txtStartDate.addTo(fields);
+        txtStartDate.addTo(fields)
+                .setTextChangeListener((txt, byUser) -> checkStartDate());
+        fields.addEmpty();
+        lblErrorStartDate.setForegroundColor(TextColor.ANSI.RED).addTo(fields);
 
         fields.addComponent(new Label("Date de fin (JJ/MM/AAAA) : "));
         txtEndDate = new TextBox(new TerminalSize(12,1));
-        txtEndDate.addTo(fields);
+        txtEndDate.addTo(fields)
+                .setTextChangeListener((txt, byUser) -> checkEndDate());
+        fields.addEmpty();
+        lblErrorEndDate.setForegroundColor(TextColor.ANSI.RED).addTo(fields);
 
         fields.addComponent(new Label("Raison de la fermeture : "));
         txtReason = new TextBox(new TerminalSize(40,1));
-        txtReason.addTo(fields);
+        txtReason.addTo(fields)
+                .setTextChangeListener((txt, byUser) -> checkReason());
+        fields.addEmpty();
+        lblErrorReason.setForegroundColor(TextColor.ANSI.RED).addTo(fields);
 
         fields.addTo(panel);
         return panel;
     }
 
+    // reset les txtbox
     private void clearFieldsPanel(){
         txtStartDate.setText("");
         txtEndDate.setText("");
@@ -117,21 +132,39 @@ public class ClosingChangeview extends DialogWindow {
         lblTitle.setText("NOUVELLE PÉRIODE DE FERMETURE");
         lblTitle.addStyle(SGR.BORDERED)
                 .setForegroundColor(TextColor.ANSI.GREEN_BRIGHT);
+
+        lblErrorStartDate.setText("");
+        lblErrorEndDate.setText("");
+        lblErrorReason.setText("");
     }
 
+    // remplis avec les informations given
     private void fillFieldsPanel(ClosingPeriod closingPeriod){
+        // isFilling permet d'attendre que tout sois set avant de faire quoique ce soit
+        // sinon il va d'abord set txtStartDate mais dans le validator
+        // il va mettre en comparaison le startDate du current avec le endDate du previous
+        isFilling = true;
+
         txtStartDate.setText(closingPeriod.getStartDateFormatted());
         txtEndDate.setText(closingPeriod.getEndDateFormatted());
         txtReason.setText(closingPeriod.getReason());
+
         lblTitle.setText("MODIFICATION DE LA PÉRIODE DE FERMETURE");
         lblTitle.addStyle(SGR.BORDERED)
                 .setForegroundColor(TextColor.ANSI.YELLOW_BRIGHT);
+
+        // efface les messages d'erreurs quand on recharge une ligne
+        lblErrorStartDate.setText("");
+        lblErrorEndDate.setText("");
+        lblErrorReason.setText("");
+
+        isFilling = false;
     }
 
     private Panel createButtonPanel(){
         return Panel.horizontalPanel(
-                new Button("Ajouter",this::changeAndAdd),
-                new Button("Modifier",this::changeAndAdd),
+                new Button("Ajouter",this::add),
+                new Button("Modifier",this::change),
                 new Button("Annuler", this::cancel),
                 new Button("Supprimer",this::delete),
                 new Button("Fermer", this::close)
@@ -140,28 +173,140 @@ public class ClosingChangeview extends DialogWindow {
 
     private void cancel(){
         clearFieldsPanel();
+        closingPeriod = null;
     }
 
     private void delete(){
-        closingPeriod.delete();
-        reloadData();
+        // si pas de closingPeriod -> impossible de supprimer
+        if(closingPeriod == null) {
+            controller.showAnError("supprimer");
+            // cherche l'erreur
+            check();
+        } else {
+            controller.delete(closingPeriod);
+            // mets le closingPeriod null pour pas garder celui qui vient d'etre supprimer
+            closingPeriod = null;
+
+            reloadData();
+            clearFieldsPanel();
+        }
     }
 
-    private void updateSaveAndChangeButton(){
-        boolean hasErrors =
-                txtStartDate.getText().isEmpty() ||
-                        txtEndDate.getText().isEmpty() ||
-                        txtReason.getText().isEmpty();
+    private void checkStartDate(){
+        // si isFilling alors on fait rien
+        if (isFilling) return;
 
-    }
-
-    private void changeAndAdd(){
-        controller.add(
+        var errorsStart = controller.checkStartDate(
                 txtStartDate.getText(),
                 txtEndDate.getText(),
-                txtReason.getText()
-        );
-        reloadData();
+                closingPeriod);
+
+        lblErrorStartDate.setText(errorsStart.getFirstErrorMessage(ClosingPeriod.Fields.StartDate));
+
+        // Si End a déjà une erreur affichée, vérifier si elle doit disparaître
+
+        if(!txtEndDate.getText().isEmpty()) {
+            var errorsEnd = controller.checkEndDate(
+                    txtStartDate.getText(),
+                    txtEndDate.getText(),
+                    closingPeriod
+            );
+
+            lblErrorEndDate.setText(errorsEnd.getFirstErrorMessage(ClosingPeriod.Fields.EndDate));
+
+//             si plus d'erreur → effacer label
+            if (errorsEnd.isEmpty()) {
+                lblErrorEndDate.setText("");
+            }
+        }
+
     }
+
+    private void checkEndDate(){
+        // si isFilling alors on fait rien
+        if (isFilling) return;
+
+        var errorsEnd = controller.checkEndDate(
+                txtStartDate.getText(),
+                txtEndDate.getText(),
+                closingPeriod);
+
+        lblErrorEndDate.setText(errorsEnd.getFirstErrorMessage(ClosingPeriod.Fields.EndDate));
+
+        if(!txtStartDate.getText().isEmpty()) {
+            var errorsStart = controller.checkStartDate(
+                    txtStartDate.getText(),
+                    txtEndDate.getText(),
+                    closingPeriod
+            );
+
+            lblErrorStartDate.setText(errorsStart.getFirstErrorMessage(ClosingPeriod.Fields.StartDate));
+
+            if (errorsStart.isEmpty()) {
+                lblErrorStartDate.setText("");
+            }
+        }
+
+    }
+
+    private void checkReason(){
+        var errors = controller.checkReason(txtReason.getText());
+        lblErrorReason.setText(errors.getFirstErrorMessage(ClosingPeriod.Fields.Reason));
+    }
+
+    private void check(){
+        var errors = controller.check(
+                txtStartDate.getText(),
+                txtEndDate.getText(),
+                txtReason.getText(),
+                closingPeriod);
+
+        lblErrorStartDate.setText(errors.getFirstErrorMessage(ClosingPeriod.Fields.StartDate));
+        lblErrorEndDate.setText(errors.getFirstErrorMessage(ClosingPeriod.Fields.EndDate));
+        lblErrorReason.setText(errors.getFirstErrorMessage(ClosingPeriod.Fields.Reason));
+    }
+
+    private void change(){
+        // ne peut pas changer si pas de closingPeriod
+        if(hasErrors() || closingPeriod == null) {
+            controller.showAnError("changer");
+            check();
+        }else {
+            controller.change(
+                    txtStartDate.getText(),
+                    txtEndDate.getText(),
+                    txtReason.getText(),
+                    closingPeriod
+            );
+
+            reloadData();
+            clearFieldsPanel();
+        }
+    }
+
+    private boolean hasErrors(){
+        return !lblErrorStartDate.getText().isEmpty() ||
+                !lblErrorEndDate.getText().isEmpty() ||
+                !lblErrorReason.getText().isEmpty() ||
+                txtStartDate.getText().isEmpty() ||
+                txtEndDate.getText().isEmpty() ||
+                txtReason.getText().isEmpty();
+    }
+
+    private void add(){
+        if(hasErrors() || closingPeriod != null) {
+            controller.showAnError("ajouter");
+            check();
+        } else {
+            controller.add(
+                    txtStartDate.getText(),
+                    txtEndDate.getText(),
+                    txtReason.getText()
+            );
+            reloadData();
+            clearFieldsPanel();
+        }
+    }
+
 }
 

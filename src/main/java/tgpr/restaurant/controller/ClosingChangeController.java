@@ -2,15 +2,11 @@ package tgpr.restaurant.controller;
 
 import tgpr.framework.Controller;
 import tgpr.framework.ErrorList;
-import tgpr.framework.Error;
 import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.model.ClosingPeriodValidator;
-import tgpr.restaurant.model.Product;
-import tgpr.restaurant.model.ProductValidator;
 import tgpr.restaurant.view.ClosingChangeview;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ClosingChangeController extends Controller<ClosingChangeview> {
@@ -29,19 +25,51 @@ public class ClosingChangeController extends Controller<ClosingChangeview> {
     }
 
     public void add(String startDate, String endDate, String reason){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        LocalDate startDateFormatted = LocalDate.parse(startDate, formatter);
-        LocalDate endDateFormatted = LocalDate.parse(endDate, formatter);
+        LocalDate startDateFormatted = ClosingPeriod.dateFormatter(startDate);
+        LocalDate endDateFormatted = ClosingPeriod.dateFormatter(endDate);
 
         ClosingPeriod closingPeriod = new ClosingPeriod(startDateFormatted, endDateFormatted, reason);
         closingPeriod.save();
     }
 
-    public Error checkStartDate(LocalDate startDate, LocalDate endDate) {
-        return ClosingPeriodValidator.isValidStartDate(startDate, endDate);
+    public void change(String startDate, String endDate, String reason, ClosingPeriod closingPeriod){
+        closingPeriod.setStartDate(ClosingPeriod.dateFormatter(startDate));
+        closingPeriod.setStartDate(ClosingPeriod.dateFormatter(endDate));
+        closingPeriod.setReason(reason);
+        closingPeriod.save();
+    }
+
+    public ErrorList checkStartDate(String startDate, String endDate, ClosingPeriod closingPeriod) {
+        var errors = new ErrorList();
+        errors.add(ClosingPeriodValidator.isValidStartDate(startDate, endDate, closingPeriod));
+        return errors;
+
+    }
+
+    public ErrorList checkEndDate(String startDate, String endDate, ClosingPeriod closingPeriod) {
+        var errors = new ErrorList();
+        errors.add(ClosingPeriodValidator.isValidEndDate(startDate, endDate, closingPeriod));
+        return errors;
 
 
+    }
+
+    public ErrorList checkReason(String reason) {
+        var errors = new ErrorList();
+        errors.add(ClosingPeriodValidator.isValidReason(reason));
+        return errors;
+    }
+
+    public ErrorList check(String startDate, String endDate, String reason, ClosingPeriod closingPeriod){
+        var errors = new ErrorList();
+        errors.add(ClosingPeriodValidator.isValidReason(reason));
+        errors.add(ClosingPeriodValidator.isValidEndDate(startDate,endDate, closingPeriod));
+        errors.add(ClosingPeriodValidator.isValidStartDate(startDate, endDate, closingPeriod));
+        return errors;
+    }
+
+    public void showAnError(String message){
+        showError("Ne peut pas " + message + " car les informations ne sont pas correctes");
     }
 }
 

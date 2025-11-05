@@ -162,4 +162,9 @@ public class ClosingPeriod extends Model {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return endDate.format(formatter);
     }
+
+    public static LocalDate dateFormatter(String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return LocalDate.parse(date, formatter);
+    }
 }
