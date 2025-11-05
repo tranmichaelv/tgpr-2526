@@ -3,10 +3,7 @@ package tgpr.restaurant;
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
 import tgpr.framework.Tools;
-import tgpr.restaurant.controller.OrderAddController;
-import tgpr.restaurant.controller.OrderCheckController;
-import tgpr.restaurant.controller.OrderDeleteController;
-import tgpr.restaurant.controller.TestController;
+import tgpr.restaurant.controller.*;
 import tgpr.restaurant.model.Order;
 import tgpr.restaurant.model.User;
 
@@ -22,7 +19,8 @@ public class RestaurantApp {
 
            // Controller.navigateTo(new TestController());
            // Controller.navigateTo(new OrderAddController(test));
-            Controller.navigateTo(new OrderDeleteController(test));
+           // Controller.navigateTo(new OrderDeleteController(test));
+            Controller.navigateTo(new OrderPayController(test));
 
         }
     }
