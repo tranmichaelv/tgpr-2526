@@ -2,6 +2,7 @@ package tgpr.restaurant;
 
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
+import tgpr.restaurant.controller.OrderCreateController;
 import tgpr.restaurant.controller.OrderListClientController;
 
 public class RestaurantApp {
@@ -37,6 +38,7 @@ public class RestaurantApp {
 
             Controller.navigateTo(new OrderListClientController());
             //Controller.navigateTo(new OrderListEmployeeController());
+            //Controller.navigateTo(new OrderCreateController());
         }
     }
 }

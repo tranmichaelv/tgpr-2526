@@ -90,14 +90,17 @@ public class OrderListClientView extends BasicWindow {
         ordersListBox.clearItems();
 
         boolean hasOrders = false;
+        boolean showAll = showAllOrders.isChecked(); // je récupère l'état du checkBox
         for (Order order : ordersList) {
 
-            //boolean isPaid = order.getPaymentMethod() != null;
+            boolean isPaid = order.getPaymentMethod() != null;
             if (order.getClient().equals(user)) {
 
-                String display = toString(order);
-                ordersListBox.addItem(display, () -> openDetails(order));
-                hasOrders = true;
+                if (showAll || !isPaid){
+                    String display = toString(order);
+                    ordersListBox.addItem(display, () -> openDetails(order));
+                    hasOrders = true;
+                }
             }
         }
         if (!hasOrders) {
@@ -153,7 +156,7 @@ public class OrderListClientView extends BasicWindow {
         boolean type = order.getTakeAway();
         boolean online = order.getOnline();
         String amount = String.format("%.2f €", getPrice(order));
-        String paiement = order.getPaymentMethod() == null ? "En cours" : String.valueOf(order.getPaymentMethod());
+        String paiement = String.valueOf(order.getPaymentMethod()); //
 
 
         return "  " + padOrTruncate(date, 14)

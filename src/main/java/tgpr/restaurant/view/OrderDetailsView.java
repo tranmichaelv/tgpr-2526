@@ -19,6 +19,7 @@ public class OrderDetailsView extends BasicWindow {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         Panel root = new Panel(new BorderLayout());
+
         Panel content = new Panel(new LinearLayout(Direction.VERTICAL));
 
         content.addComponent(new Label("Détails de la commande :"));
