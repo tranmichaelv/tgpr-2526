@@ -47,7 +47,14 @@ public class ReservationView extends BasicWindow {
 
         createHeader().addTo(root);
         createGridLayout().addTo(root);
+
+        // The following Listeners will refresh the reservation whenever the service or the number of people is changed
         midiSoir.addListener((newIndex,PrevIndex,byUser)->{
+            buildCalendarGrid();
+            tableLabel.setText("(non attribuée)");
+        });
+
+        nbGuests.setTextChangeListener((newText, changedByUserInteraction) -> {
             buildCalendarGrid();
             tableLabel.setText("(non attribuée)");
         });
