@@ -11,9 +11,11 @@ import tgpr.restaurant.controller.OrderDetailsController;
 import tgpr.restaurant.controller.OrderListClientController;
 import tgpr.restaurant.model.Order;
 import tgpr.restaurant.model.OrderItem;
+import tgpr.restaurant.model.Table;
 import tgpr.restaurant.model.User;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderListClientView extends BasicWindow {
@@ -68,11 +70,30 @@ public class OrderListClientView extends BasicWindow {
 
         // Adding all elements in reservation panel into root
         reservations.addTo(root);
+        reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
+
 
         // CheckBox to choose whether to show all reservations
-        reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
         showAllReservations = new CheckBox("Afficher toutes les réservations (y compris passées et avec commande)");
         reservations.addComponent(showAllReservations);
+        reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
+
+        List<Label> ls = new ArrayList<>();
+        ls.add(new Label("Table"));
+        ls.add(new Label("Service"));
+        ls.add(new Label("Date"));
+        ls.add(new Label("Pers."));
+        ls.add(new Label("En ligne"));
+
+        Panel fieldLabels = new Panel(new LinearLayout(Direction.HORIZONTAL));
+        for (Label lab : ls) {
+            lab.addStyle(SGR.UNDERLINE);
+            TextColor gray = new TextColor.RGB(90,90,90);
+            lab.setForegroundColor(gray);
+            fieldLabels.addComponent(lab);
+        }
+
+        reservations.addComponent(fieldLabels);
 
         // New reservation button
         nouvelleReservation = new Button("Nouvelle réservation");
