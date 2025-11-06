@@ -268,4 +268,12 @@ public class User extends Model {
     public boolean isBoss(){
         return this.role == Role.Boss;
     }
+    // verifie si l'user est un client
+    public boolean isClient(){
+        return this.role == Role.Client;
+    }
+    // verifie si l'user est un employee
+    public boolean isEmployee(){
+        return this.role == Role.Employee;
+    }
 }

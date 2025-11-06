@@ -22,9 +22,11 @@ import tgpr.restaurant.model.Security;
 
 public class ProductCheckView extends PanelProductAndMenu<Product> {
     private final ProductCheckController controller;
+    private final String view;
 
-    public ProductCheckView(ProductCheckController controller) {
+    public ProductCheckView(ProductCheckController controller, String view) {
         this.controller = controller;
+        this.view = view;
 
         initTable(6);
 
@@ -38,7 +40,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
     // charge les donnes
     @Override
     public void loadData() {
-        if(Security.isBoss()) {
+        if(view.equals("CarteMenuManagementView")) {
             // demande au contrôleur la liste des produits
             var products = controller.listProduct();
             // ajoute l'ensemble des produits au tableau
@@ -66,7 +68,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
     @Override
     public void onProductSelected() {
         // si l'user est le boss
-        if (Security.isBoss()) {
+        if (view.equals("CarteMenuManagementView")) {
             // récupère l'objet couramment sélectionné en naviguant dessus
             var product = tableProduct.getSelected();
             // va vers le controlleur qui permet de changer le produit

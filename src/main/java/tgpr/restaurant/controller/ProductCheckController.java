@@ -10,7 +10,7 @@ public class ProductCheckController extends Controller<ProductCheckView> {
 
     @Override
     public ProductCheckView getView() {
-        return new ProductCheckView(this);
+        return new ProductCheckView(this,"CarteMenuManagementView");
     }
 
     // retourne la liste de tous les produits
