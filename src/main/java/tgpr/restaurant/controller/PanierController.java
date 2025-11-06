@@ -2,6 +2,7 @@ package tgpr.restaurant.controller;
 
 import com.googlecode.lanterna.gui2.*;
 import tgpr.framework.Controller;
+import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.model.Product;
 import tgpr.restaurant.view.PanierView;
 
@@ -65,6 +66,10 @@ public class PanierController extends Controller<PanierView> {
 
     public void connect(){
         navigateTo(new SecurityConnectController());
+    }
+
+    public void restaurantIsClosed(ClosingPeriod closedPeriod){
+        navigateTo(new RestaurantClosedController(closedPeriod));
     }
 
 
