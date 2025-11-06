@@ -8,7 +8,7 @@ public class OrderListClientController extends Controller<OrderListClientView> {
 
     // pour pouvoir avancer en attendant que je fasse le lien avec le login
     public User getUser(){
-        return User.getByKey(2);
+        return User.getByKey(1);
     }
     public OrderListClientView getView() { return new OrderListClientView(this,getUser());}
 }

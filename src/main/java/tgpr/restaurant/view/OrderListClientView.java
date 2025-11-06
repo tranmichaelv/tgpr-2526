@@ -21,6 +21,7 @@ public class OrderListClientView extends BasicWindow {
     private User user = new User();
     // la liste sera scrollable et sélectionnable
     private final ActionListBox ordersListBox = new ActionListBox(new TerminalSize(120, 10));
+    private CheckBox showAllOrders;
 
     public OrderListClientView(OrderListClientController controller, User user) {
         this.controller = controller;
@@ -37,8 +38,11 @@ public class OrderListClientView extends BasicWindow {
         orders.addComponent(new Label("COMMANDES"));
 
         orders.addComponent(new EmptySpace(new TerminalSize(0,1)));
-        CheckBox showAllOrders = new CheckBox("Afficher aussi les commandes terminées (payées)                           ");
+        showAllOrders = new CheckBox("Afficher aussi les commandes terminées (payées)                           ");
         orders.addComponent(showAllOrders);
+
+        // quand on coche / décoche -> recharger la liste
+        showAllOrders.addListener((checkBox) -> populateListBox());
 
         orders.addComponent(new EmptySpace(new TerminalSize(0,1)));
         root.addComponent(orders);
@@ -87,7 +91,10 @@ public class OrderListClientView extends BasicWindow {
 
         boolean hasOrders = false;
         for (Order order : ordersList) {
+
+            //boolean isPaid = order.getPaymentMethod() != null;
             if (order.getClient().equals(user)) {
+
                 String display = toString(order);
                 ordersListBox.addItem(display, () -> openDetails(order));
                 hasOrders = true;
@@ -146,7 +153,7 @@ public class OrderListClientView extends BasicWindow {
         boolean type = order.getTakeAway();
         boolean online = order.getOnline();
         String amount = String.format("%.2f €", getPrice(order));
-        String paiement = String.valueOf(order.getPaymentMethod()); //
+        String paiement = order.getPaymentMethod() == null ? "En cours" : String.valueOf(order.getPaymentMethod());
 
 
         return "  " + padOrTruncate(date, 14)
