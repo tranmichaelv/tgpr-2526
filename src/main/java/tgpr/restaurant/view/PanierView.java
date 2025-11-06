@@ -4,9 +4,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.framework.Controller;
 import tgpr.restaurant.controller.PanierController;
-import tgpr.restaurant.model.Panier;
-import tgpr.restaurant.model.Product;
-import tgpr.restaurant.model.Security;
+import tgpr.restaurant.model.*;
 
 import java.util.List;
 import java.util.Map;
@@ -14,20 +12,28 @@ import java.util.Map;
 public class PanierView extends BasicWindow {
 
     private final PanierController controller;
-    private final Panel root;
 
     public PanierView(PanierController controller) {
         this.controller = controller;
+
+        // verfie si le restaurant est ferme
+        ClosingPeriod closedPeriod = Time.restaurantIsClosed();
+        if(closedPeriod != null){
+            controller.restaurantIsClosed(closedPeriod);
+        } else {
+
         setTitle("Restaurant - Mon Panier");
 
         setHints(List.of(Hint.CENTERED,Hint.MODAL));
-        root = Panel.gridPanel(1, Margin.of(2,2,0,0));
+        Panel root = Panel.gridPanel(1, Margin.of(2,2,0,0));
         setComponent(root);
 
-        afficherContenu();
+        root.addComponent(afficherContenu());
+        }
     }
 
-    private void afficherContenu() {
+    private Panel afficherContenu() {
+        Panel root = new Panel();
         root.removeAllComponents();
 
         root.addComponent(new Label("↑↓ pour naviguer, Entrée: modifier quantité, Suppr: supprimer"));
@@ -70,6 +76,8 @@ public class PanierView extends BasicWindow {
 
         root.addComponent(new EmptySpace(new TerminalSize(0, 1)));
         root.addComponent(creerBoutons());
+
+        return root;
     }
 
     private Panel creerBoutons() {
@@ -98,7 +106,7 @@ public class PanierView extends BasicWindow {
             Panier.vider();
             Controller.showInfo("Le panier a été vidé !");
             this.close();
-            Controller.navigateTo(new PanierController());
+            Controller.navigateBack();
         }
     }
 
