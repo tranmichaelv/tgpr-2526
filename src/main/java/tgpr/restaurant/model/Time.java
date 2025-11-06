@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Time {
-    private static LocalDateTime dateChosen = null;
+    private static LocalDateTime dateChosen = dateOfToday();
 
     public static LocalDateTime dateOfToday(){
         return LocalDateTime.now();
@@ -22,13 +22,14 @@ public class Time {
         return (LocalDateTime.parse(date, formatter));
     }
 
-    public static boolean restaurantIsClosed(LocalDate todayDate){
+    public static ClosingPeriod restaurantIsClosed(){
+        LocalDate todayDate = dateChosen.toLocalDate();
         for(ClosingPeriod c : ClosingPeriod.getAll()){
             if(!todayDate.isBefore(c.getStartDate()) && !todayDate.isAfter(c.getEndDate())){
-                return true;
+                return c;
             }
         }
-        return false;
+        return null;
     }
 
     public static void dateChosen(LocalDateTime date) {
