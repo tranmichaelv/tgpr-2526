@@ -19,7 +19,8 @@ import java.util.List;
 public class OrderListClientView extends BasicWindow {
 
     private final OrderListClientController controller;
-    private final List<Order> ordersList = Order.getAll();;
+    private final List<Order> ordersList = Order.getAll();
+    private final List<Reservation> reservationList = Reservation.getAll();
     private final Menu menuNav;
     private final Menu menuUser;
     private User user = new User();
@@ -63,13 +64,14 @@ public class OrderListClientView extends BasicWindow {
 
         // Title
         Label titleReservations = new Label("RESERVATIONS");
-        titleReservations.setForegroundColor(TextColor.ANSI.BLUE_BRIGHT);
+        titleReservations.addStyle(SGR.UNDERLINE);
+        TextColor blue = new TextColor.RGB(0,0,204);
+        titleReservations.setForegroundColor(blue);
         reservations.addComponent(titleReservations);
 
         // Adding all elements in reservation panel into root
         reservations.addTo(root);
         reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
-
 
         // CheckBox to choose whether to show all reservations
         showAllReservations = new CheckBox("Afficher toutes les réservations (y compris passées et avec commande)");
@@ -83,24 +85,33 @@ public class OrderListClientView extends BasicWindow {
         ls.add(new Label(String.format("%-5s", "Pers.")));
         ls.add(new Label(String.format("%-8s", "En ligne")));
 
-        Panel fieldLabels = new Panel(new GridLayout(ls.size())); // nb column == nb labels
+        Panel displayReservationsHeader = new Panel(new GridLayout(5)); // nb column == nb labels
+
         for (Label field : ls) {
             field.addStyle(SGR.UNDERLINE);
             field.addStyle(SGR.BOLD);
             TextColor gray = new TextColor.RGB(80 ,80,80);
             field.setForegroundColor(gray);
-            fieldLabels.addComponent(field);
+            displayReservationsHeader.addComponent(field);
         }
 
-        fieldLabels.addComponent(new Label("Table 3 (6p)"));
+        Panel displayReservations = new Panel(new GridLayout(5));
+        for (Reservation r : reservationList) {
 
-        reservations.addComponent(fieldLabels);
+            displayReservations.addComponent(new Label("Table " + String.format("%-2s", r.getTable().getId()) + " (" + String.format( "%1s", r.getTable().getCapacity()) + "p)"));
+            displayReservations.addComponent(new Label(String.format("%6s", r.getService().getName())));
+            displayReservations.addComponent(new Label(String.format("%15s", r.getReservationDate())));
+            displayReservations.addComponent(new Label(String.format("%3s", r.getNumberOfPeople())));
+            displayReservations.addComponent(new Label(String.format("%7s", r.getOnline() ? "Oui" : "Non")));
+        }
+
+        reservations.addComponent(displayReservationsHeader);
+        reservations.addComponent(displayReservations);
 
         // New reservation button
         nouvelleReservation = new Button("Nouvelle réservation");
         reservations.addComponent(new EmptySpace(new TerminalSize(0,5)));
         reservations.addComponent(nouvelleReservation);
-
 
     // COMMANDES
         root.addComponent(new EmptySpace(new TerminalSize(0,1)));
