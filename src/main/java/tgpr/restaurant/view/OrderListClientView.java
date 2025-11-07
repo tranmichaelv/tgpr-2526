@@ -7,12 +7,10 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.gui2.menu.MenuItem;
+import org.w3c.dom.Text;
 import tgpr.restaurant.controller.OrderDetailsController;
 import tgpr.restaurant.controller.OrderListClientController;
-import tgpr.restaurant.model.Order;
-import tgpr.restaurant.model.OrderItem;
-import tgpr.restaurant.model.Table;
-import tgpr.restaurant.model.User;
+import tgpr.restaurant.model.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,7 +19,7 @@ import java.util.List;
 public class OrderListClientView extends BasicWindow {
 
     private final OrderListClientController controller;
-    private final List<Order> ordersList = Order.getAll();
+    private final List<Order> ordersList = Order.getAll();;
     private final Menu menuNav;
     private final Menu menuUser;
     private User user = new User();
@@ -79,19 +77,22 @@ public class OrderListClientView extends BasicWindow {
         reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
         List<Label> ls = new ArrayList<>();
-        ls.add(new Label("Table"));
-        ls.add(new Label("Service"));
-        ls.add(new Label("Date"));
-        ls.add(new Label("Pers."));
-        ls.add(new Label("En ligne"));
+        ls.add(new Label(String.format("%-15s", "Table")));
+        ls.add(new Label(String.format("%-9s", "Service")));
+        ls.add(new Label(String.format("%-12s", "Date")));
+        ls.add(new Label(String.format("%-5s", "Pers.")));
+        ls.add(new Label(String.format("%-8s", "En ligne")));
 
-        Panel fieldLabels = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        for (Label lab : ls) {
-            lab.addStyle(SGR.UNDERLINE);
-            TextColor gray = new TextColor.RGB(90,90,90);
-            lab.setForegroundColor(gray);
-            fieldLabels.addComponent(lab);
+        Panel fieldLabels = new Panel(new GridLayout(ls.size())); // nb column == nb labels
+        for (Label field : ls) {
+            field.addStyle(SGR.UNDERLINE);
+            field.addStyle(SGR.BOLD);
+            TextColor gray = new TextColor.RGB(80 ,80,80);
+            field.setForegroundColor(gray);
+            fieldLabels.addComponent(field);
         }
+
+        fieldLabels.addComponent(new Label("Table 3 (6p)"));
 
         reservations.addComponent(fieldLabels);
 
@@ -100,6 +101,8 @@ public class OrderListClientView extends BasicWindow {
         reservations.addComponent(new EmptySpace(new TerminalSize(0,5)));
         reservations.addComponent(nouvelleReservation);
 
+
+    // COMMANDES
         root.addComponent(new EmptySpace(new TerminalSize(0,1)));
         Panel orders = new Panel(new LinearLayout(Direction.VERTICAL));
         orders.addComponent(new Label("COMMANDES"));
@@ -138,6 +141,26 @@ public class OrderListClientView extends BasicWindow {
         populateListBox();
         root.addComponent(ordersListBox);
     }
+
+//    private void fillReservationList() {
+//        reservationList.clear();
+//
+//        boolean hasReservations = false;
+//        for (Reservation reservation : reservationList) {
+//
+//            //boolean isPaid = order.getPaymentMethod() != null;
+//            if (reservation.getClient().equals(user)) {
+//
+//                String display = toString(reservation);
+//                reservationList.add(display, () -> openDetails(reservation));
+//                hasReservations = true;
+//            }
+//        }
+//        if (!hasReservations) {
+//            ordersListBox.addItem("(Aucune commande à afficher)", () -> {});
+//            ordersListBox.setSelectedIndex(0);
+//        }
+//    }
 
     private void openDetails(Order order) {
         //  Crée contrôleur + vue des détails
