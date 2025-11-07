@@ -214,8 +214,8 @@ public class ReservationView extends BasicWindow {
             });
 
 
-//            if (current date is before today OR current day of week is monday) {
-            if (date.isBefore(today) || date.getDayOfWeek() == DayOfWeek.MONDAY) {
+//            if (current date is before today OR current day of week is monday OR (current day of week is sunday and service is "soir")) {
+            if (date.isBefore(today) || date.getDayOfWeek() == DayOfWeek.MONDAY || (date.getDayOfWeek() == DayOfWeek.SUNDAY && midiSoir.getSelectedItem().equalsIgnoreCase("soir"))) {
                 dayButton.setEnabled(false);
                 calendarGrid.addComponent(dayButton
                         .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER))
