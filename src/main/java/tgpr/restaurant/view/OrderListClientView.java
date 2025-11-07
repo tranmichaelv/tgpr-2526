@@ -7,7 +7,6 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.gui2.menu.MenuItem;
-import org.w3c.dom.Text;
 import tgpr.restaurant.controller.OrderDetailsController;
 import tgpr.restaurant.controller.OrderListClientController;
 import tgpr.restaurant.model.*;
@@ -20,7 +19,7 @@ public class OrderListClientView extends BasicWindow {
 
     private final OrderListClientController controller;
     private final List<Order> ordersList = Order.getAll();
-    private final List<Reservation> reservationList = Reservation.getAll();
+    private final List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model
     private final Menu menuNav;
     private final Menu menuUser;
     private User user = new User();
@@ -28,7 +27,7 @@ public class OrderListClientView extends BasicWindow {
     private final ActionListBox ordersListBox = new ActionListBox(new TerminalSize(120, 10));
     private CheckBox showAllOrders;
     private CheckBox showAllReservations;
-    private Button nouvelleReservation;
+    private Button newReservation;
 
     public OrderListClientView(OrderListClientController controller, User user) {
         this.controller = controller;
@@ -78,6 +77,7 @@ public class OrderListClientView extends BasicWindow {
         reservations.addComponent(showAllReservations);
         reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
+        // List of Labels representing the "header" of Reservations
         List<Label> ls = new ArrayList<>();
         ls.add(new Label(String.format("%-15s", "Table")));
         ls.add(new Label(String.format("%-9s", "Service")));
@@ -85,8 +85,9 @@ public class OrderListClientView extends BasicWindow {
         ls.add(new Label(String.format("%-5s", "Pers.")));
         ls.add(new Label(String.format("%-8s", "En ligne")));
 
-        Panel displayReservationsHeader = new Panel(new GridLayout(5)); // nb column == nb labels
-
+        // Panel displayReservationHeader
+        Panel displayReservationsHeader = new Panel(new GridLayout(5)); // nb column == nb labels == 5
+        // for each to add each label to displayReservationHeader
         for (Label field : ls) {
             field.addStyle(SGR.UNDERLINE);
             field.addStyle(SGR.BOLD);
@@ -95,9 +96,9 @@ public class OrderListClientView extends BasicWindow {
             displayReservationsHeader.addComponent(field);
         }
 
+        // Panel displayReservations
         Panel displayReservations = new Panel(new GridLayout(5));
         for (Reservation r : reservationList) {
-
             displayReservations.addComponent(new Label("Table " + String.format("%-2s", r.getTable().getId()) + " (" + String.format( "%1s", r.getTable().getCapacity()) + "p)"));
             displayReservations.addComponent(new Label(String.format("%6s", r.getService().getName())));
             displayReservations.addComponent(new Label(String.format("%15s", r.getReservationDate())));
@@ -105,13 +106,14 @@ public class OrderListClientView extends BasicWindow {
             displayReservations.addComponent(new Label(String.format("%7s", r.getOnline() ? "Oui" : "Non")));
         }
 
+        // adding all components into reservation panel
         reservations.addComponent(displayReservationsHeader);
         reservations.addComponent(displayReservations);
 
         // New reservation button
-        nouvelleReservation = new Button("Nouvelle réservation");
+        newReservation = new Button("Nouvelle réservation");
         reservations.addComponent(new EmptySpace(new TerminalSize(0,5)));
-        reservations.addComponent(nouvelleReservation);
+        reservations.addComponent(newReservation);
 
     // COMMANDES
         root.addComponent(new EmptySpace(new TerminalSize(0,1)));
