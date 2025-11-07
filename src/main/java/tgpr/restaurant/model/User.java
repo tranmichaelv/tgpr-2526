@@ -276,4 +276,9 @@ public class User extends Model {
     public boolean isEmployee(){
         return this.role == Role.Employee;
     }
+
+    public static List<User> getAllOrderByName() {
+        return queryList(User.class, "select * from users order by last_name");
+    }
+
 }
