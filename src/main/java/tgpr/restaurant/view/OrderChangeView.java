@@ -4,13 +4,13 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import tgpr.restaurant.controller.OrderChangeController;
 import tgpr.restaurant.controller.ProductCheckController;
-import tgpr.restaurant.model.Order;
-import tgpr.restaurant.model.Service;
-import tgpr.restaurant.model.Table;
-import tgpr.restaurant.model.User;
+import tgpr.restaurant.model.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -45,16 +45,16 @@ public class OrderChangeView extends BasicWindow {
 
         Panel infoSection = new Panel(new LinearLayout(Direction.VERTICAL));
         root.addComponent(sectionHeader("Informations de la commande:"));
-        infoSection.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        infoSection.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         Panel clientLine = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        clientLine.addComponent(new Label("Client : "  ));
+        clientLine.addComponent(new Label("Client : "));
         clientBox = new ComboBox<>();
-        clientBox.setPreferredSize(new TerminalSize(30,1));
+        clientBox.setPreferredSize(new TerminalSize(30, 1));
 
         clients = controller.getClients();
-        for(User u : clients){
-            clientBox.addItem(u.getLastName() +", " + u.getFirstName());
+        for (User u : clients) {
+            clientBox.addItem(u.getLastName() + ", " + u.getFirstName());
         }
         // sélectionne le client de la commande choisie comme affichage de base
         int currentClientId = controller.getOrder().getClientId();
@@ -70,12 +70,12 @@ public class OrderChangeView extends BasicWindow {
         tableLine.addComponent(new Label("Table:"));
 
         tableBox = new ComboBox<>();
-        tableBox.setPreferredSize(new TerminalSize(28,1));
+        tableBox.setPreferredSize(new TerminalSize(28, 1));
 
         tables = controller.getAvailableTables();
         tableBox.addItem("Aucune");
-        for (Table t : tables){
-            tableBox.addItem("Table" +" " + t.getId() + " (" + t.getCapacity() + "p)");
+        for (Table t : tables) {
+            tableBox.addItem("Table" + " " + t.getId() + " (" + t.getCapacity() + "p)");
         }
         // sélectionne la table de la commande choisie comme affichage de base
         Integer currentTableId = controller.getOrder().getTableId();
@@ -156,14 +156,14 @@ public class OrderChangeView extends BasicWindow {
         reductionLine.addComponent(new Label("Réduction (€): "));
 
         reductionBox = new TextBox();
-        reductionBox.setPreferredSize(new TerminalSize(10,1));
+        reductionBox.setPreferredSize(new TerminalSize(10, 1));
         Double d = controller.getOrder().getDiscount();
         reductionBox.setText(d == null ? "" : String.format("%.2f", d));
 
         reductionLine.addComponent(reductionBox);
         infoSection.addComponent(reductionLine);
 
-        infoSection.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        infoSection.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         Label serviceLabel = new Label("Services disponibles:");
         serviceLabel.addStyle(SGR.ITALIC);
@@ -174,28 +174,23 @@ public class OrderChangeView extends BasicWindow {
 
         serviceLabel.setText("Services disponibles : " + nomsServices);
         infoSection.addComponent(serviceLabel);
-        infoSection.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        infoSection.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         Panel productsSection = new Panel(new LinearLayout(Direction.VERTICAL));
         productsSection.addComponent(sectionHeader("Produits disponibles:"));
-        productsSection.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        productsSection.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
-// Récupère la vue du contrôleur ProductCheck
+        // Récupère la vue du contrôleur ProductCheck
         ProductCheckController pcc = new ProductCheckController();
         ProductCheckView productCheckView = pcc.getView();
 
 // Ajoute le panel dans ta fenêtre principale
         productsSection.addComponent(productCheckView);
 
-        root.addComponent(productsSection);
+        infoSection.addComponent(productsSection);
 
-        Panel ligneProducts = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        ligneProducts.addComponent(emphasize("Nom              "));
-        ligneProducts.addComponent(emphasize("Type      "));
-        ligneProducts.addComponent(emphasize("Prix       "));
-        ligneProducts.addComponent(emphasize("Description         "));
 
-        productsSection.addComponent(ligneProducts);
+
 
         productsSection.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
@@ -215,9 +210,21 @@ public class OrderChangeView extends BasicWindow {
         ligneArticles.addComponent(emphasize("Produit         "));
         ligneArticles.addComponent(emphasize("Quantité"));
         ligneArticles.addComponent(emphasize("Prix unitaire"));
-        ligneArticles.addComponent(emphasize("Total"));
+        ligneArticles.addComponent(emphasize("Total      "));
 
         articles.addComponent(ligneArticles);
+
+        for (var item : controller.getOrder().getOrderItems()) {
+            Panel ligne = new Panel(new LinearLayout(Direction.HORIZONTAL));
+            var product = item.getProduct();
+            ligne.addComponent(new Label(String.format("%-10s", product.getType().toString())));
+            ligne.addComponent(new Label(String.format("%-18s", product.getName())));
+            ligne.addComponent(new Label(String.format("%-10d", item.getQuantity())));
+            ligne.addComponent(new Label(String.format("%-10.2f €", item.getPrice())));
+            ligne.addComponent(new Label(String.format("%.2f €", item.getQuantity() * item.getPrice())));
+
+            articles.addComponent(ligne);
+        }
 
 
         articles.addComponent(new EmptySpace(new TerminalSize(0, 4)));
