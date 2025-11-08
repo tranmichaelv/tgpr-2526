@@ -83,6 +83,7 @@ public class OrderListClientView extends BasicWindow {
         reservations.addComponent(showAllReservations);
         reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
+        updateReservationList(reservationListBox, reservationList, false);
         // List of Labels representing the "header" of Reservations
         List<Label> ls = new ArrayList<>();
         ls.add(new Label(String.format("%-15s", "Table")));
@@ -100,25 +101,6 @@ public class OrderListClientView extends BasicWindow {
             TextColor gray = new TextColor.RGB(80 ,80,80);
             field.setForegroundColor(gray);
             displayReservationsHeader.addComponent(field);
-        }
-
-        // Panel displayReservations
-        Panel displayReservations = new Panel(new GridLayout(5));
-        for (Reservation r : reservationList) {
-            String row = String.format("%s%s%7s%16s%4s%8s",
-                    " Table " + (r.getTable().getId() < 10 ?
-                            r.getTable().getId() + " " //(n > 10 takes 1 more place horizontally, compensating by adding empty space where id is < 0)
-                            : r.getTable().getId()
-                    ),
-                    " (" + r.getTable().getCapacity() + "p)", // reminder: max_capacity is 20, 2 digits would take one more place horizontally. Will be fixed later eventually
-                    r.getService().getName(),
-                    r.getReservationDate(),
-                    r.getNumberOfPeople(),
-                    r.getOnline() ? "Oui" : "Non"
-            );
-            reservationListBox.addItem(row, () -> {
-                // action will be added
-            });
         }
 
         // adding all components into reservation panel
@@ -170,33 +152,12 @@ public class OrderListClientView extends BasicWindow {
         root.addComponent(ordersListBox);
     }
 
-//    private void fillReservationList() {
-//        reservationList.clear();
-//
-//        boolean hasReservations = false;
-//        for (Reservation reservation : reservationList) {
-//
-//            //boolean isPaid = order.getPaymentMethod() != null;
-//            if (reservation.getClient().equals(user)) {
-//
-//                String display = toString(reservation);
-//                reservationList.add(display, () -> openDetails(reservation));
-//                hasReservations = true;
-//            }
-//        }
-//        if (!hasReservations) {
-//            ordersListBox.addItem("(Aucune commande à afficher)", () -> {});
-//            ordersListBox.setSelectedIndex(0);
-//        }
-//    }
-
-
     private void updateReservationList(ActionListBox reservationListBox, List<Reservation> allReservations, boolean showAll) {
         reservationListBox.clearItems();
         LocalDate today = LocalDate.now();
 
         for (Reservation r : allReservations) {
-            if (showAll || !r.getReservationDate().isBefore(today)) {
+            if (showAll || !(r.getReservationDate().isBefore(today))) {
                 String row = String.format("%s%s%7s%16s%4s%8s",
                         " Table " + (r.getTable().getId() < 10 ?
                                 r.getTable().getId() + " " :
