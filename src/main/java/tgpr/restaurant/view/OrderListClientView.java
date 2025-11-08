@@ -11,6 +11,7 @@ import tgpr.restaurant.controller.OrderDetailsController;
 import tgpr.restaurant.controller.OrderListClientController;
 import tgpr.restaurant.model.*;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class OrderListClientView extends BasicWindow {
     private CheckBox showAllOrders;
     private CheckBox showAllReservations;
     private Button newReservation;
+    private ActionListBox reservationListBox = new ActionListBox(new TerminalSize(80, 10));
 
     public OrderListClientView(OrderListClientController controller, User user) {
         this.controller = controller;
@@ -74,6 +76,10 @@ public class OrderListClientView extends BasicWindow {
 
         // CheckBox to choose whether to show all reservations
         showAllReservations = new CheckBox("Afficher toutes les réservations (y compris passées et avec commande)");
+        showAllReservations.setChecked(false);
+        showAllReservations.addListener(checked -> {
+           updateReservationList(reservationListBox, reservationList, checked);
+        });
         reservations.addComponent(showAllReservations);
         reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
@@ -97,22 +103,21 @@ public class OrderListClientView extends BasicWindow {
         }
 
         // Panel displayReservations
-        ActionListBox reservationListBox = new ActionListBox(new TerminalSize(80, 10));
         Panel displayReservations = new Panel(new GridLayout(5));
         for (Reservation r : reservationList) {
             String row = String.format("%s%s%7s%16s%4s%8s",
                     " Table " + (r.getTable().getId() < 10 ?
-                            "0" + r.getTable().getId() //(n > 10 takes 1 more place, compensating by adding 0 where capacity is < 0)
+                            r.getTable().getId() + " " //(n > 10 takes 1 more place horizontally, compensating by adding empty space where id is < 0)
                             : r.getTable().getId()
                     ),
-                    " (" + r.getTable().getCapacity() + "p)",
+                    " (" + r.getTable().getCapacity() + "p)", // reminder: max_capacity is 20, 2 digits would take one more place horizontally. Will be fixed later eventually
                     r.getService().getName(),
                     r.getReservationDate(),
                     r.getNumberOfPeople(),
                     r.getOnline() ? "Oui" : "Non"
             );
             reservationListBox.addItem(row, () -> {
-                // Azione quando selezioni la riga (opzionale)
+                // action will be added
             });
         }
 
@@ -125,7 +130,7 @@ public class OrderListClientView extends BasicWindow {
         reservations.addComponent(new EmptySpace(new TerminalSize(0,5)));
         reservations.addComponent(newReservation);
 
-    // COMMANDES
+        // COMMANDES
         root.addComponent(new EmptySpace(new TerminalSize(0,1)));
         Panel orders = new Panel(new LinearLayout(Direction.VERTICAL));
         orders.addComponent(new Label("COMMANDES"));
@@ -184,6 +189,32 @@ public class OrderListClientView extends BasicWindow {
 //            ordersListBox.setSelectedIndex(0);
 //        }
 //    }
+
+
+    private void updateReservationList(ActionListBox reservationListBox, List<Reservation> allReservations, boolean showAll) {
+        reservationListBox.clearItems();
+        LocalDate today = LocalDate.now();
+
+        for (Reservation r : allReservations) {
+            if (showAll || !r.getReservationDate().isBefore(today)) {
+                String row = String.format("%s%s%7s%16s%4s%8s",
+                        " Table " + (r.getTable().getId() < 10 ?
+                                r.getTable().getId() + " " :
+                                r.getTable().getId()
+                        ),
+                        " (" + r.getTable().getCapacity() + "p)",
+                        r.getService().getName(),
+                        r.getReservationDate(),
+                        r.getNumberOfPeople(),
+                        r.getOnline() ? "Oui" : "Non"
+                );
+                reservationListBox.addItem(row, () -> {
+                    // Action when row is selected
+                });
+            }
+        }
+    }
+
 
     private void openDetails(Order order) {
         //  Crée contrôleur + vue des détails
