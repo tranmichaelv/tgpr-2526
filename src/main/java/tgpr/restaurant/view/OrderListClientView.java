@@ -4,7 +4,6 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
-import tgpr.framework.Controller;
 import tgpr.restaurant.controller.OrderDetailsController;
 import tgpr.restaurant.controller.OrderListClientController;
 import tgpr.restaurant.model.Order;
@@ -19,6 +18,7 @@ public class OrderListClientView extends BasicWindow {
     private final OrderListClientController controller;
     private final List<Order> ordersList = Order.getAll();
     private User user = new User();
+
     // la liste sera scrollable et sélectionnable
     private final ActionListBox ordersListBox = new ActionListBox(new TerminalSize(120, 10));
     private CheckBox showAllOrders;
