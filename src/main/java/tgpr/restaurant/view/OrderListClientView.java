@@ -40,7 +40,7 @@ public class OrderListClientView extends BasicWindow {
         // Root Panel englobing every element
         Panel root = new Panel();
         setComponent(root);
-        root.setPreferredSize(new TerminalSize(115,20));
+//        root.setPreferredSize(new TerminalSize(115,20));
 
         // menuFile nav
         MenuBar header = new MenuBar().addTo(root);
@@ -97,18 +97,24 @@ public class OrderListClientView extends BasicWindow {
         }
 
         // Panel displayReservations
+        ActionListBox reservationListBox = new ActionListBox(new TerminalSize(80, 10));
         Panel displayReservations = new Panel(new GridLayout(5));
         for (Reservation r : reservationList) {
-            displayReservations.addComponent(new Label("Table " + String.format("%-2s", r.getTable().getId()) + " (" + String.format( "%1s", r.getTable().getCapacity()) + "p)"));
-            displayReservations.addComponent(new Label(String.format("%6s", r.getService().getName())));
-            displayReservations.addComponent(new Label(String.format("%15s", r.getReservationDate())));
-            displayReservations.addComponent(new Label(String.format("%3s", r.getNumberOfPeople())));
-            displayReservations.addComponent(new Label(String.format("%7s", r.getOnline() ? "Oui" : "Non")));
+            String row = String.format("%-15s%-10s%-15s%-6d%-8s",
+                    "Table " + r.getTable().getId() + " (" + r.getTable().getCapacity() + "p)",
+                    r.getService().getName(),
+                    r.getReservationDate(),
+                    r.getNumberOfPeople(),
+                    r.getOnline() ? "Oui" : "Non"
+            );
+            reservationListBox.addItem(row, () -> {
+                // Azione quando selezioni la riga (opzionale)
+            });
         }
 
         // adding all components into reservation panel
         reservations.addComponent(displayReservationsHeader);
-        reservations.addComponent(displayReservations);
+        reservations.addComponent(reservationListBox);
 
         // New reservation button
         newReservation = new Button("Nouvelle réservation");
