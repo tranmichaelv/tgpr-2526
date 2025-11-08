@@ -5,6 +5,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.restaurant.controller.OrderChangeController;
+import tgpr.restaurant.controller.ProductCheckController;
 import tgpr.restaurant.model.Order;
 import tgpr.restaurant.model.Service;
 import tgpr.restaurant.model.Table;
@@ -176,9 +177,17 @@ public class OrderChangeView extends BasicWindow {
         infoSection.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
         Panel productsSection = new Panel(new LinearLayout(Direction.VERTICAL));
-        // Ajouter ProductCheck de Michael
         productsSection.addComponent(sectionHeader("Produits disponibles:"));
         productsSection.addComponent(new EmptySpace(new TerminalSize(0,1)));
+
+// Récupère la vue du contrôleur ProductCheck
+        ProductCheckController pcc = new ProductCheckController();
+        ProductCheckView productCheckView = pcc.getView();
+
+// Ajoute le panel dans ta fenêtre principale
+        productsSection.addComponent(productCheckView);
+
+        root.addComponent(productsSection);
 
         Panel ligneProducts = new Panel(new LinearLayout(Direction.HORIZONTAL));
         ligneProducts.addComponent(emphasize("Nom              "));

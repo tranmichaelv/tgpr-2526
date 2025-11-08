@@ -15,15 +15,27 @@ public class RestaurantApp {
             Controller.abort("Database is not available!");
         else {
 
-            Order test = Order.getByKey(17);
+            /*
+             * Exemple de navigation dans les données via le modèle
+             */
 
-           // Controller.navigateTo(new TestController());
-           // Controller.navigateTo(new OrderAddController(test));
-          // Controller.navigateTo(new OrderDeleteController(test));
-           // Controller.navigateTo(new OrderPayController(test));
+            // récupére un utilisateur
+            var user = User.getByKey(1);
+            // et ses réservations en tant que client
+            var reservations = user.getClientReservations();
+            // affiche les réservations
+            for (var r : reservations) {
+                System.out.println("Réservation #" + r.getId() + " : le " + Tools.asString(r.getReservationDate()) +
+                        " pour " + r.getNumberOfPeople() + " personnes" +
+                        " à une table de " + r.getTable().getCapacity() + " places.");
+            }
+            Order test = Order.getByKey(1);
+            // Controller.navigateTo(new TestController());
+            // Controller.navigateTo(new OrderAddController(test));
+            // Controller.navigateTo(new OrderDeleteController(test));
+            // Controller.navigateTo(new OrderPayController(test));
             Controller.navigateTo(new OrderChangeController(test));
-           // Controller.navigateTo(new OrderCheckController());
-
+            // Controller.navigateTo(new OrderCheckController());
         }
     }
 }
