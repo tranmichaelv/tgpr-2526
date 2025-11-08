@@ -15,12 +15,14 @@ public class RestaurantApp {
             Controller.abort("Database is not available!");
         else {
 
-            Order test = Order.getByKey(1);
+            Order test = Order.getByKey(17);
 
            // Controller.navigateTo(new TestController());
            // Controller.navigateTo(new OrderAddController(test));
-           // Controller.navigateTo(new OrderDeleteController(test));
-            Controller.navigateTo(new OrderPayController(test));
+          // Controller.navigateTo(new OrderDeleteController(test));
+           // Controller.navigateTo(new OrderPayController(test));
+            Controller.navigateTo(new OrderChangeController(test));
+           // Controller.navigateTo(new OrderCheckController());
 
         }
     }
