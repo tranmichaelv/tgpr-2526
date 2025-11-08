@@ -100,8 +100,12 @@ public class OrderListClientView extends BasicWindow {
         ActionListBox reservationListBox = new ActionListBox(new TerminalSize(80, 10));
         Panel displayReservations = new Panel(new GridLayout(5));
         for (Reservation r : reservationList) {
-            String row = String.format("%-15s%-10s%-15s%-6d%-8s",
-                    "Table " + r.getTable().getId() + " (" + r.getTable().getCapacity() + "p)",
+            String row = String.format("%s%s%7s%16s%4s%8s",
+                    " Table " + (r.getTable().getId() < 10 ?
+                            "0" + r.getTable().getId() //(n > 10 takes 1 more place, compensating by adding 0 where capacity is < 0)
+                            : r.getTable().getId()
+                    ),
+                    " (" + r.getTable().getCapacity() + "p)",
                     r.getService().getName(),
                     r.getReservationDate(),
                     r.getNumberOfPeople(),
