@@ -29,7 +29,7 @@ public class OrderListClientView extends BasicWindow {
     private CheckBox showAllOrders;
     private CheckBox showAllReservations;
     private Button newReservation;
-    private ActionListBox reservationListBox = new ActionListBox(new TerminalSize(80, 10));
+    private ActionListBox reservationListBox = new ActionListBox(new TerminalSize(80, 7));
 
     public OrderListClientView(OrderListClientController controller, User user) {
         this.controller = controller;
@@ -106,10 +106,10 @@ public class OrderListClientView extends BasicWindow {
         // adding all components into reservation panel
         reservations.addComponent(displayReservationsHeader);
         reservations.addComponent(reservationListBox);
+        reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
         // New reservation button
         newReservation = new Button("Nouvelle réservation");
-        reservations.addComponent(new EmptySpace(new TerminalSize(0,5)));
         reservations.addComponent(newReservation);
 
         // COMMANDES
