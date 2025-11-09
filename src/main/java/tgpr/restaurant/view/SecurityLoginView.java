@@ -67,7 +67,7 @@ public class SecurityLoginView extends BasicWindow{
 
     // reservation
     private Panel createReservationPanel(){
-        Button reservation = new Button("Reserver une table");
+        Button reservation = new Button("Reserver une table", this::reservation);
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,
                 reservation).center();
 
@@ -129,6 +129,8 @@ public class SecurityLoginView extends BasicWindow{
     private void register(){
         controller.register();
     }
+
+    private void reservation() {controller.reservation();}
 
     private void cart(){
         controller.cart();

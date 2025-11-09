@@ -30,6 +30,8 @@ public class SecurityLoginController extends Controller<SecurityLoginView> {
         navigateTo(new SecurityRegisterController());
     }
 
+    public void reservation() {navigateTo(new ReservationController());}
+
     public void menu(){navigateTo(new MenuController());}
 
     public void cart(){navigateTo(new PanierController());}

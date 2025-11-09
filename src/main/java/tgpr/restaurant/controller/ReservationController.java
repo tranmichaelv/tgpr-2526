@@ -45,7 +45,11 @@ public class ReservationController extends Controller<ReservationView> {
         return view;
     }
 
-        // method to print days in the calendar
+    public void retour(){
+        navigateTo(new SecurityLoginController());
+    }
+
+    // method to print days in the calendar
     public List<LocalDate> getCalendarDays(YearMonth month) {
         List<LocalDate> days = new ArrayList<>();
 
@@ -95,10 +99,10 @@ public class ReservationController extends Controller<ReservationView> {
 
             Service service = Service.getByNameAndDay(serviceName, weekDay);
 
-            if (service == null) {
-                view.showError("Pas de service de " + serviceName + " le " + weekDay);
-                return false;
-            }
+//            if (service == null) {
+//                view.showError("Pas de service de " + serviceName + " le " + weekDay);
+//                return false;
+//            }
 
             Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
             if (table == null) {

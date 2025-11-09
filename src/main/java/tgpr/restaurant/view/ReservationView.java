@@ -8,6 +8,7 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationController;
+import tgpr.restaurant.model.Security;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -257,6 +258,12 @@ public class ReservationView extends BasicWindow {
     private Panel buttonsAtBottom() {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
         Button cancel = new Button("Annuler");
+        // if guest, "annuler" button will navigate back to homepage
+        if (!Security.isLogged()) {
+            cancel.addListener(button -> {
+                controller.retour();
+            });
+        }
         confirm = new Button("Confirmer la réservation", () -> {
             int numberOfPeople = Integer.parseInt(nbGuests.getText());
             String service = midiSoir.getSelectedItem();
@@ -282,4 +289,6 @@ public class ReservationView extends BasicWindow {
     public void showError(String message) {
         MessageDialog.showMessageDialog(getTextGUI(), "Erreur", message);
     }
+
+    private void retour() {controller.retour();}
 }
