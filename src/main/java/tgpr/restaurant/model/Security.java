@@ -22,8 +22,12 @@ public class Security {
     public static void logout() {
         login(null);
     }
-    // verifie sir l'user est le boss
+    // verifie si l'user est le boss
     public static boolean isBoss() {
         return loggedUser != null && loggedUser.isBoss();
+    }
+    // vérifie si l'user est un employee
+    public static boolean isEmployee(){
+        return loggedUser != null && loggedUser.getRole() == User.Role.Employee;
     }
 }

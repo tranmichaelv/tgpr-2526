@@ -30,14 +30,10 @@ public class OrderChangeView extends BasicWindow {
     private TextBox nbPersonsBox;
     private TextBox reductionBox;
 
-    Order order;
-
     public OrderChangeView(OrderChangeController controller) {
         this.controller = controller;
 
-
         setTitle("Modifier une commande");
-
         Panel root = new Panel();
 
         root.addComponent(new EmptySpace());
@@ -94,7 +90,7 @@ public class OrderChangeView extends BasicWindow {
         Panel serviceLine = new Panel(new LinearLayout(Direction.HORIZONTAL));
         serviceLine.addComponent(new Label("Service:"));
         serviceBox = new ComboBox<>();
-        serviceBox.setPreferredSize(new TerminalSize(28, 1));
+        serviceBox.setPreferredSize(new TerminalSize(26, 1));
 
         services = controller.getAvailableServices();
         for(Service s : services){
@@ -108,7 +104,6 @@ public class OrderChangeView extends BasicWindow {
                 break;
             }
         }
-
         serviceLine.addComponent(serviceBox);
         infoSection.addComponent(serviceLine);
 
@@ -128,7 +123,7 @@ public class OrderChangeView extends BasicWindow {
         infoSection.addComponent(peopleLine);
 
         // si c'est une commande à emporter alors
-        // on affiche Aucune pour Table et 1 pour nb personne
+        // on affiche 'Aucune' pour Table et 1 pour nb personne
         takeAwayBox.addListener(checked -> {
             boolean takeAway = checked;
             controller.getOrder().setTakeAway(takeAway);
@@ -181,16 +176,10 @@ public class OrderChangeView extends BasicWindow {
         productsSection.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         // Récupère la vue du contrôleur ProductCheck
-        ProductCheckController pcc = new ProductCheckController();
+        ProductCheckController pcc = new ProductCheckController(controller);
+        pcc.setOnOrderChanged(this::refreshArticles);
         ProductCheckView productCheckView = pcc.getView();
-
-// Ajoute le panel dans ta fenêtre principale
         productsSection.addComponent(productCheckView);
-
-        infoSection.addComponent(productsSection);
-
-
-
 
         productsSection.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
@@ -225,8 +214,6 @@ public class OrderChangeView extends BasicWindow {
 
             articles.addComponent(ligne);
         }
-
-
         articles.addComponent(new EmptySpace(new TerminalSize(0, 4)));
 
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL));
@@ -238,7 +225,6 @@ public class OrderChangeView extends BasicWindow {
         buttons.addComponent(new EmptySpace(new TerminalSize(1, 0)));
         buttons.addComponent(new Button("Retour", this::close));
 
-
         infoSection.addTo(root);
         productsSection.addTo(root);
         articles.addTo(root);
@@ -247,6 +233,24 @@ public class OrderChangeView extends BasicWindow {
         setComponent(root);
 
     }
+    // Supprime l'ancien contenu de la section articles
+    // et la reconstruit à partir de la commande actualisée
+    private void refreshArticles() {
+
+
+        // Ferme la fenêtre actuelle
+        getTextGUI().getActiveWindow().close();
+        try {
+            // Recharge la commande mise à jour depuis la base
+            controller.getOrder().reload();
+
+            // Rouvre une nouvelle fenêtre OrderChangeView avec les données à jour
+            controller.navigateTo(new OrderChangeController(controller.getOrder()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // méthode couleur + style css
     private Component sectionHeader(String title) {
         Label header = new Label(title);

@@ -29,13 +29,14 @@ public class RestaurantApp {
                         " pour " + r.getNumberOfPeople() + " personnes" +
                         " à une table de " + r.getTable().getCapacity() + " places.");
             }
-            Order test = Order.getByKey(1);
+            Order test = Order.getByKey(2);
             // Controller.navigateTo(new TestController());
             // Controller.navigateTo(new OrderAddController(test));
             // Controller.navigateTo(new OrderDeleteController(test));
             // Controller.navigateTo(new OrderPayController(test));
             Controller.navigateTo(new OrderChangeController(test));
             // Controller.navigateTo(new OrderCheckController());
+          //  Controller.navigateTo(new CartMenuManagementController());
         }
     }
 }

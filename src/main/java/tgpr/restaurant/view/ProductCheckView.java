@@ -1,6 +1,7 @@
 package tgpr.restaurant.view;
 
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import tgpr.restaurant.controller.ProductCheckController;
 import tgpr.restaurant.model.PanelProductAndMenu;
 import tgpr.restaurant.model.Product;
@@ -27,13 +28,36 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
         this.controller = controller;
 
         initTable(6);
+        // action à éxecuter quand on appuie enter
+        tableProduct.setSelectAction(() -> {
+            // récupère le produit sélectionné
+            var product = tableProduct.getSelected();
+            if (product == null) return;
 
-        // si le patron alors, il peut ajouter de nouveaux products
-        if(Security.isBoss()) {
-            createButtonAddPanel("Ajouter produit", this::addNewProduct);
-        }
-
+            // Si le rôle est boss ou employé : modification
+            if (Security.isBoss() || Security.isEmployee()) {
+                controller.productChange(product);
+                reloadData();
+                tableProduct.setSelected(product);
+            } else {
+                // 0 autorisé si déjà présent suppression
+                var existing = controller.findItem(product);
+                Integer qty = askQuantity(
+                        "Quantité",
+                        "Quantité pour " + product.getName() + " :",
+                        existing == null ? 1 : existing.getQuantity(),
+                        // autorise 0 seulement si déjà présent
+                        existing != null
+                );
+                //  Cancel
+                if (qty == null) return;
+                // si qty = 0 on supprime, si > 0 on ajoute ou met à jour la qty
+                controller.addOrSetQuantity(product, qty);
+            }
+        });
     }
+
+
 
     // charge les donnes
     @Override
@@ -87,6 +111,20 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
     public void addNewProduct(){
         controller.addNewProduct();
         reloadData();
+    }
+    // demande la quantité pour un produit / menu
+    // doit etre positif sauf pour supprimer un produit déjà présent dans ma commande
+    private Integer askQuantity(String title, String desc, int initial, boolean allowZero) {
+        String pattern = allowZero ? "^(?:0|[1-9]\\d*)$" : "^[1-9]\\d*$";
+        String s = new TextInputDialogBuilder()
+                .setTitle(title)
+                .setDescription(desc)
+                .setInitialContent(String.valueOf(initial))
+                .setValidationPattern(java.util.regex.Pattern.compile(pattern),
+                        allowZero ? "Entrez 0 ou un entier positif." : "Entrez un entier positif.")
+                .build()
+                .showDialog((WindowBasedTextGUI) getTextGUI());
+        return (s == null) ? null : Integer.parseInt(s);
     }
 
 }
