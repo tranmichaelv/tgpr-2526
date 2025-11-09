@@ -5,6 +5,9 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.restaurant.controller.OrderPayController;
+import tgpr.restaurant.model.Order;
+
+import java.time.format.DateTimeFormatter;
 
 public class OrderPayView extends BasicWindow {
 
@@ -13,6 +16,8 @@ public class OrderPayView extends BasicWindow {
     public OrderPayView(OrderPayController controller) {
         this.controller = controller;
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        Order order = controller.getOrder(); // on récupère la commande sélectionnée
         setTitle("Enregistrer le paiement");
 
         Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
@@ -23,17 +28,20 @@ public class OrderPayView extends BasicWindow {
         root.addComponent(new EmptySpace());
         Panel info = new Panel(new GridLayout(2));
         // ajout des informations de la commande
-        info.addComponent(new Label("Client:"));
-        info.addComponent(new Label(""));
-
-        info.addComponent(new Label("Date:"));
-        info.addComponent(new Label(""));
-
-        info.addComponent(new Label("Table:"));
-        info.addComponent(new Label(""));
-
-        info.addComponent(new Label("Type:"));
-        info.addComponent(new Label(""));
+        info.addComponent(new Label("Client : " + order.getClient().getFirstName() + " " + order.getClient().getLastName()));
+        info.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        info.addComponent(new Label("Date : " + order.getOrderDate().format(formatter)));
+        info.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        info.addComponent(new Label("Table : " + (order.getTable() != null ? "Table " + order.getTable().getId() + " " + "(" + order.getTable().getCapacity() + "p)" : "Aucune")));
+        info.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        info.addComponent(new Label("Service : " + order.getService().getName()));
+        info.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        info.addComponent(new Label("Personnes effectives : " + order.getEffectivePeopleCount()));
+        info.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        info.addComponent(new Label("Type : " + (order.getTakeAway() ? "À emporter" : "Sur place")));
+        info.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        info.addComponent(new Label("En ligne : " + (order.getOnline() ? "Oui" : "Non")));
+        info.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
         root.addComponent(info);
         root.addComponent(new EmptySpace());
@@ -43,33 +51,27 @@ public class OrderPayView extends BasicWindow {
         // prix des articles
         Panel totals = new Panel(new GridLayout(2));
         Label sousTotalLbl = new Label("Sous-total:");
-        sousTotalLbl.setForegroundColor(TextColor.ANSI.BLACK);
         Label sousTotalVal = new Label("");
-        sousTotalVal.setForegroundColor(TextColor.ANSI.BLACK);
-        totals.addComponent(sousTotalLbl);
-
-        totals.addComponent(sousTotalVal);
-
-
-        // remise de la commande
-        Label remiseLbl = new Label("Remise");
+        Label remiseLbl = new Label("Remise:");
         Label remiseVal = new Label("");
-        remiseLbl.setForegroundColor(TextColor.ANSI.RED);
-        totals.addComponent(remiseLbl);
-
-        totals.addComponent(remiseVal);
-
-        // paiement totale
         Label totalLbl = new Label("Total:");
-        totalLbl.addStyle(SGR.BOLD);
         Label totalVal = new Label("");
-        totalVal.addStyle(SGR.BOLD);
-        totalLbl.setForegroundColor(TextColor.ANSI.GREEN);
-        totals.addComponent(totalLbl);
-        totals.addComponent(totalVal);
-
 
         root.addComponent(totals);
+        double subTotal = order.calculateSubTotal();
+        double discount = order.calculateDiscount();
+        double total = order.calculateTotal();
+
+        sousTotalVal.setText(String.format("%.2f €", subTotal));
+        remiseVal.setText(String.format("-%.2f €", discount));
+        totalVal.setText(String.format("%.2f €", total));
+
+        totals.addComponent(sousTotalLbl);
+        totals.addComponent(sousTotalVal);
+        totals.addComponent(remiseLbl);
+        totals.addComponent(remiseVal);
+        totals.addComponent(totalLbl);
+        totals.addComponent(totalVal);
         root.addComponent(new EmptySpace());
 
         // le client choisi sa méthode de paiement

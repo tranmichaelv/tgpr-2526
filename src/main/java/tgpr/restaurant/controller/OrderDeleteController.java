@@ -8,6 +8,9 @@ public class OrderDeleteController extends Controller<OrderDeleteView> {
 
     private final Order order;
 
+    public Order getOrder() {
+        return order;
+    }
     public OrderDeleteController(Order order) {
         this.order = order;
     }
@@ -21,4 +24,5 @@ public class OrderDeleteController extends Controller<OrderDeleteView> {
             order.delete();
         }
     }
+
 }

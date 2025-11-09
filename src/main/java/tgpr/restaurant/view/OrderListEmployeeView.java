@@ -96,7 +96,7 @@ public class OrderListEmployeeView extends BasicWindow {
         for (Order order : ordersList) {
             if (order.getClient().equals(user)) {
 
-                boolean isPaid = false;
+                boolean isPaid = order.getPaymentMethod() != null;
                 if (showAll || !isPaid){
                     String display = toString(order);
                     ordersListBox.addItem(display, () -> openActions(order));
