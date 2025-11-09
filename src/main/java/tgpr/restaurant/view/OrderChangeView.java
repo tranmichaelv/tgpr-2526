@@ -30,6 +30,7 @@ public class OrderChangeView extends BasicWindow {
     private TextBox nbPersonsBox;
     private TextBox reductionBox;
     private Label priceSummaryLabel;
+    private Panel articlesPanel;
 
     public OrderChangeView(OrderChangeController controller) {
         this.controller = controller;
@@ -168,7 +169,8 @@ public class OrderChangeView extends BasicWindow {
                 // Si ok, on accepte et met à jour le modèle
                 Double value = parseReduction(clean);
                 controller.getOrder().setDiscount(value);
-                updatePriceSummaryLabel();
+                rebuildArticlesSection();
+                try { getTextGUI().updateScreen(); } catch (Exception ignored) {}
             } else {
                 // Trop de décimales → on tronque
                 if (clean.contains(".")) {
@@ -204,19 +206,11 @@ public class OrderChangeView extends BasicWindow {
         pcc.setOnOrderChanged(this::refreshArticles);
         ProductCheckView productCheckView = pcc.getView();
         productsSection.addComponent(productCheckView);
-
         productsSection.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
-        Panel articles = new Panel(new LinearLayout(Direction.VERTICAL));
-        articles.addComponent(sectionHeader("Articles de la commande:"));
-        articles.addComponent(new EmptySpace(new TerminalSize(0,1)));
-
-
-        double sousTotal = controller.getSousTotal();
-        double reduction = controller.getReduction();
-        double total = controller.getTotal();
-
-        articles.addComponent(priceSummary(sousTotal, reduction, total));
+        articlesPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+        // construit la section à partir de l'état courant
+        rebuildArticlesSection();
 
         Panel ligneArticles = new Panel(new LinearLayout(Direction.HORIZONTAL));
         ligneArticles.addComponent(emphasize("Type     "));
@@ -224,8 +218,6 @@ public class OrderChangeView extends BasicWindow {
         ligneArticles.addComponent(emphasize("Quantité"));
         ligneArticles.addComponent(emphasize("Prix unitaire"));
         ligneArticles.addComponent(emphasize("Total      "));
-
-        articles.addComponent(ligneArticles);
 
         for (var item : controller.getOrder().getOrderItems()) {
             Panel ligne = new Panel(new LinearLayout(Direction.HORIZONTAL));
@@ -235,10 +227,7 @@ public class OrderChangeView extends BasicWindow {
             ligne.addComponent(new Label(String.format("%-10d", item.getQuantity())));
             ligne.addComponent(new Label(String.format("%-10.2f €", item.getPrice())));
             ligne.addComponent(new Label(String.format("%.2f €", item.getQuantity() * item.getPrice())));
-
-            articles.addComponent(ligne);
         }
-        articles.addComponent(new EmptySpace(new TerminalSize(0, 4)));
 
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttons.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
@@ -251,29 +240,14 @@ public class OrderChangeView extends BasicWindow {
 
         infoSection.addTo(root);
         productsSection.addTo(root);
-        articles.addTo(root);
+        articlesPanel.addTo(root);
         buttons.addTo(root);
 
         setComponent(root);
 
     }
-    // Supprime l'ancien contenu de la section articles
-    // et la reconstruit à partir de la commande actualisée
-    private void refreshArticles() {
 
 
-        // Ferme la fenêtre actuelle
-        getTextGUI().getActiveWindow().close();
-        try {
-            // Recharge la commande mise à jour depuis la base
-            controller.getOrder().reload();
-
-            // Rouvre une nouvelle fenêtre OrderChangeView avec les données à jour
-            controller.navigateTo(new OrderChangeController(controller.getOrder()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     // méthode couleur + style css
     private Component sectionHeader(String title) {
@@ -340,18 +314,50 @@ public class OrderChangeView extends BasicWindow {
         }
     }
 
-    private void updatePriceSummaryLabel() {
-        // sécurité pendant construction
-        if (priceSummaryLabel == null) return;
+
+    private void rebuildArticlesSection() {
+        if (articlesPanel == null) return;
+        articlesPanel.removeAllComponents();
+
+        articlesPanel.addComponent(sectionHeader("Articles de la commande:"));
+        articlesPanel.addComponent(new EmptySpace(new TerminalSize(0,1)));
+
+        // Totaux à jour
         double sousTotal = controller.getSousTotal();
-        // 0.00 si discount == null
         double reduction = controller.getReduction();
         double total = controller.getTotal();
+        articlesPanel.addComponent(priceSummary(sousTotal, reduction, total));
 
-        priceSummaryLabel.setText(String.format(
-                "Sous-total: %.2f €  -  Réduction: %.2f €  =  Total: %.2f €",
-                sousTotal, reduction, total
-        ));
+        // En-têtes colonnes
+        Panel ligneArticles = new Panel(new LinearLayout(Direction.HORIZONTAL));
+        ligneArticles.addComponent(emphasize("Type     "));
+        ligneArticles.addComponent(emphasize("Produit         "));
+        ligneArticles.addComponent(emphasize("Quantité"));
+        ligneArticles.addComponent(emphasize("Prix unitaire"));
+        ligneArticles.addComponent(emphasize("Total      "));
+        articlesPanel.addComponent(ligneArticles);
+
+        // Lignes d'articles
+        for (var item : controller.getOrder().getOrderItems()) {
+            Panel ligne = new Panel(new LinearLayout(Direction.HORIZONTAL));
+            var product = item.getProduct();
+            ligne.addComponent(new Label(String.format("%-10s", product.getType().toString())));
+            ligne.addComponent(new Label(String.format("%-18s", product.getName())));
+            ligne.addComponent(new Label(String.format("%-10d", item.getQuantity())));
+            ligne.addComponent(new Label(String.format("%-10.2f €", item.getPrice())));
+            ligne.addComponent(new Label(String.format("%.2f €", item.getQuantity() * item.getPrice())));
+            articlesPanel.addComponent(ligne);
+        }
+
+        articlesPanel.addComponent(new EmptySpace(new TerminalSize(0, 4)));
+    }
+
+    private void refreshArticles() {
+        //  Save la réduction tapée dans le modèle AVANT de reconstruire
+        Double value = parseReduction(reductionBox.getText());
+        controller.getOrder().setDiscount(value);
+        //  Reconstruire la section Articles (totaux + lignes)
+        rebuildArticlesSection();
     }
 
 }
