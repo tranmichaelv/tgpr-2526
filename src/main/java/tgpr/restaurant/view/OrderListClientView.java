@@ -104,7 +104,6 @@ public class OrderListClientView extends BasicWindow {
             }
         }
         if (!hasOrders) {
-            ordersListBox.addItem("(Aucune commande à afficher)", () -> {});
             ordersListBox.setSelectedIndex(0);
         }
     }
@@ -129,14 +128,6 @@ public class OrderListClientView extends BasicWindow {
         headerPanel.addComponent(underlineLabel);
         return headerPanel;
     }
-
-    public String getType(boolean type){
-        return type ? "A emporter" : "Sur place";
-    }
-
-    public String getonline(boolean online) {
-        return online ? "Oui" : "Non";
-    }
     public double getPrice(Order order) {
         double total = 0.0;
         for (OrderItem item : order.getOrderItems()) {
@@ -153,8 +144,8 @@ public class OrderListClientView extends BasicWindow {
                 : "A emporter";
         String service = order.getService().getName();
         String pers = String.valueOf(order.getEffectivePeopleCount());
-        boolean type = order.getTakeAway();
-        boolean online = order.getOnline();
+        String type = order.getTakeAway() ? "A emporter" : "Sur place";
+        String online = order.getOnline() ? "Oui" : "Non";
         String amount = String.format("%.2f €", getPrice(order));
         String paiement = String.valueOf(order.getPaymentMethod()); //
 
@@ -163,8 +154,8 @@ public class OrderListClientView extends BasicWindow {
                 + padOrTruncate(tableInfo, 15)
                 + padOrTruncate(service, 11)
                 + padOrTruncate(pers, 9)
-                + padOrTruncate(getType(type), 12)
-                + padOrTruncate(getonline(online), 12)
+                + padOrTruncate(type, 12)
+                + padOrTruncate(online, 12)
                 + padOrTruncate(amount, 12)
                 + padOrTruncate(paiement, 12);
     }

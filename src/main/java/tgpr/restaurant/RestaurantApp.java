@@ -37,8 +37,8 @@ public class RestaurantApp {
             // Page Pour afficher la liste des commande
             //Controller.navigateTo(new OrderChangeController());
 
-            //Controller.navigateTo(new OrderListClientController());
-            Controller.navigateTo(new OrderListEmployeeController());
+            Controller.navigateTo(new OrderListClientController());
+            //Controller.navigateTo(new OrderListEmployeeController());
             //Controller.navigateTo(new OrderCreateController());
         }
     }
