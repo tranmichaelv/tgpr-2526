@@ -29,6 +29,7 @@ public class OrderChangeView extends BasicWindow {
     private CheckBox takeAwayBox;
     private TextBox nbPersonsBox;
     private TextBox reductionBox;
+    private Label priceSummaryLabel;
 
     public OrderChangeView(OrderChangeController controller) {
         this.controller = controller;
@@ -157,6 +158,29 @@ public class OrderChangeView extends BasicWindow {
 
         reductionLine.addComponent(reductionBox);
         infoSection.addComponent(reductionLine);
+        // Mise à jour dynamique du prix quand on tape dans réduction
+        reductionBox.setTextChangeListener((newText, changedByUser) -> {
+            // Nettoye le texte
+            String clean = newText.replace(',', '.').trim();
+
+            // Vérifie et limite à 2 décimales
+            if (clean.matches("\\d*\\.?\\d{0,2}")) {
+                // Si ok, on accepte et met à jour le modèle
+                Double value = parseReduction(clean);
+                controller.getOrder().setDiscount(value);
+                updatePriceSummaryLabel();
+            } else {
+                // Trop de décimales → on tronque
+                if (clean.contains(".")) {
+                    int dotIndex = clean.indexOf(".");
+                    if (dotIndex + 3 < clean.length()) {
+                        clean = clean.substring(0, dotIndex + 3);
+                    }
+                }
+                // Applique la valeur corrigée dans la TextBox
+                reductionBox.setText(clean);
+            }
+        });
 
         infoSection.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
@@ -283,17 +307,51 @@ public class OrderChangeView extends BasicWindow {
     private Component priceSummary(double sousTotal, double reduction, double total) {
         Panel summary = new Panel(new LinearLayout(Direction.HORIZONTAL));
 
-        String texte = String.format(
+       priceSummaryLabel = new Label(String.format(
+               "Sous-total: %.2f €  -  Réduction: %.2f €  =  Total: %.2f €",
+               sousTotal, reduction, total
+       ));
+
+        priceSummaryLabel.setForegroundColor(TextColor.ANSI.GREEN_BRIGHT);
+        priceSummaryLabel.addStyle(SGR.BOLD);
+
+        summary.addComponent(priceSummaryLabel);
+        return summary;
+    }
+    // convertit le texte dans Réduction en décimal valide
+    private Double parseReduction(String s) {
+        if (s == null) return null;
+        s = s.trim();
+        // champ vide => pas de réduction (null)
+        if (s.isEmpty()) return null;
+        // accepter la virgule
+        s = s.replace(',', '.');
+        try {
+            double v = Double.parseDouble(s);
+            // borne inférieure
+            if (v < 0) v = 0;
+            //  éviter réduc > sous-total
+            double st = controller.getSousTotal();
+            if (v > st) v = st;
+            return v;
+        } catch (NumberFormatException e) {
+            // invalide => ignorer (affiché 0.00 en bas)
+            return null;
+        }
+    }
+
+    private void updatePriceSummaryLabel() {
+        // sécurité pendant construction
+        if (priceSummaryLabel == null) return;
+        double sousTotal = controller.getSousTotal();
+        // 0.00 si discount == null
+        double reduction = controller.getReduction();
+        double total = controller.getTotal();
+
+        priceSummaryLabel.setText(String.format(
                 "Sous-total: %.2f €  -  Réduction: %.2f €  =  Total: %.2f €",
                 sousTotal, reduction, total
-        );
-
-        Label lbl = new Label(texte);
-        lbl.setForegroundColor(TextColor.ANSI.GREEN_BRIGHT);
-        lbl.addStyle(SGR.BOLD);
-
-        summary.addComponent(lbl);
-        return summary;
+        ));
     }
 
 }
