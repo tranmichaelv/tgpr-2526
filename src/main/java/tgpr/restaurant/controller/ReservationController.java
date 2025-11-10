@@ -4,10 +4,10 @@ import tgpr.framework.Controller;
 import tgpr.restaurant.model.Reservation;
 import tgpr.restaurant.model.Service;
 import tgpr.restaurant.model.Table;
+import tgpr.restaurant.model.Time;
 import tgpr.restaurant.view.ReservationView;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
+import java.time.*;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ import java.util.Locale;
 public class ReservationController extends Controller<ReservationView> {
 
     private final ReservationView view = new ReservationView(this); // ReservationView has now access to this controller's methods
-    private YearMonth currentMonth = YearMonth.now();
+    private YearMonth currentMonth = YearMonth.from(Time.getDateChosen());
 
     @Override
     public ReservationView getView() {
@@ -69,11 +69,11 @@ public class ReservationController extends Controller<ReservationView> {
     }
 
     public YearMonth getCurrentMonth() {
-        // guaranteed initialization of currentMonth
         if (currentMonth == null) {
-            currentMonth = YearMonth.now();
+            currentMonth = YearMonth.from(Time.getDateChosen());
         }
         return currentMonth;
+
     }
 
     public void goToPreviousMonth() {
@@ -89,7 +89,7 @@ public class ReservationController extends Controller<ReservationView> {
         try {
             int numberOfPeople = Integer.parseInt(nbGuestsText);
 
-            if (selectedDate == null || selectedDate.isBefore(LocalDate.now())) {
+            if (selectedDate == null || selectedDate.isBefore(Time.getDateChosen().toLocalDate())) {
                 view.showError("Veuillez sélectionner une date valide.");
                 return false;
             }

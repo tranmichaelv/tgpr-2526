@@ -9,9 +9,11 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationController;
 import tgpr.restaurant.model.Security;
+import tgpr.restaurant.model.Time;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,6 @@ import java.util.regex.Pattern;
 
 public class ReservationView extends BasicWindow {
     public static final String[] DAYS = new String[]{"Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"};
-    public static final LocalDate today = LocalDate.now();
     private static final int MONTH_LABEL_WIDTH = 20;
     private final ReservationController controller;
     private Label monthLabel;
@@ -146,8 +147,14 @@ public class ReservationView extends BasicWindow {
 
     // formatting Month received from controller
     private String getFormattedMonth() {
-        return controller.getCurrentMonth().atDay(1)
-                .format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRENCH));
+        try {
+            return controller.getCurrentMonth().atDay(1)
+                    .format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRENCH));
+        } catch (Exception e) {
+            showError("Erreur lors du formatage du mois.");
+            return "Mois inconnu";
+        }
+
     }
 
 
@@ -214,9 +221,10 @@ public class ReservationView extends BasicWindow {
                 }
             });
 
+            LocalDate simulatedToday = Time.getDateChosen().toLocalDate();
 
 //            if (current date is before today OR current day of week is monday OR (current day of week is sunday and service is "soir")) {
-            if (date.isBefore(today) || date.getDayOfWeek() == DayOfWeek.MONDAY || (date.getDayOfWeek() == DayOfWeek.SUNDAY && midiSoir.getSelectedItem().equalsIgnoreCase("soir"))) {
+            if (date.isBefore(simulatedToday) || date.getDayOfWeek() == DayOfWeek.MONDAY || (date.getDayOfWeek() == DayOfWeek.SUNDAY && midiSoir.getSelectedItem().equalsIgnoreCase("soir"))) {
                 dayButton.setEnabled(false);
                 calendarGrid.addComponent(dayButton
                         .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER))
@@ -231,8 +239,6 @@ public class ReservationView extends BasicWindow {
         }
     }
 
-
-
     // method refresh to scroll calendar
     private void refreshCalendar() {
         monthLabel.setText(centerText(getFormattedMonth(), MONTH_LABEL_WIDTH)); // updating month label
@@ -245,7 +251,6 @@ public class ReservationView extends BasicWindow {
         int padding = Math.max(0, (width - text.length()) / 2);
         return " ".repeat(padding) + text + " ".repeat(width - padding - text.length());
     }
-
 
     // calendar grid (columns : 7)
     private Panel createCalendarGridPanel() {
