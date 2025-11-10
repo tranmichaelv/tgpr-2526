@@ -74,20 +74,7 @@ public class OrderListEmployeeView extends BasicWindow {
 
     }
 
-    private void openActions(Order order) {
-        //  Crée contrôleur + vue actions sur la commande
-        var ctrl = new OrderCheckController(order);
-        //var ctrl = new OrderDetailsController(order);
-        var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
 
-        //  Configure l’affichage pour qu’elle s’ouvre par-dessus
-        win.setHints(java.util.Arrays.asList(
-                Window.Hint.MODAL,     // bloque les interactions dessous
-                Window.Hint.CENTERED   // centre la fenêtre
-        ));
-        //  Affiche la fenêtre par-dessus sans fermer celle de la liste
-        getTextGUI().addWindowAndWait(win);
-    }
 
     private void populateListBox() {
         ordersListBox.clearItems();
@@ -99,7 +86,7 @@ public class OrderListEmployeeView extends BasicWindow {
                 boolean isPaid = order.getPaymentMethod() != null;
                 if (showAll || !isPaid){
                     String display = toString(order);
-                    ordersListBox.addItem(display, () -> openActions(order));
+                    ordersListBox.addItem(display, () -> controller.openActions(order));
                     hasOrders = true;
                 }
             }

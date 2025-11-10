@@ -72,20 +72,6 @@ public class OrderListClientView extends BasicWindow {
         root.addComponent(ordersListBox);
     }
 
-    private void openDetails(Order order) {
-        //  Crée contrôleur + vue des détails
-        var ctrl = new OrderDetailsController(order);
-        var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
-
-        //  Configure l’affichage pour qu’elle s’ouvre par-dessus
-        win.setHints(java.util.Arrays.asList(
-                Window.Hint.MODAL,     // bloque les interactions dessous
-                Window.Hint.CENTERED   // centre la fenêtre
-        ));
-        //  Affiche la fenêtre par-dessus sans fermer celle de la liste
-        getTextGUI().addWindowAndWait(win);
-    }
-
     private void populateListBox() {
         ordersListBox.clearItems();
 
@@ -98,7 +84,7 @@ public class OrderListClientView extends BasicWindow {
 
                 if (showAll || !isPaid){
                     String display = toString(order);
-                    ordersListBox.addItem(display, () -> openDetails(order));
+                    ordersListBox.addItem(display, () -> controller.openDetails(order));
                     hasOrders = true;
                 }
             }
