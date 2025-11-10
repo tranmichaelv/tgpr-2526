@@ -1,8 +1,10 @@
 package tgpr.restaurant.controller;
 
 import tgpr.framework.Controller;
+import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.model.Product;
 import tgpr.restaurant.model.Panier;
+import tgpr.restaurant.model.Time;
 import tgpr.restaurant.view.MenuView;
 import com.googlecode.lanterna.gui2.*;
 
@@ -11,6 +13,10 @@ public class MenuController extends Controller<MenuView> {
     @Override
     public MenuView getView() {
         return new MenuView(this);
+    }
+
+    public void back(){
+        navigateTo(new SecurityLoginController());
     }
 
     /**
@@ -25,7 +31,12 @@ public class MenuController extends Controller<MenuView> {
      * Ouvre le panier actuel de l’utilisateur.
      */
     public void ouvrirPanier() {
-        navigateTo(new PanierController());
+        ClosingPeriod closingPeriod =  Time.restaurantIsClosed();
+        if(closingPeriod != null ){
+            navigateTo(new RestaurantClosedController(closingPeriod));
+        } else {
+            navigateTo(new PanierController());
+        }
     }
 
     /**
@@ -62,11 +73,7 @@ public class MenuController extends Controller<MenuView> {
 
         panel.addComponent(boutons);
         popup.setComponent(panel);
-
-        tgpr.framework.ViewManager.showModal(popup);
-    }
-
-    public void back(){
-        navigateBack();
+        // marche pas ducoup
+//        tgpr.framework.ViewManager.showModal(popup);
     }
 }

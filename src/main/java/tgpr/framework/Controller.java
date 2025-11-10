@@ -4,7 +4,6 @@ import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
-
 import java.util.List;
 
 /**
@@ -163,21 +162,8 @@ public abstract class Controller<V> {
      *
      * @param error l'erreur à afficher
      */
-
-
-
-
-
-
-
     public static void abort(String error) {
         showError(new Error(error), "Abort");
         System.exit(1);
-    }
-
-
-
-    public static void navigateBack() {
-        ViewManager.navigateBack();
     }
 }

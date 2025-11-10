@@ -2,13 +2,14 @@ package tgpr.restaurant.view;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.restaurant.controller.MenuDetailController;
 import tgpr.restaurant.model.MenuItem;
 import tgpr.restaurant.model.Product;
 
 import java.util.List;
 
-public class MenuDetailView extends BasicWindow {
+public class MenuDetailView extends DialogWindow {
 
     private final MenuDetailController controller;
     private final Product produit;
@@ -18,7 +19,8 @@ public class MenuDetailView extends BasicWindow {
         this.controller = controller;
         this.produit = produit;
 
-        setHints(List.of(Hint.CENTERED));
+        setHints(List.of(Hint.CENTERED, Hint.MODAL));
+        setCloseWindowWithEscape(true);
 
         Panel root = Panel.gridPanel(1,
                 Margin.of(2,1,0,0),
@@ -127,7 +129,7 @@ public class MenuDetailView extends BasicWindow {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttons.addComponent(new Button("Ajouter à mon panier", controller::ajouterAuPanier));
         buttons.addComponent(new Button("Mon Panier", controller::ouvrirPanier));
-        buttons.addComponent(new Button("Retour", controller::retour));
+        buttons.addComponent(new Button("Retour", this::close));
         return buttons;
     }
 }

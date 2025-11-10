@@ -3,6 +3,7 @@ package tgpr.framework;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
@@ -11,115 +12,128 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
-import com.googlecode.lanterna.gui2.Window;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class ViewManager {
     private static MultiWindowTextGUI gui;
-    private static final Stack<Window> windowStack = new Stack<>();
+    private static Window currentWindow;
 
-    // ==================== INITIALISATION ====================
     static {
         try {
             DefaultTerminalFactory factory = new DefaultTerminalFactory();
-            factory.setForceTextTerminal(false);
-            factory.setPreferTerminalEmulator(true);
 
-            factory.setInitialTerminalSize(new TerminalSize(
-                    Configuration.getInt("terminal.width"),
-                    Configuration.getInt("terminal.height")
-            ));
+            // Ces deux lignes sont nécessaires depuis JDK 22+ sinon lanterna réclame javaw au lieu de java
+            factory.setForceTextTerminal(false);      // Ne force PAS le terminal texte natif
+            factory.setPreferTerminalEmulator(true);  // Préfère l'émulateur graphique
 
+            factory.setInitialTerminalSize(new TerminalSize(Configuration.getInt("terminal.width"),
+                    Configuration.getInt("terminal.height")));
             factory.setTerminalEmulatorFontConfiguration(
-                    SwingTerminalFontConfiguration.newInstance(
-                            new Font(getFontName(), Font.PLAIN, Configuration.getInt("fontsize"))
-                    )
-            );
-
+                    SwingTerminalFontConfiguration.newInstance(new Font(getFontName(), Font.PLAIN,
+                            Configuration.getInt("fontsize"))));
             SwingTerminalFrame terminal = (SwingTerminalFrame) factory.createTerminal();
             terminal.setResizable(false);
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            terminal.setLocation(
-                    (screenSize.width - terminal.getWidth()) / 2,
-                    (screenSize.height - terminal.getHeight()) / 2
-            );
+            terminal.setLocation((screenSize.width - terminal.getWidth()) / 2,
+                    (screenSize.height - terminal.getHeight()) / 2);
             terminal.setTitle(Configuration.get("title"));
-
             Screen screen = new TerminalScreen(terminal);
             screen.startScreen();
             gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(),
                     new EmptySpace(TextColor.ANSI.valueOf(Configuration.get("backgroundColor"))));
-
         } catch (IOException e) {
             System.err.println(e);
             System.exit(1);
         }
     }
 
-    // ==================== SYSTEM METHODS ====================
     private static String getFontName() {
+        String fontName = null;
         switch (OSType.DETECTED) {
-            case Windows: return Configuration.get("fontname.windows");
-            case Linux: return Configuration.get("fontname.linux");
-            case MacOS: return Configuration.get("fontname.mac");
-            default: return Configuration.get("fontname.other");
+            case Windows:
+                fontName = Configuration.get("fontname.windows");
+                break;
+            case Linux:
+                fontName = Configuration.get("fontname.linux");
+                break;
+            case MacOS:
+                fontName = Configuration.get("fontname.mac");
+                break;
+            case Other:
+                fontName = Configuration.get("fontname.other");
+            default:
+                throw new RuntimeException("Unsupported OS");
         }
+        return fontName;
     }
 
-    // ==================== NAVIGATION ====================
-    public static void navigateTo(Window window) {
-        if (!windowStack.isEmpty()) {
-            windowStack.peek().close();
-        }
-        windowStack.push(window);
-        gui.addWindowAndWait(window);
+    public static TerminalSize getTerminalSize() {
+        return gui.getScreen().getTerminalSize();
     }
 
-    public static void navigateBack() {
-        if (!windowStack.isEmpty()) {
-            Window current = windowStack.pop();
-            current.close();
-            if (!windowStack.isEmpty()) {
-                gui.addWindowAndWait(windowStack.peek());
-            }
-        }
+    public static int getTerminalColumns() {
+        return getTerminalSize().getColumns();
     }
 
-    public static void showModal(DialogWindow window) {
-        window.showDialog(gui);
+    public static int getTerminalRows() {
+        return getTerminalSize().getRows();
     }
 
-
-
-    public static void showModal(BasicWindow window) {
-        gui.addWindowAndWait(window);
+    /**
+     * Permet d'afficher une boîte de dialogue modale présentant les erreurs reçues en paramètre.
+     * Les erreurs sont représentées par des instances de {@link Error}.
+     *
+     * @param errors la liste des erreurs à afficher
+     */
+    static void showErrors(List<Error> errors) {
+        showErrors(errors, "Error");
     }
 
-    // ==================== MESSAGES ====================
-    public static void showErrors(List<Error> errors) {
-        showErrors(errors, "Erreur");
+    /**
+     * Permet d'afficher une boîte de dialogue modale présentant une erreur reçue en paramètre.
+     * L'erreur est représentée par une instances de {@link Error}.
+     *
+     * @param error l'erreur à afficher
+     */
+    static void showError(Error error) {
+        showErrors(List.of(error));
     }
 
-    public static void showErrors(List<Error> errors, String title) {
-        if (errors == null || errors.isEmpty()) return;
-        String message = errors.stream()
-                .map(Error::getMessage)
-                .collect(Collectors.joining("\n"));
-        MessageDialog.showMessageDialog(gui, title, message, MessageDialogButton.OK);
+    static void showErrors(List<Error> errors, String title) {
+        var errorsText = errors.stream().map(Error::getMessage).collect(Collectors.toList());
+        if (!errors.isEmpty())
+            MessageDialog.showMessageDialog(gui, title, String.join("\n", errorsText), MessageDialogButton.OK);
     }
 
-    public static MessageDialogButton showMessage(String message, String title, MessageDialogButton... buttons) {
+    static MessageDialogButton showMessage(String message, String title, MessageDialogButton... buttons) {
         return MessageDialog.showMessageDialog(gui, title, message, buttons);
     }
 
-    public static String showMessage(String message, String title, String... buttons) {
-        // fallback simple message
-        MessageDialog.showMessageDialog(gui, title, message, MessageDialogButton.OK);
-        return "OK";
+    static String showMessage(String message, String title, String[] buttons) {
+        var dialog = new MessageBox(message, title, buttons);
+        showModal(dialog);
+        return dialog.getClickedButton();
+    }
+
+    static void navigateTo(Window window) {
+        if (window == null)
+            return;
+        if (currentWindow != null) {
+            // on fait ça sinon le menu reste ouvert quand on ferme la fenêtre avec logout
+            if (gui.getActiveWindow() != null && gui.getActiveWindow() != currentWindow)
+                gui.getActiveWindow().close();
+            currentWindow.close();
+            gui.removeWindow(currentWindow);
+        }
+        currentWindow = window;
+        gui.addWindowAndWait(window);
+    }
+
+    static void showModal(DialogWindow window) {
+        window.showDialog(gui);
     }
 }

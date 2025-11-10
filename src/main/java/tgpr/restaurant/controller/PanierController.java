@@ -2,8 +2,11 @@ package tgpr.restaurant.controller;
 
 import com.googlecode.lanterna.gui2.*;
 import tgpr.framework.Controller;
+import tgpr.framework.ViewManager;
 import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.model.Product;
+import tgpr.restaurant.model.Time;
+import tgpr.restaurant.view.MenuDetailView;
 import tgpr.restaurant.view.PanierView;
 
 public class PanierController extends Controller<PanierView> {
@@ -11,10 +14,6 @@ public class PanierController extends Controller<PanierView> {
     @Override
     public PanierView getView() {
         return new PanierView(this);
-    }
-
-    public void back() {
-        navigateBack();
     }
 
     public void modifierQuantite(Product produit) {
@@ -61,16 +60,10 @@ public class PanierController extends Controller<PanierView> {
         popup.setComponent(panel);
 
         // Affiche la fenêtre modale (popup) à l’écran et bloque l’exécution
-        tgpr.framework.ViewManager.showModal(popup);
+//        tgpr.framework.ViewManager.showModal(popup);
     }
 
     public void connect(){
         navigateTo(new SecurityConnectController());
     }
-
-    public void restaurantIsClosed(ClosingPeriod closedPeriod){
-        navigateTo(new RestaurantClosedController(closedPeriod));
-    }
-
-
 }

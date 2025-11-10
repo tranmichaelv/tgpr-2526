@@ -14,7 +14,7 @@ public class SecurityLoginView extends BasicWindow{
     private final SecurityLoginController controller;
     private Button btnLogin;
 
-    private final TextBox date = new TextBox(Time.dateToString(Time.dateOfToday()));
+    private final TextBox date = new TextBox(Time.getDateChosenToString());
 
     public SecurityLoginView(SecurityLoginController controller) {
         this.controller = controller;
@@ -139,6 +139,7 @@ public class SecurityLoginView extends BasicWindow{
     private void menu(){
         controller.menu();
     }
+
     private void checkDate(){
         controller.checkDate(date.getText());
     }

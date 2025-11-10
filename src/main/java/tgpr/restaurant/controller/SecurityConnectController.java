@@ -15,15 +15,14 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
         System.exit(0);
     }
 
+    public void back(){
+        navigateTo(new SecurityLoginController());
+    }
+
     // view
     @Override
     public SecurityConnectView getView() {
         return new SecurityConnectView(this);
-    }
-
-    // retour
-    public void back(){
-        navigateBack();
     }
 
     // login il faut mettre la suite

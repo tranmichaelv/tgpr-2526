@@ -15,8 +15,4 @@ public class RestaurantClosedController extends Controller<RestaurantClosedView>
         return new RestaurantClosedView(this, closingPeriod);
     }
 
-    public void back(){
-        navigateBack();
-    }
-
 }

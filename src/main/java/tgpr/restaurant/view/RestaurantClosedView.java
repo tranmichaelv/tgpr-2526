@@ -10,11 +10,11 @@ import tgpr.restaurant.model.ClosingPeriod;
 
 import java.util.List;
 
-public class RestaurantClosedView extends BasicWindow {
+public class RestaurantClosedView extends DialogWindow {
     RestaurantClosedController controller;
     private Button back = new Button("Retour",this::back);
     public RestaurantClosedView(RestaurantClosedController controller, ClosingPeriod closingPeriod) {
-        setTitle("Restaurant ferme");
+        super("Restaurant ferme");
         this.controller = controller;
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
@@ -29,7 +29,7 @@ public class RestaurantClosedView extends BasicWindow {
     }
 
     private void back(){
-        controller.back();
+        close();
     }
 
     private Panel createButton(){

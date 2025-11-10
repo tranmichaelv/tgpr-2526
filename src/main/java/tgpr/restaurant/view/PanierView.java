@@ -2,34 +2,37 @@ package tgpr.restaurant.view;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.framework.Controller;
+import tgpr.framework.ViewManager;
 import tgpr.restaurant.controller.PanierController;
 import tgpr.restaurant.model.*;
 
 import java.util.List;
 import java.util.Map;
 
-public class PanierView extends BasicWindow {
+public class PanierView extends DialogWindow {
 
     private final PanierController controller;
+    private ActionListBox connection;
 
     public PanierView(PanierController controller) {
+        super("Restaurant - Mon Panier");
         this.controller = controller;
 
         // verfie si le restaurant est ferme
-        ClosingPeriod closedPeriod = Time.restaurantIsClosed();
-        if(closedPeriod != null){
-            controller.restaurantIsClosed(closedPeriod);
-        } else {
 
         setTitle("Restaurant - Mon Panier");
 
         setHints(List.of(Hint.CENTERED,Hint.MODAL));
+        setCloseWindowWithEscape(true);
+
         Panel root = Panel.gridPanel(1, Margin.of(2,2,0,0));
         setComponent(root);
 
         root.addComponent(afficherContenu());
-        }
+        if(connection != null)
+            connection.takeFocus();
     }
 
     private Panel afficherContenu() {
@@ -43,7 +46,7 @@ public class PanierView extends BasicWindow {
         if (Panier.estVide()) {
             root.addComponent(new Label("Votre panier est vide pour le moment."));
         } else {
-            ActionListBox connection = new ActionListBox(new TerminalSize(60, 3));
+            connection = new ActionListBox(new TerminalSize(60, 3));
             connection.addItem("=== COMMANDE ===", () -> {});
             if(!Security.isLogged()) {
                 // si pas connecte alors
@@ -83,7 +86,7 @@ public class PanierView extends BasicWindow {
     private Panel creerBoutons() {
         Panel buttons = Panel.horizontalPanel();
 
-        Button retour = new Button("Retour", this::back);
+        Button retour = new Button("Retour", this::close);
         buttons.addComponent(retour);
 
         if (!Panier.estVide()) {
@@ -106,7 +109,6 @@ public class PanierView extends BasicWindow {
             Panier.vider();
             Controller.showInfo("Le panier a été vidé !");
             this.close();
-            Controller.navigateBack();
         }
     }
 
@@ -120,10 +122,7 @@ public class PanierView extends BasicWindow {
     }
 
     private void connect(){
+        close();
         controller.connect();
-    }
-
-    private void back(){
-        controller.back();
     }
 }
