@@ -262,24 +262,24 @@ public class ReservationView extends BasicWindow {
     // buttons "Annuler" and "Confirmer la réservation". Will be reworked later (to match model's logic)
     private Panel buttonsAtBottom() {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
-        Button cancel = new Button("Annuler");
-        // if guest, "annuler" button will navigate back to homepage
         if (!Security.isLogged()) {
+            Button cancel = new Button("Annuler");
+            // if guest, "annuler" button will navigate back to homepage
             cancel.addListener(button -> {
                 controller.retour();
             });
-        }
-        confirm = new Button("Confirmer la réservation", () -> {
-            int numberOfPeople = Integer.parseInt(nbGuests.getText());
-            String service = midiSoir.getSelectedItem();
-            String tableInfo = tableLabel.getText();
+            confirm = new Button("Confirmer la réservation", () -> {
+                int numberOfPeople = Integer.parseInt(nbGuests.getText());
+                String service = midiSoir.getSelectedItem();
+                String tableInfo = tableLabel.getText();
 
-            ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, service, tableInfo);
-            dialog.showDialog(getTextGUI());
-        });
-        confirm.setEnabled(false);
-        buttons.addComponent(cancel);
-        buttons.addComponent(confirm);
+                ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, service, tableInfo);
+                dialog.showDialog(getTextGUI());
+            });
+            confirm.setEnabled(false);
+            buttons.addComponent(cancel);
+            buttons.addComponent(confirm);
+        }
         return buttons;
     }
 
