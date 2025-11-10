@@ -8,13 +8,13 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationController;
-import tgpr.restaurant.model.Security;
-import tgpr.restaurant.model.Time;
+import tgpr.restaurant.model.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -270,10 +270,30 @@ public class ReservationView extends BasicWindow {
             });
             confirm = new Button("Confirmer la réservation", () -> {
                 int numberOfPeople = Integer.parseInt(nbGuests.getText());
-                String service = midiSoir.getSelectedItem();
+                String serviceName = midiSoir.getSelectedItem();
                 String tableInfo = tableLabel.getText();
 
-                ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, service, tableInfo);
+                String weekDay = selectedDate.getDayOfWeek()
+                        .getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
+
+                Service service = Service.getByNameAndDay(serviceName, weekDay);
+                Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
+
+                if (service != null && table != null) {
+                    Reservation r = new Reservation(
+                            numberOfPeople,
+                            -1, // Temporary clientId
+                            table.getId(),
+                            service.getId(),
+                            true,
+                            selectedDate
+                    );
+
+                    Security.setPendingReservation(r); // the chosen reservation is temporary saved with setPendingReservation in Security class
+                }
+
+
+                ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, serviceName, tableInfo);
                 dialog.showDialog(getTextGUI());
             });
             confirm.setEnabled(false);
