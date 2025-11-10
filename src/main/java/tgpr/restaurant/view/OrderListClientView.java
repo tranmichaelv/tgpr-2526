@@ -9,11 +9,13 @@ import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.gui2.menu.MenuItem;
 import tgpr.restaurant.controller.OrderDetailsController;
 import tgpr.restaurant.controller.OrderListClientController;
+import tgpr.restaurant.controller.ReservationEditController;
 import tgpr.restaurant.model.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class OrderListClientView extends BasicWindow {
@@ -154,7 +156,7 @@ public class OrderListClientView extends BasicWindow {
 
     private void updateReservationList(ActionListBox reservationListBox, List<Reservation> allReservations, boolean showAll) {
         reservationListBox.clearItems();
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.of(2025,8,20);
 
         for (Reservation r : allReservations) {
             if (showAll || !(r.getReservationDate().isBefore(today))) {
@@ -170,12 +172,28 @@ public class OrderListClientView extends BasicWindow {
                         r.getOnline() ? "Oui" : "Non"
                 );
                 reservationListBox.addItem(row, () -> {
-                    // Action when row is selected
+                    if(r.getReservationDate().isBefore(today))
+                        return;
+                    editReservation(r);
                 });
             }
         }
     }
 
+    private void editReservation(Reservation reservationToEdit) {
+        //  Crée contrôleur + vue des détails
+        var ctrl = new ReservationEditController();
+        var win = ctrl.getReservationView(); // vue OrderDetailsView (BasicWindow)
+
+
+        //  Configure l’affichage pour qu’elle s’ouvre par-dessus
+        win.setHints(java.util.Arrays.asList(
+                Window.Hint.MODAL,     // bloque les interactions dessous
+                Window.Hint.CENTERED   // centre la fenêtre
+        ));
+        //  Affiche la fenêtre par-dessus sans fermer celle de la liste
+        getTextGUI().addWindowAndWait(win);
+    }
 
     private void openDetails(Order order) {
         //  Crée contrôleur + vue des détails
