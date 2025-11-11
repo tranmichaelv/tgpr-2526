@@ -127,27 +127,43 @@ public class OrderChangeView extends BasicWindow {
             public void onSelectionChanged(int selectedIndex, int previousSelection, boolean fromUser) {
                 if (selectedIndex < 0 || selectedIndex >= services.size()) return;
 
-                //  mettre à jour le service choisi sur la commande
+                // 1) mettre à jour le service choisi sur la commande (en mémoire)
                 controller.getOrder().setServiceId(services.get(selectedIndex).getId());
 
-                //  recharger les tables disponibles
+                // 2) mémoriser l’ID de la table actuellement sélectionnée dans l’UI
+                Integer uiSelectedTableId = null;
+                int currentIdx = tableBox.getSelectedIndex(); // 0 = "Aucune"
+                if (currentIdx > 0 && currentIdx - 1 < tables.size()) {
+                    uiSelectedTableId = tables.get(currentIdx - 1).getId();
+                }
+
+                // 3) recharger les tables disponibles pour CE service
+                List<Table> newTables = controller.getAvailableTables();
+                tables = newTables; // ⚠️ MAJ du champ 'tables' pour garder la correspondance index→table
+
+                // 4) rebâtir la combo
                 tableBox.clearItems();
                 tableBox.addItem("Aucune");
-
-                List<Table> newTables = controller.getAvailableTables();
                 for (Table t : newTables) {
                     tableBox.addItem("Table " + t.getId() + " (" + t.getCapacity() + "p)");
                 }
 
-                //  re-sélectionner la table si encore dispo
-                Integer currentTableId = controller.getOrder().getTableId();
-                int idx2 = 0; // "Aucune"
-                if (currentTableId != null) {
+                // 5) essayer de re-sélectionner la table que l’utilisateur avait choisie (si encore dispo)
+                int idxToSelect = 0; // "Aucune"
+                if (uiSelectedTableId != null) {
                     for (int j = 0; j < newTables.size(); j++) {
-                        if (newTables.get(j).getId() == currentTableId) { idx2 = j + 1; break; }
+                        if (newTables.get(j).getId() == uiSelectedTableId) { idxToSelect = j + 1; break; }
+                    }
+                } else {
+                    // sinon, tenter de garder la table déjà enregistrée sur la commande
+                    Integer currentTableIdInModel = controller.getOrder().getTableId();
+                    if (currentTableIdInModel != null) {
+                        for (int j = 0; j < newTables.size(); j++) {
+                            if (newTables.get(j).getId() == currentTableIdInModel) { idxToSelect = j + 1; break; }
+                        }
                     }
                 }
-                tableBox.setSelectedIndex(idx2);
+                tableBox.setSelectedIndex(idxToSelect);
 
                 invalidate();
             }
@@ -320,7 +336,40 @@ public class OrderChangeView extends BasicWindow {
             }
         }));
         buttons.addComponent(new EmptySpace(new TerminalSize(1, 0)));
-        buttons.addComponent(new Button("Annuler")); // dirige vers la vue order_delete
+        buttons.addComponent(new Button("Annuler", () -> {
+            controller.resetToOriginal();
+            Order o = controller.getOrder();
+
+            // Refléter l’état dans l’UI (takeAway/nb/service/tables/réduc)
+            takeAwayBox.setChecked(o.getTakeAway());
+            nbPersonsBox.setEnabled(!o.getTakeAway());
+            tableBox.setEnabled(!o.getTakeAway());
+            nbPersonsBox.setText(String.valueOf(o.getEffectivePeopleCount()));
+
+            Double disc = o.getDiscount();
+            reductionBox.setText(disc == null ? "" : String.format("%.2f", disc));
+
+            // Services (jour de la commande)
+            services = controller.getAvailableServices();
+            serviceBox.clearItems();
+            for (Service s : services) serviceBox.addItem(s.getName());
+            int si = 0; for (int i = 0; i < services.size(); i++) if (services.get(i).getId() == o.getServiceId()) { si = i; break; }
+            if (!services.isEmpty()) serviceBox.setSelectedIndex(si);
+
+            // Tables (date + service remis)
+            tables = controller.getAvailableTables();
+            tableBox.clearItems();
+            tableBox.addItem("Aucune");
+            for (Table t : tables) tableBox.addItem("Table " + t.getId() + " (" + t.getCapacity() + "p)");
+            Integer tId = o.getTableId();
+            int ti = 0; if (tId != null) for (int i = 0; i < tables.size(); i++) if (tables.get(i).getId() == tId) { ti = i + 1; break; }
+            tableBox.setSelectedIndex(ti);
+
+            // Articles: totaux + lignes
+            rebuildArticlesSection();
+
+            try { getTextGUI().updateScreen(); } catch (Exception ignored) {}
+        }));
         buttons.addComponent(new EmptySpace(new TerminalSize(1, 0)));
         buttons.addComponent(new Button("Retour", this::close));
 

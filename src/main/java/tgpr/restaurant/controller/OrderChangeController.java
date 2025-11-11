@@ -11,9 +11,21 @@ import java.util.stream.Collectors;
 
 public class OrderChangeController extends Controller<OrderChangeView>{
     private final Order order;
+    private final Order original;
+    private  List<OrderItem> originalItems;
 
     public OrderChangeController(Order order) {
         this.order = order;
+        this.original = order.copy();
+        this.original.setId(order.getId());
+        this.originalItems = order.getOrderItems().stream().map(oi -> {
+            OrderItem x = new OrderItem();
+            x.setOrderId(order.getId());
+            x.setProductId(oi.getProductId());
+            x.setQuantity(oi.getQuantity());
+            x.setPrice(oi.getPrice());
+            return x;
+        }).collect(java.util.stream.Collectors.toList());
     }
 
     public Order getOrder() {
@@ -76,6 +88,37 @@ public class OrderChangeController extends Controller<OrderChangeView>{
 
     public double getTotal() {
         return getSousTotal() - getReduction();
+    }
+    // Remet la commande à son état d'origine
+    public void resetToOriginal() {
+        // Champs simples
+        order.setOrderDate(original.getOrderDate());
+        order.setClientId(original.getClientId());
+        order.setTableId(original.getTableId());
+        order.setTakeAway(original.getTakeAway());
+        order.setOnline(original.getOnline());
+        order.setServiceId(original.getServiceId());
+        order.setEmployeeId(original.getEmployeeId());
+        order.setReservationId(original.getReservationId());
+        order.setEffectivePeopleCount(original.getEffectivePeopleCount());
+        order.setDiscount(original.getDiscount());
+        order.setPaymentMethod(original.getPaymentMethod());
+
+        // Produits : purge puis réinsertion du snapshot
+        for (OrderItem oi : order.getOrderItems()) {
+            oi.delete();
+        }
+        for (OrderItem src : originalItems) {
+            OrderItem ni = new OrderItem();
+            ni.setOrderId(order.getId());
+            ni.setProductId(src.getProductId());
+            ni.setQuantity(src.getQuantity());
+            ni.setPrice(src.getPrice());
+            ni.save();
+        }
+
+        // Recharger depuis la BD pour repartir propre (ordre + items recalculés)
+        order.reload();
     }
     @Override
     public OrderChangeView getView() {
