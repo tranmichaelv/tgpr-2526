@@ -16,7 +16,12 @@ public class OrderDetailsController extends Controller<OrderDetailsView> {
     }
 
     @Override
-    public OrderDetailsView getView() {
+    public OrderDetailsView getReservationView() {
         return new OrderDetailsView(this);
     }
+
+//    @Override
+//    public OrderDetailsView getView() {
+//        return new OrderDetailsView(this);
+//    }
 }

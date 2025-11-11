@@ -197,7 +197,7 @@ public class Reservation extends Model {
     }
 
     public static List<Reservation> getAll() {
-        return queryList(Reservation.class, "select * from reservations");
+        return queryList(Reservation.class, "select * from reservations order by reservation_date DESC"); // added order by DESC to show last reservations first
     }
 
     public Reservation save() {

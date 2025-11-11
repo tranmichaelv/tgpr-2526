@@ -11,7 +11,12 @@ public class OrderCreateController extends Controller<OrderCreateView> {
      * //@param title Title of the window
      */
 
-    public OrderCreateView getView() {
+//    public OrderCreateView getView() {
+//        return new OrderCreateView(this);
+//    }
+
+    @Override
+    public OrderCreateView getReservationView() {
         return new OrderCreateView(this);
     }
 }

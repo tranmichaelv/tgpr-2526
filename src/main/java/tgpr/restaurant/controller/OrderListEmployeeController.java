@@ -20,10 +20,16 @@ public class OrderListEmployeeController extends Controller<OrderListEmployeeVie
     public User getUser() {
         return User.getByKey(1);
     }
+
     @Override
-    public OrderListEmployeeView getView() {
+    public OrderListEmployeeView getReservationView() {
         return view;
     }
+
+//    @Override
+//    public OrderListEmployeeView getView() {
+//        return view;
+//    }
 
 
     private void showModal(BasicWindow win) {
@@ -38,7 +44,7 @@ public class OrderListEmployeeController extends Controller<OrderListEmployeeVie
     public void openActions(Order order) {
         //  Crée contrôleur + vue actions sur la commande
         var ctrl = new OrderCheckController(order);
-        var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
+        var win = ctrl.getReservationView(); // vue OrderDetailsView (BasicWindow)
 
         //  Configure l’affichage pour qu’elle s’ouvre par-dessus
         win.setHints(java.util.Arrays.asList(

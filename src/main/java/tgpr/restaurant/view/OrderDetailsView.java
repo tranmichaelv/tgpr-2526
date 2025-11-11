@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 public class OrderDetailsView extends BasicWindow {
     private final OrderDetailsController controller;
 
-    public OrderDetailsView(OrderDetailsController controller){
+    public OrderDetailsView(OrderDetailsController controller) {
         this.controller = controller;
 
         setTitle("Détails de la commande");
@@ -19,11 +19,10 @@ public class OrderDetailsView extends BasicWindow {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         Panel root = new Panel(new BorderLayout());
-
         Panel content = new Panel(new LinearLayout(Direction.VERTICAL));
 
         content.addComponent(new Label("Détails de la commande :"));
-        content.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        content.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         content.addComponent(new Label("Client : " + order.getClient().getFirstName() + " " + order.getClient().getLastName()));
         content.addComponent(new Label("Date : " + order.getOrderDate().format(formatter)));
@@ -32,7 +31,7 @@ public class OrderDetailsView extends BasicWindow {
         content.addComponent(new Label("Personnes effectives : " + order.getEffectivePeopleCount()));
         content.addComponent(new Label("Type : " + (order.getTakeAway() ? "À emporter" : "Sur place")));
         content.addComponent(new Label("En ligne : " + (order.getOnline() ? "Oui" : "Non")));
-        content.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        content.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         Panel articlesPanel = new Panel(new LinearLayout(Direction.VERTICAL));
         articlesPanel.addComponent(new Label("Articles :"));
@@ -40,13 +39,12 @@ public class OrderDetailsView extends BasicWindow {
                 articlesPanel.addComponent(new Label(" - " + item.getProduct().getName() + " x" + item.getQuantity()))
         );
         content.addComponent(articlesPanel);
-        content.addComponent(new EmptySpace(new TerminalSize(0,2)));
+        content.addComponent(new EmptySpace(new TerminalSize(0, 2)));
 
         content.addComponent(new Label("Sous-total : " + order.calculateSubTotal()));
         content.addComponent(new Label("Remise : " + order.calculateDiscount()));
         content.addComponent(new Label("Montant total : " + order.calculateTotal()));
         content.addComponent(new Label("Paiement : " + (order.getPaymentMethod() != null ? order.getPaymentMethod() : "En attente")));
-
 
         Panel bottomPanel = new Panel(new BorderLayout());
         Panel rightButtons = new Panel(new LinearLayout(Direction.HORIZONTAL));
@@ -58,3 +56,17 @@ public class OrderDetailsView extends BasicWindow {
         setComponent(root);
     }
 }
+
+// 🔹 Exemple de calcul de sous-total et total
+//    private double calculateSubtotal(Order order) {
+//        return order.getOrderItems().stream()
+//                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+//                .sum();
+//    }
+//
+//    private double calculateTotal(Order order) {
+//        double subtotal = calculateSubtotal(order);
+//        double discount = (order.getDiscount() != null) ? order.getDiscount() : 0.0;
+//        return subtotal - discount;
+//    }
+//

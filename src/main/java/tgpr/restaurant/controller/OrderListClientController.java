@@ -21,7 +21,13 @@ public class OrderListClientController extends Controller<OrderListClientView> {
     public User getUser(){
         return User.getByKey(1);
     }
-    public OrderListClientView getView() { return view;}
+
+    @Override
+    public OrderListClientView getReservationView() {
+        return view;
+    }
+
+    // public OrderListClientView getView() { return view; }
 
     private void showModal(BasicWindow win) {
         win.setHints(Arrays.asList(
@@ -34,7 +40,7 @@ public class OrderListClientController extends Controller<OrderListClientView> {
     public void openDetails(Order order) {
         //  Crée contrôleur + vue des détails
         var ctrl = new OrderDetailsController(order);
-        var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
+        var win = ctrl.getReservationView(); // vue OrderDetailsView (BasicWindow)
 
         //  Configure l’affichage pour qu’elle s’ouvre par-dessus
         win.setHints(java.util.Arrays.asList(

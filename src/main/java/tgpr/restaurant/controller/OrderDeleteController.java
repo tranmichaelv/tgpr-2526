@@ -14,10 +14,16 @@ public class OrderDeleteController extends Controller<OrderDeleteView> {
     public OrderDeleteController(Order order) {
         this.order = order;
     }
+
     @Override
-    public OrderDeleteView getView() {
+    public OrderDeleteView getReservationView() {
         return new OrderDeleteView(this);
     }
+
+//    @Override
+//    public OrderDeleteView getView() {
+//        return new OrderDeleteView(this);
+//    }
 
     public void deleteOrder(){
         if(order != null){

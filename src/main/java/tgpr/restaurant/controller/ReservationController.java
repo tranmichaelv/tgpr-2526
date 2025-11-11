@@ -41,7 +41,7 @@ public class ReservationController extends Controller<ReservationView> {
     private YearMonth currentMonth = YearMonth.now();
 
     @Override
-    public ReservationView getView() {
+    public ReservationView getReservationView() {
         return view;
     }
 
