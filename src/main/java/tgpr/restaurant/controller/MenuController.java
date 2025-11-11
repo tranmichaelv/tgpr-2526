@@ -73,7 +73,6 @@ public class MenuController extends Controller<MenuView> {
 
         panel.addComponent(boutons);
         popup.setComponent(panel);
-        // marche pas ducoup
-//        tgpr.framework.ViewManager.showModal(popup);
-    }
+        // Affiche la popup de manière modale et bloque l’exécution jusqu’à sa fermeture
+        tgpr.framework.ViewManager.gui.addWindowAndWait(popup);    }
 }

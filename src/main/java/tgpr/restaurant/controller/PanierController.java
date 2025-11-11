@@ -2,11 +2,7 @@ package tgpr.restaurant.controller;
 
 import com.googlecode.lanterna.gui2.*;
 import tgpr.framework.Controller;
-import tgpr.framework.ViewManager;
-import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.model.Product;
-import tgpr.restaurant.model.Time;
-import tgpr.restaurant.view.MenuDetailView;
 import tgpr.restaurant.view.PanierView;
 
 public class PanierController extends Controller<PanierView> {
@@ -24,8 +20,24 @@ public class PanierController extends Controller<PanierView> {
         panel.addComponent(new Label(produit.getName()));
         panel.addComponent(new EmptySpace());
 
+
+
         // Récupère la quantité actuelle du produit dans le panier
-        int quantiteActuelle = tgpr.restaurant.model.Panier.getProduits().get(produit);
+        //int quantiteActuelle = tgpr.restaurant.model.Panier.getProduits().get(produit);
+
+        Integer quantiteActuelle = tgpr.restaurant.model.Panier.getProduits().get(produit);
+        if (quantiteActuelle == null) {
+            // Le produit n'est plus dans le panier → on ferme tout et on recharge
+            popup.close();
+
+            if (tgpr.framework.ViewManager.gui.getActiveWindow() != null)
+                tgpr.framework.ViewManager.gui.getActiveWindow().close();
+
+            Controller.navigateTo(new PanierController());
+            return;
+        }
+
+
         panel.addComponent(new Label("Quantité actuelle : " + quantiteActuelle));
         panel.addComponent(new EmptySpace());
 
@@ -43,15 +55,31 @@ public class PanierController extends Controller<PanierView> {
         boutons.addComponent(new Button("-1", () -> {
             tgpr.restaurant.model.Panier.retirerProduit(produit);
             popup.close();
+
+
+            if (tgpr.framework.ViewManager.gui.getActiveWindow() != null)
+                tgpr.framework.ViewManager.gui.getActiveWindow().close();
             Controller.navigateTo(new PanierController());
         }));
 
+
+
         //  Supprimer
+//        boutons.addComponent(new Button("Supprimer", () -> {
+//            tgpr.restaurant.model.Panier.supprimerProduit(produit);
+//            popup.close();
+//            Controller.navigateTo(new PanierController());
+//        }));
+
+        // Bouton "Supprimer" : supprime complètement le produit du panier
         boutons.addComponent(new Button("Supprimer", () -> {
             tgpr.restaurant.model.Panier.supprimerProduit(produit);
             popup.close();
+            if (tgpr.framework.ViewManager.gui.getActiveWindow() != null)
+                tgpr.framework.ViewManager.gui.getActiveWindow().close();
             Controller.navigateTo(new PanierController());
         }));
+
 
         //  Fermer
         boutons.addComponent(new Button("Fermer", popup::close));
@@ -59,9 +87,8 @@ public class PanierController extends Controller<PanierView> {
         panel.addComponent(boutons);
         popup.setComponent(panel);
 
-        // Affiche la fenêtre modale (popup) à l’écran et bloque l’exécution
-//        tgpr.framework.ViewManager.showModal(popup);
-    }
+        // Affiche la popup de manière modale et bloque l’exécution jusqu’à sa fermeture.
+        tgpr.framework.ViewManager.gui.addWindowAndWait(popup);    }
 
     public void connect(){
         navigateTo(new SecurityConnectController());
