@@ -316,4 +316,22 @@ public class Order extends Model {
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+
+    // Des méthodes pour éviter de dupliquer le code et pouvoir les appeler
+    public double calculateSubTotal() {
+        return getOrderItems()
+                .stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
+
+    public double calculateDiscount() {
+        double subtotal = calculateSubTotal();
+        double discountRate = getDiscount() != null ? getDiscount() : 0.0;
+        return subtotal * discountRate / 100.0;
+    }
+
+    public double calculateTotal() {
+        return calculateSubTotal() - calculateDiscount();
+    }
 }

@@ -4,7 +4,6 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
-import tgpr.framework.Controller;
 import tgpr.restaurant.controller.OrderDetailsController;
 import tgpr.restaurant.controller.OrderListClientController;
 import tgpr.restaurant.model.Order;
@@ -19,6 +18,7 @@ public class OrderListClientView extends BasicWindow {
     private final OrderListClientController controller;
     private final List<Order> ordersList = Order.getAll();
     private User user = new User();
+
     // la liste sera scrollable et sélectionnable
     private final ActionListBox ordersListBox = new ActionListBox(new TerminalSize(120, 10));
     private CheckBox showAllOrders;
@@ -72,36 +72,24 @@ public class OrderListClientView extends BasicWindow {
         root.addComponent(ordersListBox);
     }
 
-    private void openDetails(Order order) {
-        //  Crée contrôleur + vue des détails
-        var ctrl = new OrderDetailsController(order);
-        var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
-
-        //  Configure l’affichage pour qu’elle s’ouvre par-dessus
-        win.setHints(java.util.Arrays.asList(
-                Window.Hint.MODAL,     // bloque les interactions dessous
-                Window.Hint.CENTERED   // centre la fenêtre
-        ));
-        //  Affiche la fenêtre par-dessus sans fermer celle de la liste
-        getTextGUI().addWindowAndWait(win);
-    }
-
     private void populateListBox() {
         ordersListBox.clearItems();
 
         boolean hasOrders = false;
+        boolean showAll = showAllOrders.isChecked(); // je récupère l'état du checkBox
         for (Order order : ordersList) {
 
-            //boolean isPaid = order.getPaymentMethod() != null;
+            boolean isPaid = order.getPaymentMethod() != null;
             if (order.getClient().equals(user)) {
 
-                String display = toString(order);
-                ordersListBox.addItem(display, () -> openDetails(order));
-                hasOrders = true;
+                if (showAll || !isPaid){
+                    String display = toString(order);
+                    ordersListBox.addItem(display, () -> controller.openDetails(order));
+                    hasOrders = true;
+                }
             }
         }
         if (!hasOrders) {
-            ordersListBox.addItem("(Aucune commande à afficher)", () -> {});
             ordersListBox.setSelectedIndex(0);
         }
     }
@@ -126,14 +114,6 @@ public class OrderListClientView extends BasicWindow {
         headerPanel.addComponent(underlineLabel);
         return headerPanel;
     }
-
-    public String getType(boolean type){
-        return type ? "A emporter" : "Sur place";
-    }
-
-    public String getonline(boolean online) {
-        return online ? "Oui" : "Non";
-    }
     public double getPrice(Order order) {
         double total = 0.0;
         for (OrderItem item : order.getOrderItems()) {
@@ -150,18 +130,18 @@ public class OrderListClientView extends BasicWindow {
                 : "A emporter";
         String service = order.getService().getName();
         String pers = String.valueOf(order.getEffectivePeopleCount());
-        boolean type = order.getTakeAway();
-        boolean online = order.getOnline();
+        String type = order.getTakeAway() ? "A emporter" : "Sur place";
+        String online = order.getOnline() ? "Oui" : "Non";
         String amount = String.format("%.2f €", getPrice(order));
-        String paiement = order.getPaymentMethod() == null ? "En cours" : String.valueOf(order.getPaymentMethod());
+        String paiement = String.valueOf(order.getPaymentMethod()); //
 
 
         return "  " + padOrTruncate(date, 14)
                 + padOrTruncate(tableInfo, 15)
                 + padOrTruncate(service, 11)
                 + padOrTruncate(pers, 9)
-                + padOrTruncate(getType(type), 12)
-                + padOrTruncate(getonline(online), 12)
+                + padOrTruncate(type, 12)
+                + padOrTruncate(online, 12)
                 + padOrTruncate(amount, 12)
                 + padOrTruncate(paiement, 12);
     }
