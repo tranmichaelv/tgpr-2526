@@ -11,7 +11,7 @@ import tgpr.restaurant.controller.OrderAddController;
 import tgpr.restaurant.controller.OrderChangeController;
 import tgpr.restaurant.controller.ProductCheckController;
 import tgpr.restaurant.model.*;
-
+import com.googlecode.lanterna.gui2.ComboBox;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -101,13 +101,45 @@ public class OrderChangeView extends BasicWindow {
             serviceBox.addItem(s.getName());
         }
         // sélectionne le service de la commande choisie comme affichage de base
+        // Sélectionner le service courant si présent, sinon 0
         int currentServiceId = controller.getOrder().getServiceId();
-        for (int i = 0; i < services.size(); i++) {
-            if (services.get(i).getId() == currentServiceId) {
-                serviceBox.setSelectedIndex(i);
-                break;
-            }
+        int selectedIdx = 0;
+        for (int k = 0; k < services.size(); k++) {
+            if (services.get(k).getId() == currentServiceId) { selectedIdx = k; break; }
         }
+        serviceBox.setSelectedIndex(selectedIdx);
+
+
+        serviceBox.addListener(new ComboBox.Listener() {
+            @Override
+            public void onSelectionChanged(int selectedIndex, int previousSelection, boolean fromUser) {
+                if (selectedIndex < 0 || selectedIndex >= services.size()) return;
+
+                //  mettre à jour le service choisi sur la commande
+                controller.getOrder().setServiceId(services.get(selectedIndex).getId());
+
+                //  recharger les tables disponibles
+                tableBox.clearItems();
+                tableBox.addItem("Aucune");
+
+                List<Table> newTables = controller.getAvailableTables();
+                for (Table t : newTables) {
+                    tableBox.addItem("Table " + t.getId() + " (" + t.getCapacity() + "p)");
+                }
+
+                //  re-sélectionner la table si encore dispo
+                Integer currentTableId = controller.getOrder().getTableId();
+                int idx2 = 0; // "Aucune"
+                if (currentTableId != null) {
+                    for (int j = 0; j < newTables.size(); j++) {
+                        if (newTables.get(j).getId() == currentTableId) { idx2 = j + 1; break; }
+                    }
+                }
+                tableBox.setSelectedIndex(idx2);
+
+                invalidate();
+            }
+        });
         serviceLine.addComponent(serviceBox);
         infoSection.addComponent(serviceLine);
 
@@ -382,10 +414,10 @@ public class OrderChangeView extends BasicWindow {
     }
 
     private void refreshArticles() {
-        //  Save la réduction tapée dans le modèle AVANT de reconstruire
+        //  Save la réduction tapée dans le modèle avant de reconstruire
         Double value = parseReduction(reductionBox.getText());
         controller.getOrder().setDiscount(value);
-        //  Reconstruire la section Articles (totaux + lignes)
+        //  Reconstruit la section Articles (totaux + lignes)
         rebuildArticlesSection();
     }
 

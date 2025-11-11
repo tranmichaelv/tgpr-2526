@@ -183,4 +183,17 @@ public class Service extends Model {
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+    /*
+    method used in AssignTable method (in ReservationController) to find a service with :
+        a) a given name (either midi or soir);
+        b) a given day of the week (the one from the date selected by the user);
+
+    */
+    public static Service getByNameAndDay(String name, String weekDay) {
+        return queryOne(Service.class,
+                "SELECT FROM services s WHERE name = :name AND week_day = :weekDay",
+                new Params()
+                        .add("name", name)
+                        .add("weekDay", weekDay));
+    }
 }
