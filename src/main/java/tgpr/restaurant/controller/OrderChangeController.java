@@ -14,19 +14,6 @@ import java.util.stream.Collectors;
 
 public class OrderChangeController extends Controller<OrderChangeView>{
     private final Order order;
-    private static Service.WeekDay toWeekDay(java.time.LocalDate d) {
-        DayOfWeek dow = d.getDayOfWeek();
-        switch (dow) {
-            case MONDAY:    return Service.WeekDay.Lundi;
-            case TUESDAY:   return Service.WeekDay.Mardi;
-            case WEDNESDAY: return Service.WeekDay.Mercredi;
-            case THURSDAY:  return Service.WeekDay.Jeudi;
-            case FRIDAY:    return Service.WeekDay.Vendredi;
-            case SATURDAY:  return Service.WeekDay.Samedi;
-            case SUNDAY:    return Service.WeekDay.Dimanche;
-            default:        return null;
-        }
-    }
 
     public OrderChangeController(Order order) {
         this.order = order;
@@ -47,7 +34,7 @@ public class OrderChangeController extends Controller<OrderChangeView>{
     }
 
     public List<Service> getAvailableServices(){
-        var wd = toWeekDay(getOrder().getOrderDate());
+        var wd = Order.toWeekDay(getOrder().getOrderDate());
         return Service.getAll().stream()
                 .filter(s -> s.getWeekDay() == wd)       // ne garder que le bon jour
                 .sorted((a,b) -> a.getStartTime().compareTo(b.getStartTime()))

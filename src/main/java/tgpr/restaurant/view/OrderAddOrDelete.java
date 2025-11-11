@@ -28,10 +28,10 @@ public abstract class OrderAddOrDelete<T> extends BasicWindow {
         content.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         // Infos commande
-        content.addComponent(new Label("Client:" + order.getClient().getFirstName() + " " + order.getClient().getLastName() ));
-        content.addComponent(new Label("Table:" + (order.getTable() != null ? order.getTable().getId() : "Aucune")));
-        content.addComponent(new Label("Service:" + order.getService().getName()));
-        content.addComponent(new Label("Personnes effectives: " + order.getEffectivePeopleCount()));
+        content.addComponent(new Label("Client:"  + " " + order.getClient().getFirstName() + " " + order.getClient().getLastName() ));
+        content.addComponent(new Label("Table:" + (order.getTable() != null ? " "+ "Table" + " " +  order.getTable().getId() : "Aucune")));
+        content.addComponent(new Label("Service:" + " " + order.getService().getName()));
+        content.addComponent(new Label("Personnes effectives: " + " " + order.getEffectivePeopleCount()));
         content.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
 

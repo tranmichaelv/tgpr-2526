@@ -6,6 +6,8 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+import tgpr.framework.Controller;
+import tgpr.restaurant.controller.OrderAddController;
 import tgpr.restaurant.controller.OrderChangeController;
 import tgpr.restaurant.controller.ProductCheckController;
 import tgpr.restaurant.model.*;
@@ -47,7 +49,7 @@ public class OrderChangeView extends BasicWindow {
 
         Panel clientLine = new Panel(new LinearLayout(Direction.HORIZONTAL));
         clientLine.addComponent(new Label("Client : "));
-        clientBox = new ComboBox<>();
+        ComboBox<String> clientBox = new ComboBox<>();
         clientBox.setPreferredSize(new TerminalSize(30, 1));
 
         clients = controller.getClients();
@@ -232,7 +234,24 @@ public class OrderChangeView extends BasicWindow {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttons.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
-        buttons.addComponent(new Button("Modifier la commande")); // ouvre vue de confirmation screenshot 23
+        buttons.addComponent(new Button("Modifier la commande", () -> {
+            try {
+                //  valide les règles métiers de la commande
+                controller.getOrder().validate();
+
+                //  prépare la fenêtre suivante
+                BasicWindow win = getWindow(controller);
+
+                //  puvre sur la fenêtre courante
+                getTextGUI().addWindowAndWait(win);
+
+            } catch (IllegalArgumentException e) {
+                // ne crée pas la commande et affiche les messages d'erreurs
+                MessageDialog.showMessageDialog(
+                        getTextGUI(), "Erreur de validation", e.getMessage(), MessageDialogButton.OK
+                );
+            }
+        }));
         buttons.addComponent(new EmptySpace(new TerminalSize(1, 0)));
         buttons.addComponent(new Button("Annuler")); // dirige vers la vue order_delete
         buttons.addComponent(new EmptySpace(new TerminalSize(1, 0)));
@@ -246,7 +265,17 @@ public class OrderChangeView extends BasicWindow {
         setComponent(root);
 
     }
-
+        // méthode pour mettre la vue OrderAdd au milieu quand on crée la commande modifié
+    private static BasicWindow getWindow(OrderChangeController controller) {
+        OrderAddController nextController = new OrderAddController(controller.getOrder());
+        BasicWindow win = nextController.getView();
+        win.setFixedSize(new TerminalSize(60, 20));
+        win.setHints(java.util.Arrays.asList(
+                Hint.CENTERED,
+                Hint.MODAL
+        ));
+        return win;
+    }
 
 
     // méthode couleur + style css
@@ -314,7 +343,7 @@ public class OrderChangeView extends BasicWindow {
         }
     }
 
-
+        // Affichage article
     private void rebuildArticlesSection() {
         if (articlesPanel == null) return;
         articlesPanel.removeAllComponents();
