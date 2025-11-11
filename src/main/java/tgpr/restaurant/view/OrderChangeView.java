@@ -23,9 +23,9 @@ public class OrderChangeView extends BasicWindow {
     private final OrderChangeController controller;
 
     private ComboBox<String> clientBox;
-    private final List<User> clients;
+    private  List<User> clients;
     private ComboBox<String> tableBox;
-    private final List<Table> tables;
+    private  List<Table> tables;
     private ComboBox<String> serviceBox;
     private List<Service> services;
     private CheckBox takeAwayBox;
@@ -72,10 +72,12 @@ public class OrderChangeView extends BasicWindow {
         tableBox = new ComboBox<>();
         tableBox.setPreferredSize(new TerminalSize(28, 1));
 
-        tables = controller.getAvailableTables();
+        List<Table> newTables = controller.getAvailableTables();
+        tables = newTables;
+        tableBox.clearItems();
         tableBox.addItem("Aucune");
-        for (Table t : tables) {
-            tableBox.addItem("Table" + " " + t.getId() + " (" + t.getCapacity() + "p)");
+        for (Table t : newTables) {
+            tableBox.addItem("Table " + t.getId() + " (" + t.getCapacity() + "p)");
         }
         // sélectionne la table de la commande choisie comme affichage de base
         Integer currentTableId = controller.getOrder().getTableId();
@@ -103,11 +105,21 @@ public class OrderChangeView extends BasicWindow {
         // sélectionne le service de la commande choisie comme affichage de base
         // Sélectionner le service courant si présent, sinon 0
         int currentServiceId = controller.getOrder().getServiceId();
-        int selectedIdx = 0;
+        int selectedIdx = -1;
         for (int k = 0; k < services.size(); k++) {
             if (services.get(k).getId() == currentServiceId) { selectedIdx = k; break; }
         }
-        serviceBox.setSelectedIndex(selectedIdx);
+
+        if (!services.isEmpty() && selectedIdx >= 0) {
+            serviceBox.setSelectedIndex(selectedIdx);
+        } else if (!services.isEmpty()) {
+            serviceBox.setSelectedIndex(0);
+        } else {
+            serviceBox.addItem("(aucun service disponible)");
+            serviceBox.setSelectedIndex(0);
+            serviceBox.setEnabled(false);
+
+        }
 
 
         serviceBox.addListener(new ComboBox.Listener() {
@@ -155,6 +167,7 @@ public class OrderChangeView extends BasicWindow {
         Panel peopleLine = new Panel(new LinearLayout(Direction.HORIZONTAL));
         peopleLine.addComponent(new Label("Nombre de personnes :"));
         nbPersonsBox = new TextBox(String.valueOf(controller.getOrder().getEffectivePeopleCount()));
+        nbPersonsBox.setValidationPattern(java.util.regex.Pattern.compile("\\d*"));
         peopleLine.addComponent(nbPersonsBox);
         infoSection.addComponent(peopleLine);
 
@@ -268,20 +281,42 @@ public class OrderChangeView extends BasicWindow {
 
         buttons.addComponent(new Button("Modifier la commande", () -> {
             try {
-                //  valide les règles métiers de la commande
+                //  Nombre de personnes
+                String txt = nbPersonsBox.getText().trim();
+                if (txt.isEmpty()) throw new IllegalArgumentException("Le nombre de personnes est obligatoire.");
+                int nb = Integer.parseInt(txt);
+                controller.getOrder().setEffectivePeopleCount(nb); // ou setNumberOfPeople(nb)
+
+                //  Service sélectionné
+                int sIdx = serviceBox.getSelectedIndex();
+                if (sIdx >= 0 && sIdx < services.size()) {
+                    controller.getOrder().setServiceId(services.get(sIdx).getId());
+                }
+
+                // Table sélectionnée
+                int tIdx = tableBox.getSelectedIndex(); // 0 = "Aucune"
+                if (tIdx <= 0) {
+                    controller.getOrder().setTableId(null);
+                } else {
+                    controller.getOrder().setTableId(tables.get(tIdx - 1).getId()); // <-- tables mise à jour
+                }
+
+                //  Valider
                 controller.getOrder().validate();
 
-                //  prépare la fenêtre suivante
-                BasicWindow win = getWindow(controller);
+                //  Sauver
+                controller.getOrder().save();
 
-                //  puvre sur la fenêtre courante
+                // Affiche vue OrderAdd
+                BasicWindow win = getWindow(controller);
                 getTextGUI().addWindowAndWait(win);
 
+            } catch (NumberFormatException e) {
+                MessageDialog.showMessageDialog(getTextGUI(), "Erreur",
+                        "Veuillez entrer un nombre de personnes valide.", MessageDialogButton.OK);
             } catch (IllegalArgumentException e) {
-                // ne crée pas la commande et affiche les messages d'erreurs
-                MessageDialog.showMessageDialog(
-                        getTextGUI(), "Erreur de validation", e.getMessage(), MessageDialogButton.OK
-                );
+                MessageDialog.showMessageDialog(getTextGUI(), "Erreur de validation",
+                        e.getMessage(), MessageDialogButton.OK);
             }
         }));
         buttons.addComponent(new EmptySpace(new TerminalSize(1, 0)));

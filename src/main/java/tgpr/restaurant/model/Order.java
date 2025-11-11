@@ -319,9 +319,10 @@ public class Order extends Model {
 
     public void validate() {
         java.util.List<String> errors = new java.util.ArrayList<>();
-        /*if (orderDate.isBefore(LocalDate.now())) {
+        // si c'est une nouvelle commande on vérifie pas pendant la modifiaction
+        if ( id == 0 && orderDate.isBefore(LocalDate.now())) {
             errors.add("La date de commande ne peut pas être antérieure à aujourd'hui.");
-        }*/
+        }
         if (effectivePeopleCount <= 0) {
             errors.add("Le nombre de personnes doit être supérieur à 0.");
         }
@@ -354,6 +355,13 @@ public class Order extends Model {
         if (getClient().getRole() != User.Role.Client) {
             errors.add("Le client sélectionné doit avoir le rôle 'client'.");
         }
+        if (!takeAway && getTable() != null) {
+            int cap = getTable().getCapacity();
+            int nb  = getEffectivePeopleCount();
+            if (nb > cap || nb < cap - 1) {
+                errors.add("Le nombre de personnes doit être égal à la capacité de la table ou inférieur d’une seule personne.");
+            }
+        }
 
         // Commande en ligne : doit être à emporter et contenir au moins un produit
         if (online) {
@@ -363,6 +371,7 @@ public class Order extends Model {
             if (getOrderItems() == null || getOrderItems().isEmpty()) {
                 errors.add("Les commandes en ligne doivent contenir au moins un produit.");
             }
+
         }
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException(String.join("\n", errors));

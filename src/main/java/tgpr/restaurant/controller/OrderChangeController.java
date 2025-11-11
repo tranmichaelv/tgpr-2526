@@ -26,33 +26,22 @@ public class OrderChangeController extends Controller<OrderChangeView>{
     }
 
     public List<Table> getAvailableTables() {
-        // si à emporter, pas de table
-        if (order.getTakeAway()) {
-            return java.util.List.of();
-        }
+        if (order.getTakeAway()) return java.util.List.of();
 
-        int nb = order.getEffectivePeopleCount();
         var date = order.getOrderDate();
         int serviceId = order.getServiceId();
-        // on doit autoriser la table déjà liée à cette commande
         Integer currentOrderId = order.getId();
+        Integer currentReservationId = order.getReservationId();
 
-        // Candidats qui respectent la règle nb = cap OU nb = cap - 1
-        var candidates = Table.getAll().stream()
-                .filter(t -> t.getCapacity() == nb || t.getCapacity() == nb + 1)
-                .collect(Collectors.toList());
-
-        //  Tables occupées par d'autres commandes le même jour/service
         var busyByOrders = Order.getAll().stream()
-                // exclut la commande en cours d'édition
                 .filter(o -> o.getId() != currentOrderId)
                 .filter(o -> date.equals(o.getOrderDate()) && serviceId == o.getServiceId())
                 .map(Order::getTableId)
                 .filter(java.util.Objects::nonNull)
                 .collect(Collectors.toSet());
 
-        //  Tables occupées par des réservations le même jour/service
         var busyByReservations = Reservation.getAll().stream()
+                .filter(r -> r.getId() != (currentReservationId == null ? -1 : currentReservationId))
                 .filter(r -> date.equals(r.getReservationDate()) && serviceId == r.getServiceId())
                 .map(Reservation::getTableId)
                 .collect(Collectors.toSet());
@@ -61,32 +50,17 @@ public class OrderChangeController extends Controller<OrderChangeView>{
         busy.addAll(busyByOrders);
         busy.addAll(busyByReservations);
 
-        //  Ne garder que les libres, triées par capacité
-        return candidates.stream()
+        return Table.getAll().stream()
                 .filter(t -> !busy.contains(t.getId()))
-                .sorted((a, b) -> Integer.compare(a.getCapacity(), b.getCapacity()))
+                .sorted((a,b) -> Integer.compare(a.getCapacity(), b.getCapacity()))
                 .collect(Collectors.toList());
     }
 
-    public List<Service> getAvailableServices(){
-        // Services du bon jour
-        var wd = Order.toWeekDay(order.getOrderDate());
-        var sameDayServices = Service.getAll().stream()
+    public List<Service> getAvailableServices() {
+        var wd = Order.toWeekDay(order.getOrderDate());     // jour de la commande
+        return Service.getAll().stream()
                 .filter(s -> s.getWeekDay() == wd)
                 .sorted((a,b) -> a.getStartTime().compareTo(b.getStartTime()))
-                .collect(Collectors.toList());
-
-        // et seulement ceux pour lesquels il reste AU MOINS UNE table valable
-        return sameDayServices.stream()
-                .filter(s -> {
-                    int previous = order.getServiceId();
-                    try {
-                        order.setServiceId(s.getId());
-                        return !getAvailableTables().isEmpty();
-                    } finally {
-                        order.setServiceId(previous); // on remet la valeur initiale
-                    }
-                })
                 .collect(Collectors.toList());
     }
 
