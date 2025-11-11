@@ -12,6 +12,7 @@ import tgpr.restaurant.model.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -222,9 +223,27 @@ public class ReservationView extends BasicWindow {
             });
 
             LocalDate simulatedToday = Time.getDateChosen().toLocalDate();
+            LocalTime simulatedTodayHour = Time.getDateChosen().toLocalTime();
 
 //            if (current date is before today OR current day of week is monday OR (current day of week is sunday and service is "soir")) {
-            if (date.isBefore(simulatedToday) || date.getDayOfWeek() == DayOfWeek.MONDAY || (date.getDayOfWeek() == DayOfWeek.SUNDAY && midiSoir.getSelectedItem().equalsIgnoreCase("soir"))) {
+            if (
+                    date.isBefore(simulatedToday)
+                            || date.getDayOfWeek() == DayOfWeek.MONDAY
+                            || (date.getDayOfWeek() == DayOfWeek.SUNDAY && midiSoir.getSelectedItem().equalsIgnoreCase("soir"))
+                            /* Check pour la date du jour
+                            exemples:
+                                1) à 13h30, je ne pourrai plus réserver un service du midi pour le jour courant
+                                2) à 20h00, je ne pourrai plus réserver un service du soir pour le jour courant
+                            */
+                            || (date.equals(simulatedToday) && (
+                                    ((midiSoir.getSelectedItem().equalsIgnoreCase("midi") &&
+                                            LocalTime.from(simulatedTodayHour).isAfter(LocalTime.of(11,30))))
+                                || (midiSoir.getSelectedItem().equalsIgnoreCase("soir") &&
+                                            LocalTime.from(simulatedTodayHour).isAfter(LocalTime.of(18,30))
+                                    )
+                            )
+                            )
+            ) {
                 dayButton.setEnabled(false);
                 calendarGrid.addComponent(dayButton
                         .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER))
