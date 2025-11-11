@@ -72,42 +72,25 @@ public class OrderChangeView extends BasicWindow {
         tableBox = new ComboBox<>();
         tableBox.setPreferredSize(new TerminalSize(28, 1));
 
-        List<Table> newTables = controller.getAvailableTables();
-        tables = newTables;
-        tableBox.clearItems();
-        tableBox.addItem("Aucune");
-        for (Table t : newTables) {
-            tableBox.addItem("Table " + t.getId() + " (" + t.getCapacity() + "p)");
-        }
-        // sélectionne la table de la commande choisie comme affichage de base
-        Integer currentTableId = controller.getOrder().getTableId();
-        if (currentTableId == null) {
-            tableBox.setSelectedIndex(0);            // a emporter
-        } else {
-            int idx2 = 0; // a emporter
-            for (int i = 0; i < tables.size(); i++) {
-                if (tables.get(i).getId() == currentTableId) { idx2 = i + 1; break; }
-            }
-            tableBox.setSelectedIndex(idx2);
-        }
-        tableLine.addComponent(tableBox);
-        infoSection.addComponent(tableLine);
+
 
         Panel serviceLine = new Panel(new LinearLayout(Direction.HORIZONTAL));
         serviceLine.addComponent(new Label("Service:"));
         serviceBox = new ComboBox<>();
         serviceBox.setPreferredSize(new TerminalSize(26, 1));
-
         services = controller.getAvailableServices();
-        for(Service s : services){
+        for (Service s : services) {
             serviceBox.addItem(s.getName());
         }
-        // sélectionne le service de la commande choisie comme affichage de base
-        // Sélectionner le service courant si présent, sinon 0
+
+// Sélectionner le service courant (celui de la commande)
         int currentServiceId = controller.getOrder().getServiceId();
         int selectedIdx = -1;
         for (int k = 0; k < services.size(); k++) {
-            if (services.get(k).getId() == currentServiceId) { selectedIdx = k; break; }
+            if (services.get(k).getId() == currentServiceId) {
+                selectedIdx = k;
+                break;
+            }
         }
 
         if (!services.isEmpty() && selectedIdx >= 0) {
@@ -118,7 +101,31 @@ public class OrderChangeView extends BasicWindow {
             serviceBox.addItem("(aucun service disponible)");
             serviceBox.setSelectedIndex(0);
             serviceBox.setEnabled(false);
+        }
 
+        //  Maintenant que le service courant est bien défini,
+        // charger les tables disponibles pour CE service
+        List<Table> newTables = controller.getAvailableTables();
+        tables = newTables;
+        tableBox.clearItems();
+        tableBox.addItem("Aucune");
+        for (Table t : newTables) {
+            tableBox.addItem("Table " + t.getId() + " (" + t.getCapacity() + "p)");
+        }
+
+        //  Sélectionner la table de la commande comme affichage de base
+        Integer currentTableId = controller.getOrder().getTableId();
+        if (currentTableId == null) {
+            tableBox.setSelectedIndex(0); // a emporter
+        } else {
+            int idx2 = 0; // a emporter
+            for (int i = 0; i < tables.size(); i++) {
+                if (tables.get(i).getId() == currentTableId) {
+                    idx2 = i + 1;
+                    break;
+                }
+            }
+            tableBox.setSelectedIndex(idx2);
         }
 
 
@@ -168,6 +175,9 @@ public class OrderChangeView extends BasicWindow {
                 invalidate();
             }
         });
+
+        tableLine.addComponent(tableBox);
+        infoSection.addComponent(tableLine);
         serviceLine.addComponent(serviceBox);
         infoSection.addComponent(serviceLine);
 

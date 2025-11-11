@@ -29,7 +29,7 @@ public class RestaurantApp {
                         " pour " + r.getNumberOfPeople() + " personnes" +
                         " à une table de " + r.getTable().getCapacity() + " places.");
             }
-            Order test = Order.getByKey(3);
+            Order test = Order.getByKey(4);
             // Controller.navigateTo(new TestController());
             // Controller.navigateTo(new OrderAddController(test));
             // Controller.navigateTo(new OrderDeleteController(test));
