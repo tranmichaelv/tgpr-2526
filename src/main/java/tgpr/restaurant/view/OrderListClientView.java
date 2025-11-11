@@ -184,17 +184,15 @@ public class OrderListClientView extends BasicWindow {
     }
 
     private void editReservation(Reservation reservationToEdit) {
-        //  Crée contrôleur + vue des détails
         var ctrl = new ReservationEditController();
-        var win = ctrl.getReservationView(); // vue OrderDetailsView (BasicWindow)
+        ctrl.setReservation(reservationToEdit);
+        var win = ctrl.getReservationView();
 
-
-        //  Configure l’affichage pour qu’elle s’ouvre par-dessus
         win.setHints(java.util.Arrays.asList(
-                Window.Hint.MODAL,     // bloque les interactions dessous
-                Window.Hint.CENTERED   // centre la fenêtre
+                Window.Hint.MODAL,
+                Window.Hint.CENTERED
         ));
-        //  Affiche la fenêtre par-dessus sans fermer celle de la liste
+
         getTextGUI().addWindowAndWait(win);
     }
 
