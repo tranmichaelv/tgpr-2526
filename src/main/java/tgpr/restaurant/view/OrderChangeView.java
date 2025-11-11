@@ -330,8 +330,7 @@ public class OrderChangeView extends BasicWindow {
                 //  Valider
                 controller.getOrder().validate();
 
-                //  Sauver
-                controller.getOrder().save();
+
 
                 // Affiche vue OrderAdd
                 BasicWindow win = getWindow(controller);
