@@ -94,17 +94,21 @@ public class PanierController extends Controller<PanierView> {
 
 
     //------
-    public void connect() {
-        // Si l'utilisateur n'est pas connecté, on sauvegarde le panier actuel
-        if (!tgpr.restaurant.model.Security.isLogged()) {
-            tgpr.restaurant.model.Security.setPendingPanier(tgpr.restaurant.model.Panier.getProduits());
-            Controller.showInfo("Veuillez vous connecter pour continuer votre commande.");
-            navigateTo(new SecurityConnectController());
-            return;
-        }
+//    public void connect() {
+//        // Si l'utilisateur n'est pas connecté, on sauvegarde le panier actuel
+//        if (!tgpr.restaurant.model.Security.isLogged()) {
+//            tgpr.restaurant.model.Security.setPendingPanier(tgpr.restaurant.model.Panier.getProduits());
+//            Controller.showInfo("Veuillez vous connecter pour continuer votre commande.");
+//            navigateTo(new SecurityConnectController());
+//            return;
+//        }
+//
+//        // Si déjà connecté, on peut continuer normalement (par exemple aller à la confirmation)
+//        Controller.showInfo("Vous êtes déjà connecté !");
+//    }
 
-        // Si déjà connecté, on peut continuer normalement (par exemple aller à la confirmation)
-        Controller.showInfo("Vous êtes déjà connecté !");
+    public void connect() {
+        navigateTo(new SecurityConnectController());
     }
 
 }

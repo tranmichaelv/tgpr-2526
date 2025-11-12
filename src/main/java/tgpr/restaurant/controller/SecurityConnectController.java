@@ -7,6 +7,8 @@ import tgpr.restaurant.model.Reservation;
 import tgpr.restaurant.model.Security;
 import tgpr.restaurant.model.User;
 import tgpr.restaurant.view.SecurityConnectView;
+import tgpr.restaurant.model.Panier;
+
 
 import java.util.List;
 
@@ -46,20 +48,24 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
 
 
 
-            //-----------
-            //  Vérifie s'il y a un panier temporaire et le restaure
-            var panierTemp = tgpr.restaurant.model.Security.getPendingPanier();
+            //------
+
+
+            // Vérifie s'il y a un panier temporaire et le restaure
+            var panierTemp = Security.getPendingPanier();
             if (panierTemp != null && !panierTemp.isEmpty()) {
                 for (var entry : panierTemp.entrySet()) {
                     var produit = entry.getKey();
                     var quantite = entry.getValue();
                     for (int i = 0; i < quantite; i++) {
-                        tgpr.restaurant.model.Panier.ajouterProduit(produit);
+                        Panier.ajouterProduit(produit);
                     }
                 }
-                tgpr.restaurant.model.Security.clearPendingPanier();
+                Security.clearPendingPanier();
                 showInfo("Les articles de votre panier ont été restaurés !");
             }
+
+
 
 
 

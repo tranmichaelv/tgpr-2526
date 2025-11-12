@@ -48,9 +48,23 @@ public class PanierView extends DialogWindow {
         } else {
             connection = new ActionListBox(new TerminalSize(60, 3));
             connection.addItem("=== COMMANDE ===", () -> {});
-            if(!Security.isLogged()) {
-                // si pas connecte alors
-                connection.addItem("Connexion requise pour passer commande", this::connect);
+
+
+
+//            if(!Security.isLogged()) {
+//                //Security.setPendingPanier();
+//                // si pas connecte alors
+//                connection.addItem("Connexion requise pour passer commande", this::connect);
+//            }
+
+
+            if (!Security.isLogged()) {
+                connection.addItem("Connexion requise pour passer commande", () -> {
+                    // sauvegarder panier avant d'aller se connecter
+                    Security.setPendingPanier(Panier.getProduits());
+                    controller.connect();
+                    this.close();
+                });
             }
             root.addComponent(connection);
 
@@ -122,7 +136,7 @@ public class PanierView extends DialogWindow {
     }
 
     private void connect(){
-        close();
+
         controller.connect();
     }
 }
