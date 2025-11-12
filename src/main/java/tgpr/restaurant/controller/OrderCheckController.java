@@ -19,7 +19,7 @@ public class OrderCheckController extends Controller<OrderCheckView> {
     }
 
     @Override
-    public OrderCheckView getReservationView() {
+    public OrderCheckView getView() {
         return view;
     }
 
@@ -31,19 +31,19 @@ public class OrderCheckController extends Controller<OrderCheckView> {
 
     public void openRegisterPaymentView() {
         var ctrl = new OrderPayController(order);
-        var win = ctrl.getReservationView();
+        var win = ctrl.getView();
         showModal(win);
     }
 
     public void openDetailsView() {
         var ctrl = new OrderDetailsController(order);
-        var win = ctrl.getReservationView();
+        var win = ctrl.getView();
         showModal(win);
     }
 
     public void openCancelOrderView() {
         var ctrl = new OrderDeleteController(order);
-        var win = ctrl.getReservationView();
+        var win = ctrl.getView();
         showModal(win);
     }
 

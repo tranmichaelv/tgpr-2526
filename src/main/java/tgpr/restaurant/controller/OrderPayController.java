@@ -19,7 +19,7 @@ public class OrderPayController extends Controller<OrderPayView> {
 //    }
 
     @Override
-    public OrderPayView getReservationView() {
+    public OrderPayView getView() {
         return new OrderPayView(this);
     }
 }

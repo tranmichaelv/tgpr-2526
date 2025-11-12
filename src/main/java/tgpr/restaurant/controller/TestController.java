@@ -10,7 +10,7 @@ public class TestController extends Controller<TestView> {
     private final TestView view = new TestView(this);
 
     @Override
-    public TestView getReservationView() {
+    public TestView getView() {
         return view;
     }
 

@@ -16,7 +16,7 @@ public class OrderDeleteController extends Controller<OrderDeleteView> {
     }
 
     @Override
-    public OrderDeleteView getReservationView() {
+    public OrderDeleteView getView() {
         return new OrderDeleteView(this);
     }
 

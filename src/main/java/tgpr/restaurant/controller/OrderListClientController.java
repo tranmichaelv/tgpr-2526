@@ -23,7 +23,7 @@ public class OrderListClientController extends Controller<OrderListClientView> {
     }
 
     @Override
-    public OrderListClientView getReservationView() {
+    public OrderListClientView getView() {
         return view;
     }
 
@@ -40,7 +40,7 @@ public class OrderListClientController extends Controller<OrderListClientView> {
     public void openDetails(Order order) {
         //  Crée contrôleur + vue des détails
         var ctrl = new OrderDetailsController(order);
-        var win = ctrl.getReservationView(); // vue OrderDetailsView (BasicWindow)
+        var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
 
         //  Configure l’affichage pour qu’elle s’ouvre par-dessus
         win.setHints(java.util.Arrays.asList(

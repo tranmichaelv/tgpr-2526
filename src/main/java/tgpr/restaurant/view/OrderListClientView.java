@@ -18,7 +18,6 @@ import tgpr.restaurant.model.User;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class OrderListClientView extends BasicWindow {
@@ -187,7 +186,7 @@ public class OrderListClientView extends BasicWindow {
     private void editReservation(Reservation reservationToEdit) {
         var ctrl = new ReservationEditController();
         ctrl.setReservation(reservationToEdit);
-        var win = ctrl.getReservationView();
+        var win = ctrl.getView();
 
         win.setHints(java.util.Arrays.asList(
                 Window.Hint.MODAL,
@@ -200,7 +199,7 @@ public class OrderListClientView extends BasicWindow {
     private void openDetails(Order order) {
         //  Crée contrôleur + vue des détails
         var ctrl = new OrderDetailsController(order);
-        var win = ctrl.getReservationView(); // vue OrderDetailsView (BasicWindow)
+        var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
 
         //  Configure l’affichage pour qu’elle s’ouvre par-dessus
         win.setHints(java.util.Arrays.asList(

@@ -16,7 +16,7 @@ public abstract class Controller<V> {
      *
      * @return la vue en question
      */
-    public abstract V getReservationView();
+    public abstract V getView();
 
     /**
      * Méthode principale pour permettre la navigation dans l'application : un contrôleur permet de naviguer vers un
@@ -29,7 +29,7 @@ public abstract class Controller<V> {
         // on efface le cache des objets du modèle à chaque fois qu'on navigue vers un contrôleur
         Model.clearCache();
 
-        Object view = controller.getReservationView();
+        Object view = controller.getView();
         if (view instanceof DialogWindow dialogWindow) {
             ViewManager.showModal(dialogWindow);
         } else if (view instanceof Window window) {

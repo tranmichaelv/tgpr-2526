@@ -16,7 +16,7 @@ public class OrderCreateController extends Controller<OrderCreateView> {
 //    }
 
     @Override
-    public OrderCreateView getReservationView() {
+    public OrderCreateView getView() {
         return new OrderCreateView(this);
     }
 }
