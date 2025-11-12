@@ -34,6 +34,7 @@ public class OrderCheckView extends BasicWindow {
 
         setComponent(root);
     }
+    // cree le bouton cancel
     public Panel buttonCancel() {
         Panel button = new Panel();
         button.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
