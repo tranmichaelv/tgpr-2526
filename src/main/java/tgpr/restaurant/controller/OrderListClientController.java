@@ -3,6 +3,7 @@ import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Window;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.Order;
+import tgpr.restaurant.model.Security;
 import tgpr.restaurant.model.User;
 import tgpr.restaurant.view.OrderListClientView;
 
@@ -12,14 +13,15 @@ import java.util.Arrays;
 public class OrderListClientController extends Controller<OrderListClientView> {
 
     private final OrderListClientView view;
-    //private final User user;
+    private final User user;
 
-    public OrderListClientController(){
+    public OrderListClientController(User loggedUser){
+        this.user = loggedUser;
         this.view = new OrderListClientView(this,getUser());
     }
     // pour pouvoir avancer en attendant que je fasse le lien avec le login
     public User getUser(){
-        return User.getByKey(1);
+        return Security.getLoggedUser();
     }
 
     @Override

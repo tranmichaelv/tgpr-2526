@@ -16,6 +16,8 @@ import tgpr.restaurant.model.OrderItem;
 import tgpr.restaurant.model.User;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,8 @@ import java.util.List;
 public class OrderListClientView extends BasicWindow {
 
     // Made-up local date to test the feature (before merging with develop branch)
-    public static final LocalDate TODAY_DEMO = LocalDate.of(2025, 8, 20);
+    public static final LocalDate TODAY_DEMO_DATE = Time.getDateChosen().toLocalDate();
+    public static final LocalTime TODAY_DEMO_TIME = Time.getDateChosen().toLocalTime();
     private final OrderListClientController controller;
     private final List<Order> ordersList = Order.getAll();
     private final List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model
@@ -38,12 +41,12 @@ public class OrderListClientView extends BasicWindow {
     private ActionListBox reservationListBox = new ActionListBox(new TerminalSize(80, 7));
 
     public OrderListClientView(OrderListClientController controller, User user) {
+        super();
         this.controller = controller;
         this.user = user;
-
         // Title (will be changed according user's role)
-        setTitle("Panel pour afficher les commandes en tant que client");
         setHints(List.of(Hint.EXPANDED));
+        updateTitle(user);
 
         // Root Panel englobing every element
         Panel root = new Panel();
@@ -158,11 +161,35 @@ public class OrderListClientView extends BasicWindow {
         root.addComponent(ordersListBox);
     }
 
+    // displaying title according to User's type
+    public void updateTitle(User user) {
+        String roleLabel;
+
+        if (user.getRole().toString().equalsIgnoreCase("client")) {
+            roleLabel = "client";
+        } else if (user.getRole().toString().equalsIgnoreCase("employee")) {
+            roleLabel = "employee";
+        } else if (user.getRole().toString().equalsIgnoreCase("boss")) {
+            roleLabel = "boss";
+        } else {
+            roleLabel = "unknown";
+        }
+
+        setTitle(String.format("Restaurant (%s, %s - %s) - Date simulée: %s %s",
+                user.getFirstName(),
+                user.getFirstName(),
+                roleLabel,
+                TODAY_DEMO_DATE.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                TODAY_DEMO_TIME.format(DateTimeFormatter.ofPattern("HH:mm"))
+        ));
+    }
+
+
     private void updateReservationList(ActionListBox reservationListBox, List<Reservation> allReservations, boolean showAll) {
         reservationListBox.clearItems();
 
         for (Reservation r : allReservations) {
-            if (showAll || !(r.getReservationDate().isBefore(TODAY_DEMO))) {
+            if (showAll || !(r.getReservationDate().isBefore(TODAY_DEMO_DATE))) {
                 String row = String.format("%s%s%7s%16s%4s%8s",
                         " Table " + (r.getTable().getId() < 10 ?
                                 r.getTable().getId() + " " :
@@ -175,7 +202,7 @@ public class OrderListClientView extends BasicWindow {
                         r.getOnline() ? "Oui" : "Non"
                 );
                 reservationListBox.addItem(row, () -> {
-                    if(r.getReservationDate().isBefore(TODAY_DEMO))
+                    if(r.getReservationDate().isBefore(TODAY_DEMO_DATE))
                         return;
                     editReservation(r);
                 });

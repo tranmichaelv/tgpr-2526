@@ -41,6 +41,7 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
                 pending.save();
                 Security.clearPendingReservation();
                 showInfo("Votre réservation a été confirmée !");
+                navigateTo(new OrderListClientController(user));
             }
 
 
@@ -66,8 +67,7 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
 
             // ✅ Message de confirmation (tu peux le changer ou l'enlever)
             showInfo("Connexion réussie !");
-            // navigateTo(new MenuController()); // Exemple si tu veux rediriger vers le menu
-
+            navigateTo(new OrderListClientController(user));
             showError(new Error("c'est bon")); // à enlever c'est juste pour tester
             //...
             //...

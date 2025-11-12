@@ -5,6 +5,7 @@ import tgpr.framework.Model;
 import tgpr.restaurant.controller.OrderCreateController;
 import tgpr.restaurant.controller.OrderListClientController;
 import tgpr.restaurant.controller.OrderListEmployeeController;
+import tgpr.restaurant.controller.SecurityLoginController;
 
 public class RestaurantApp {
     public final static String DATABASE_SCRIPT_FILE = "/database/tgpr-2526-c03.sql";
@@ -37,7 +38,7 @@ public class RestaurantApp {
             // Page Pour afficher la liste des commande
             //Controller.navigateTo(new OrderChangeController());
 
-            Controller.navigateTo(new OrderListClientController());
+            Controller.navigateTo(new SecurityLoginController());
             //Controller.navigateTo(new OrderListEmployeeController());
             //Controller.navigateTo(new OrderCreateController());
         }
