@@ -7,7 +7,6 @@ import tgpr.framework.Tools;
 import tgpr.restaurant.controller.*;
 import tgpr.restaurant.model.Order;
 
-import tgpr.restaurant.model.Time;
 import tgpr.restaurant.model.User;
 
 import java.time.LocalDate;
@@ -32,12 +31,11 @@ public class RestaurantApp {
                         " à une table de " + r.getTable().getCapacity() + " places.");
             }
             Order test = Order.getByKey(4);
-           // Order newOrder = new Order();
             // Controller.navigateTo(new TestController());
             // Controller.navigateTo(new OrderAddController(test));
             // Controller.navigateTo(new OrderDeleteController(test));
             // Controller.navigateTo(new OrderPayController(test));
-           // Controller.navigateTo(new OrderChangeController(test));
+            Controller.navigateTo(new OrderChangeController(test));
             // Controller.navigateTo(new OrderCheckController());
           //  Controller.navigateTo(new CartMenuManagementController());
            // Controller.navigateTo(new TestController());

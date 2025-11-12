@@ -84,4 +84,12 @@ public class MenuChangeController extends Controller<MenuChangeView> {
         }
     }
 
+    public void changeOrderItem(){
+
+    }
+
+    public void deleteItem(){
+
+    }
+
 }
