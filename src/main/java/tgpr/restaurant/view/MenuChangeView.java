@@ -126,6 +126,7 @@ public class MenuChangeView extends DialogWindow {
             productMap.put(display, p);
             cboAddProduct.addItem(display);
         }
+        checkDouble();
 
         cboAddProduct.addListener((selectedIndex, previousSelection, changedByUserInteraction) -> checkDouble());
 
@@ -145,6 +146,7 @@ public class MenuChangeView extends DialogWindow {
         String selectedText = cboAddProduct.getSelectedItem();
         Product selectedProduct = productMap.get(selectedText);
         controller.addProductToMenu(selectedProduct.getId());
+        checkDouble();
         reloadData();
     }
 
@@ -172,6 +174,7 @@ public class MenuChangeView extends DialogWindow {
         lblErrorDoubleProduct.setText(errors.getFirstErrorMessage(MenuItem.Fields.Product));
 
         btnAdd.setEnabled(errors.isEmpty());
+        cboAddProduct.takeFocus();
     }
     public void deleteMenu(){
         controller.deleteMenu();
@@ -187,6 +190,16 @@ public class MenuChangeView extends DialogWindow {
 
     public void changeMenu(){
         controller.changeMenu();
+        reloadData();
+    }
+
+    public void deleteItem(){
+        controller.deleteItem();
+        reloadData();
+    }
+
+    public void changeOrderItem(){
+        controller.changeOrderItem();
         reloadData();
     }
 

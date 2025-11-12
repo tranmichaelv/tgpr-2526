@@ -270,13 +270,13 @@ public class ReservationView extends BasicWindow {
                                 2) à 20h00, je ne pourrai plus réserver un service du soir pour le jour courant
                             */
                             || (date.equals(simulatedToday) && (
-                                    ((midiSoir.getSelectedItem().equalsIgnoreCase("midi") &&
-                                            simulatedTodayHour.isAfter(LocalTime.of(11,30))))
-                                || (midiSoir.getSelectedItem().equalsIgnoreCase("soir") &&
-                                            simulatedTodayHour.isAfter(LocalTime.of(18,30))
-                                    )
+                            ((midiSoir.getSelectedItem().equalsIgnoreCase("midi") &&
+                                    simulatedTodayHour.isAfter(LocalTime.of(11,30))))
+                                    || (midiSoir.getSelectedItem().equalsIgnoreCase("soir") &&
+                                    simulatedTodayHour.isAfter(LocalTime.of(18,30))
                             )
-                            )
+                    )
+                    )
             ) {
                 dayButton.setEnabled(false);
                 calendarGrid.addComponent(dayButton

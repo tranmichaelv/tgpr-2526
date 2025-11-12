@@ -11,6 +11,10 @@ public class OrderAddController extends Controller<OrderAddView> {
     public OrderAddController(Order order) {
         this.order = order;
     }
+    public Order getOrder() {
+        return order;
+    }
+
 
 
     @Override

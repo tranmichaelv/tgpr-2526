@@ -11,7 +11,7 @@ public class MenuCheckView extends PanelProductAndMenu<Product> {
     public MenuCheckView(MenuCheckController controller) {
         this.controller = controller;
 
-        initTable(4);
+        initTable(6);
         createButtonAddPanel("Ajouter menu", this::addNewMenu);
 
     }

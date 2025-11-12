@@ -40,7 +40,7 @@ public class UserValidator {
         if(found != null )
             return new Error("Email deja utilise",User.Fields.Email);
 
-        if (!email.contains("@email.com"))
+        if (!Pattern.matches("\\w{1,}@email.com", email))
             return new Error("Doit etre un email",User.Fields.Email);
 
         return Error.NOERROR;

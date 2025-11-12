@@ -5,7 +5,7 @@ import tgpr.restaurant.controller.OrderDeleteController;
 public class OrderDeleteView extends OrderAddOrDelete<OrderDeleteController> {
 
     public OrderDeleteView(OrderDeleteController controller) {
-        super(controller,
+        super(controller,controller.getOrder(),
                 "Annulation",
                 "Voulez-vous annuler cette commande ?",
                 "Yes");

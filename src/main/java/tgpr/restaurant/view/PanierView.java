@@ -66,13 +66,6 @@ public class PanierView extends DialogWindow {
                     this.close();
                 });
             }
-
-
-
-
-
-
-
             root.addComponent(connection);
 
             ActionListBox listBox = new ActionListBox(new TerminalSize(60, 3));
