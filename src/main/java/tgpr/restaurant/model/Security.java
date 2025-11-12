@@ -46,7 +46,7 @@ public class Security {
 
     // when guest goes to Login page, setPendingReservation takes current data about reservation
     public static void setPendingReservation(Reservation r) {
-        pendingReservation = r;
+         pendingReservation = r;
     }
 
     // Getter (triggered in SecurityConnectController if user logged in successfully)
@@ -75,7 +75,6 @@ public class Security {
     public static void clearPendingPanier() {
         pendingPanier.clear();
     }
-
 
 
 }
