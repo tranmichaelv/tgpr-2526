@@ -76,8 +76,8 @@ public class SecurityConnectView extends BasicWindow {
     private Border createDebugPanel() {
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,
                 new Button("Connexion admin par defaut",this::logAsDefaultAdmin),
-                new Button("Connexion employe par defaut",this::logAsDefaultClient),
-                new Button("Connexion client par defaut",this::logAsDefaultEmploye)
+                new Button("Connexion employe par defaut",this::logAsDefaultEmploye),
+                new Button("Connexion client par defaut",this::logAsDefaultClient)
         );
 
         return panel.withBorder(Borders.singleLine(" A des fins de debogage "));

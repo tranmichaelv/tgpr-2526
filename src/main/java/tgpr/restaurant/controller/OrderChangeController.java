@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class OrderChangeController extends Controller<OrderChangeView>{
     private final Order order;
     private final Order original;
-    private  List<OrderItem> originalItems;
+    private final List<OrderItem> originalItems;
 
     public OrderChangeController(Order order) {
         this.order = order;
@@ -46,7 +46,7 @@ public class OrderChangeController extends Controller<OrderChangeView>{
         Integer currentReservationId = order.getReservationId();
 
         var busyByOrders = Order.getAll().stream()
-                .filter(o -> o.getId() != currentOrderId)
+                .filter(o -> currentOrderId == null || o.getId() != currentOrderId)
                 .filter(o -> date.equals(o.getOrderDate()) && serviceId == o.getServiceId())
                 .map(Order::getTableId)
                 .filter(java.util.Objects::nonNull)

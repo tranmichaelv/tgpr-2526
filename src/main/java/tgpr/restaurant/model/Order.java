@@ -329,9 +329,6 @@ public class Order extends Model {
         if (discount != null && discount < 0) {
             errors.add("La réduction doit être positive.");
         }
-        if ( getId() > 0 && paymentMethod == null ) {
-            errors.add("Le mode de paiement est obligatoire");
-        }
 
         if (takeAway && getTable() != null) {
             errors.add("Une commande à emporter ne peut pas avoir de table.");
@@ -374,6 +371,7 @@ public class Order extends Model {
             }
 
         }
+
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException(String.join("\n", errors));
         }
