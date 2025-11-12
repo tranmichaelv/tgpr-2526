@@ -1,6 +1,7 @@
 package tgpr.restaurant.controller;
 
 import tgpr.framework.Controller;
+import tgpr.restaurant.controller.SecurityLoginController;
 import tgpr.restaurant.model.Reservation;
 import tgpr.restaurant.model.Service;
 import tgpr.restaurant.model.Table;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.SQLException;
 import java.util.Locale;
+
 
 public class ReservationController extends Controller<ReservationView> {
 
@@ -78,7 +80,12 @@ public class ReservationController extends Controller<ReservationView> {
 
             Service service = Service.getByNameAndDay(serviceName, weekDay);
 
-            Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
+//            if (service == null) {
+//                view.showError("Pas de service de " + serviceName + " le " + weekDay);
+//                return false;
+//            }
+
+            Table table = Reservation.findAllAvailableTable(numberOfPeople, selectedDate, service.getId());
             if (table == null) {
                 view.updateTableLabel("(aucune table disponible)");
                 return false;

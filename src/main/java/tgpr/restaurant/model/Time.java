@@ -1,9 +1,5 @@
 package tgpr.restaurant.model;
 
-import tgpr.restaurant.controller.RestaurantClosedController;
-import tgpr.restaurant.view.RestaurantClosedView;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 

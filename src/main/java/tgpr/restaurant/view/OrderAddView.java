@@ -5,7 +5,7 @@ import tgpr.restaurant.controller.OrderAddController;
 public class OrderAddView extends OrderAddOrDelete<OrderAddController> {
 
     public OrderAddView(OrderAddController controller) {
-        super(controller, "Confirmation", "Voulez-vous créer cette commande ?", "Yes");
+        super(controller,controller.getOrder() ,"Confirmation", "Voulez-vous créer cette commande ?", "Yes");
     }
 
     // méthode qui crée la commande
