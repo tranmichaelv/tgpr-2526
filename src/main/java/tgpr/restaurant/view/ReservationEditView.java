@@ -3,23 +3,13 @@ package tgpr.restaurant.view;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.graphics.SimpleTheme;
-import com.googlecode.lanterna.graphics.Theme;
-import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-import tgpr.restaurant.controller.ReservationController;
 import tgpr.restaurant.controller.ReservationEditController;
 import tgpr.restaurant.model.Reservation;
-import tgpr.restaurant.model.Service;
-import tgpr.restaurant.model.Table;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class ReservationEditView extends BasicWindow {
@@ -55,6 +45,8 @@ public class ReservationEditView extends BasicWindow {
         root.addComponent(header());
         root.addComponent(emptyRow());
         root.addComponent(currentReservationInfo());
+        root.addComponent(inputByUser());
+        root.addComponent(buttonsAtBottom());
     }
 
     private Panel emptyRow() {
@@ -83,4 +75,45 @@ public class ReservationEditView extends BasicWindow {
 
         return currentReservation;
     };
+
+    private Panel inputByUser() {
+        Panel userInputGrid = new Panel();
+        userInputGrid.setLayoutManager(new GridLayout(2)); // two columns
+
+        // 1st row
+        userInputGrid.addComponent(new Label("Nombre de personnes: "));
+        nbGuests = new TextBox();
+        nbGuests.setValidationPattern(Pattern.compile("[1-9][0-9]*")); // only integers allowed
+        userInputGrid.addComponent(nbGuests);
+
+        userInputGrid.addComponent(new EmptySpace(), GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER, true, false, 2, 1)); // to skip row
+
+        // 2nd row
+        userInputGrid.addComponent(new Label("Service: "));
+        midiSoir = new ComboBox<>();
+        midiSoir.addItem("midi");
+        midiSoir.addItem("soir");
+        midiSoir.setSelectedItem("midi");
+        userInputGrid.addComponent(midiSoir);
+
+        userInputGrid.addComponent(new EmptySpace(), GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER, true, false, 2, 1));
+
+        // 3rd row
+        userInputGrid.addComponent(new Label("Table assignée: "));
+        tableLabel = new Label("(non attribuée)");
+        userInputGrid.addComponent(tableLabel);
+        return userInputGrid;
+    }
+
+    private Panel buttonsAtBottom() {
+        Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
+        Button cancel = new Button("Annuler", this::close);
+        Button delete = new Button("Supprimer");
+        confirm = new Button("Confirmer");
+        confirm.setEnabled(false);
+        buttons.addComponent(cancel);
+        buttons.addComponent(delete);
+        buttons.addComponent(confirm);
+        return buttons;
+    }
 }
