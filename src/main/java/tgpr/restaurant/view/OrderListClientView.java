@@ -23,6 +23,8 @@ import java.util.List;
 
 public class OrderListClientView extends BasicWindow {
 
+    // Made-up local date to test the feature (before merging with develop branch)
+    public static final LocalDate TODAY_DEMO = LocalDate.of(2025, 8, 20);
     private final OrderListClientController controller;
     private final List<Order> ordersList = Order.getAll();
     private final List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model
@@ -159,10 +161,9 @@ public class OrderListClientView extends BasicWindow {
 
     private void updateReservationList(ActionListBox reservationListBox, List<Reservation> allReservations, boolean showAll) {
         reservationListBox.clearItems();
-        LocalDate today = LocalDate.of(2025,8,20); // Made-up local date to test the feature (before merging with develop branch)
 
         for (Reservation r : allReservations) {
-            if (showAll || !(r.getReservationDate().isBefore(today))) {
+            if (showAll || !(r.getReservationDate().isBefore(TODAY_DEMO))) {
                 String row = String.format("%s%s%7s%16s%4s%8s",
                         " Table " + (r.getTable().getId() < 10 ?
                                 r.getTable().getId() + " " :
@@ -175,7 +176,7 @@ public class OrderListClientView extends BasicWindow {
                         r.getOnline() ? "Oui" : "Non"
                 );
                 reservationListBox.addItem(row, () -> {
-                    if(r.getReservationDate().isBefore(today))
+                    if(r.getReservationDate().isBefore(TODAY_DEMO))
                         return;
                     editReservation(r);
                 });

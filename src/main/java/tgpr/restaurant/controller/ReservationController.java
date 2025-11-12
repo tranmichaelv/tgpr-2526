@@ -36,9 +36,10 @@ import java.util.Locale;
 */
 
 public class ReservationController extends Controller<ReservationView> {
+    public static final LocalDate TODAY_DEMO = LocalDate.of(2025, 8, 20);
 
     private final ReservationView view = new ReservationView(this); // ReservationView has now access to this controller's methods
-    private YearMonth currentMonth = YearMonth.now();
+    private YearMonth currentMonth = YearMonth.from(TODAY_DEMO);
 
     @Override
     public ReservationView getReservationView() {
@@ -67,7 +68,7 @@ public class ReservationController extends Controller<ReservationView> {
     public YearMonth getCurrentMonth() {
         // guaranteed initialization of currentMonth
         if (currentMonth == null) {
-            currentMonth = YearMonth.now();
+            currentMonth = YearMonth.from(TODAY_DEMO);
         }
         return currentMonth;
     }
