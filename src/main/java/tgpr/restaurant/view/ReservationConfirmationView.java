@@ -6,6 +6,8 @@ import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import tgpr.framework.Controller;
+import tgpr.restaurant.controller.SecurityConnectController;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,7 +16,7 @@ import java.util.Locale;
 
 public class ReservationConfirmationView extends DialogWindow {
 
-
+        public Controller<SecurityConnectView> controller;
         public ReservationConfirmationView(LocalDate date, int numberOfPeople, String service, String tableInfo) {
             super("Réservation préparée");
             setHints(List.of(Hint.CENTERED));
@@ -32,7 +34,10 @@ public class ReservationConfirmationView extends DialogWindow {
             content.addComponent(new Label("Vous allez être redirigé vers la page de connexion pour confirmer votre réservation."));
 
             // OK button (redirection)
-            Button okButton = new Button("OK", this::close).left();
+            Button okButton = new Button("OK", () -> {
+                close();
+                controller.navigateTo(new SecurityConnectController());
+            });
             content.addComponent(okButton);
 
             setComponent(content);

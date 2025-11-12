@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static tgpr.framework.Tools.hash;
+
 public class User extends Model {
     public enum Fields {
         Id, LastName, FirstName, Email, Password, Phone, Role, Blocked
@@ -31,20 +33,20 @@ public class User extends Model {
 
     public User(String lastName, String firstName, String email, String password, Role role) {
         this.lastName = lastName;
-        this.firstName = firstName;
-        this.email = email;
-        this.password = password;
-        this.role = role;
+		this.firstName = firstName;
+		this.email = email;
+		this.password = password;
+		this.role = role;
     }
 
     public User(String lastName, String firstName, String email, String password, String phone, Role role, boolean blocked) {
         this.lastName = lastName;
-        this.firstName = firstName;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
-        this.role = role;
-        this.blocked = blocked;
+		this.firstName = firstName;
+		this.email = email;
+		this.password = password;
+		this.phone = phone;
+		this.role = role;
+		this.blocked = blocked;
     }
 
     public User copy() {
@@ -63,22 +65,22 @@ public class User extends Model {
 
     public List<Order> getClientOrders() {
         return queryList(Order.class, "select * from orders where client=:id",
-                new Params("id", id));
+            new Params("id", id));
     }
 
     public List<Order> getEmployeeOrders() {
         return queryList(Order.class, "select * from orders where employee=:id",
-                new Params("id", id));
+            new Params("id", id));
     }
 
     public List<Reservation> getClientReservations() {
         return queryList(Reservation.class, "select * from reservations where client=:id",
-                new Params("id", id));
+            new Params("id", id));
     }
 
     public List<Reservation> getEmployeeReservations() {
         return queryList(Reservation.class, "select * from reservations where employee=:id",
-                new Params("id", id));
+            new Params("id", id));
     }
 
     private String lastName;
@@ -167,15 +169,15 @@ public class User extends Model {
     @Override
     public String toString() {
         return "User[" +
-                "id=" + id +
-                ", lastName=" + lastName +
-                ", firstName=" + firstName +
-                ", email=" + email +
-                ", password=" + password +
-                ", phone=" + phone +
-                ", role=" + role +
-                ", blocked=" + blocked +
-                "]";
+			"id=" + id +
+			", lastName=" + lastName +
+			", firstName=" + firstName +
+			", email=" + email +
+			", password=" + password +
+			", phone=" + phone +
+			", role=" + role +
+			", blocked=" + blocked +
+			"]";
     }
 
     @Override
@@ -193,12 +195,12 @@ public class User extends Model {
     @Override
     public void reload() {
         reload("select * from users where id=:id",
-                new Params("id", id));
+            new Params("id", id));
     }
 
     public static User getByKey(int id) {
         return queryOne(User.class, "select * from users where id=:id",
-                new Params("id", id));
+            new Params("id", id));
     }
 
     public static List<User> getAll() {
@@ -210,31 +212,31 @@ public class User extends Model {
         User obj = getByKey(id);
         String sql;
         var params = new Params()
-                .add("id", id)
-                .add("last_name", lastName)
-                .add("first_name", firstName)
-                .add("email", email)
-                .add("password", password)
-                .add("phone", phone == null ? null : phone)
-                .add("role", role.name().toLowerCase())
-                .add("blocked", blocked);
+			.add("id", id)
+			.add("last_name", lastName)
+			.add("first_name", firstName)
+			.add("email", email)
+			.add("password", password)
+			.add("phone", phone == null ? null : phone)
+			.add("role", role.name().toLowerCase())
+			.add("blocked", blocked);
         if (obj == null) {
             if (this.id > 0)
                 throw new RuntimeException("Object not found");
             sql = "insert into users (last_name,first_name,email,password,phone,role,blocked) " +
-                    "values (:last_name,:first_name,:email,:password,:phone,:role,:blocked)";
+				"values (:last_name,:first_name,:email,:password,:phone,:role,:blocked)";
             int id = insert(sql, params);
             if (id > 0)
                 this.id = id;
         } else {
             sql = "update users set last_name=:last_name," +
-                    "first_name=:first_name," +
-                    "email=:email," +
-                    "password=:password," +
-                    "phone=:phone," +
-                    "role=:role," +
-                    "blocked=:blocked " +
-                    "where id=:id";
+				"first_name=:first_name," +
+				"email=:email," +
+				"password=:password," +
+				"phone=:phone," +
+				"role=:role," +
+				"blocked=:blocked " +
+				"where id=:id";
             c = execute(sql, params);
             Assert.isTrue(c == 1, "Something went wrong");
         }
@@ -244,7 +246,39 @@ public class User extends Model {
 
     public void delete() {
         int c = execute("delete from users where id=:id",
-                new Params("id", id));
+			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+
+    // retourne un user si l'email correspont et que le mot de passe correspond a l'emain
+    public static User checkCredentials(String email, String password){
+        var user = User.getByEmail(email); // mets un user si l'email est present
+        if (user != null && user.password.equals(password))
+            return user;
+        return null;
+    }
+
+    // cherche un user avec l'email correspondant au string
+    public static User getByEmail(String email) {
+        return queryOne(User.class,"select * from users where email=:email",
+                new Params("email", email)); // Mets le string email dans :email
+    }
+
+    // verifie si l'user est le boss
+    public boolean isBoss(){
+        return this.role == Role.Boss;
+    }
+    // verifie si l'user est un client
+    public boolean isClient(){
+        return this.role == Role.Client;
+    }
+    // verifie si l'user est un employee
+    public boolean isEmployee(){
+        return this.role == Role.Employee;
+    }
+
+    public static List<User> getAllOrderByName() {
+        return queryList(User.class, "select * from users order by last_name");
+    }
+
 }
