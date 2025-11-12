@@ -143,28 +143,28 @@ public class OrderChangeView extends BasicWindow {
             public void onSelectionChanged(int selectedIndex, int previousSelection, boolean fromUser) {
                 if (selectedIndex < 0 || selectedIndex >= services.size()) return;
 
-                // 1) mettre à jour le service choisi sur la commande (en mémoire)
+                //  mettre à jour le service choisi sur la commande
                 controller.getOrder().setServiceId(services.get(selectedIndex).getId());
 
-                // 2) mémoriser l’ID de la table actuellement sélectionnée dans l’UI
+                //  mémoriser l’ID de la table actuellement sélectionnée dans l’UI
                 Integer uiSelectedTableId = null;
                 int currentIdx = tableBox.getSelectedIndex(); // 0 = "Aucune"
                 if (currentIdx > 0 && currentIdx - 1 < tables.size()) {
                     uiSelectedTableId = tables.get(currentIdx - 1).getId();
                 }
 
-                // 3) recharger les tables disponibles pour CE service
+                //  recharger les tables disponibles pour CE service
                 List<Table> newTables = controller.getAvailableTables();
-                tables = newTables; // ⚠️ MAJ du champ 'tables' pour garder la correspondance index→table
+                tables = newTables;
 
-                // 4) rebâtir la combo
+                //  rebâtir la combo
                 tableBox.clearItems();
                 tableBox.addItem("Aucune");
                 for (Table t : newTables) {
                     tableBox.addItem("Table " + t.getId() + " (" + t.getCapacity() + "p)");
                 }
 
-                // 5) essayer de re-sélectionner la table que l’utilisateur avait choisie (si encore dispo)
+                //  essayer de re-sélectionner la table que l’utilisateur avait choisie (si encore dispo)
                 int idxToSelect = 0; // "Aucune"
                 if (uiSelectedTableId != null) {
                     for (int j = 0; j < newTables.size(); j++) {

@@ -329,9 +329,10 @@ public class Order extends Model {
         if (discount != null && discount < 0) {
             errors.add("La réduction doit être positive.");
         }
-        if (paymentMethod == null) {
+        if ( getId() > 0 && paymentMethod == null ) {
             errors.add("Le mode de paiement est obligatoire");
         }
+
         if (takeAway && getTable() != null) {
             errors.add("Une commande à emporter ne peut pas avoir de table.");
         }
@@ -349,8 +350,8 @@ public class Order extends Model {
             if (now.isBefore(s.getStartTime()) || now.isAfter(s.getEndTime())) {
                 errors.add("Le service n'est pas disponible à l'heure actuelle.");
             }
-        }*/
-
+        }
+        */
         // Les clients doivent avoir le rôle CLIENT
         if (getClient().getRole() != User.Role.Client) {
             errors.add("Le client sélectionné doit avoir le rôle 'client'.");
