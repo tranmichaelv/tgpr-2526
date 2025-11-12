@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class OrderListClientView extends BasicWindow {
 
     // Made-up local date to test the feature (before merging with develop branch)
@@ -32,7 +33,9 @@ public class OrderListClientView extends BasicWindow {
     private final List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model
     private final Menu menuNav;
     private final Menu menuUser;
-    private User user = new User();
+    private User userlloged;
+    private final TextBox clientNameBox;
+    private boolean hasOrders = false;
     // la liste sera scrollable et sélectionnable
     private final ActionListBox ordersListBox = new ActionListBox(new TerminalSize(120, 10));
     private CheckBox showAllOrders;
@@ -40,18 +43,18 @@ public class OrderListClientView extends BasicWindow {
     private Button newReservation;
     private ActionListBox reservationListBox = new ActionListBox(new TerminalSize(80, 7));
 
-    public OrderListClientView(OrderListClientController controller, User user) {
-        super();
+    public OrderListClientView(OrderListClientController controller, User userlloged) {
         this.controller = controller;
-        this.user = user;
+        this.userlloged = userlloged;
+
         // Title (will be changed according user's role)
+        setTitle("Panel pour afficher les commandes en tant que " + userlloged.getRole());
         setHints(List.of(Hint.EXPANDED));
-        updateTitle(user);
 
         // Root Panel englobing every element
         Panel root = new Panel();
         setComponent(root);
-//        root.setPreferredSize(new TerminalSize(115,20));
+        // root.setPreferredSize(new TerminalSize(115,20));
 
         // menuFile nav
         MenuBar header = new MenuBar().addTo(root);
@@ -68,29 +71,37 @@ public class OrderListClientView extends BasicWindow {
         MenuItem menuTables = new MenuItem("Voir les tables");
         menuNav.add(menuTables);
 
+        // exemple du champs ou on peut saisir le nom dun client
+        Panel clientNameFilter = new Panel(new LinearLayout(Direction.VERTICAL));
+        clientNameFilter.addComponent(new Label("Filtrer par nom de client: "));
+        clientNameBox = new TextBox(new TerminalSize(20, 1));
+        clientNameBox.setTextChangeListener((newText, buUser) -> populateListBox());
+        clientNameBox.addTo(root);
+
+
         // Creating sub-Panel reservations
         Panel reservations = new Panel(new LinearLayout(Direction.VERTICAL));
-        root.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        root.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         // Title
         Label titleReservations = new Label("RESERVATIONS");
         titleReservations.addStyle(SGR.UNDERLINE);
-        TextColor blue = new TextColor.RGB(0,0,204);
+        TextColor blue = new TextColor.RGB(0, 0, 204);
         titleReservations.setForegroundColor(blue);
         reservations.addComponent(titleReservations);
 
         // Adding all elements in reservation panel into root
         reservations.addTo(root);
-        reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        reservations.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         // CheckBox to choose whether to show all reservations
         showAllReservations = new CheckBox("Afficher toutes les réservations (y compris passées et avec commande)");
         showAllReservations.setChecked(false);
         showAllReservations.addListener(checked -> {
-           updateReservationList(reservationListBox, reservationList, checked);
+            updateReservationList(reservationListBox, reservationList, checked);
         });
         reservations.addComponent(showAllReservations);
-        reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        reservations.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         updateReservationList(reservationListBox, reservationList, false);
         // List of Labels representing the "header" of Reservations
@@ -107,7 +118,7 @@ public class OrderListClientView extends BasicWindow {
         for (Label field : ls) {
             field.addStyle(SGR.UNDERLINE);
             field.addStyle(SGR.BOLD);
-            TextColor gray = new TextColor.RGB(80 ,80,80);
+            TextColor gray = new TextColor.RGB(80, 80, 80);
             field.setForegroundColor(gray);
             displayReservationsHeader.addComponent(field);
         }
@@ -115,47 +126,65 @@ public class OrderListClientView extends BasicWindow {
         // adding all components into reservation panel
         reservations.addComponent(displayReservationsHeader);
         reservations.addComponent(reservationListBox);
-        reservations.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        reservations.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         // New reservation button
         newReservation = new Button("Nouvelle réservation");
         reservations.addComponent(newReservation);
 
         // COMMANDES
-        root.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        root.addComponent(new EmptySpace(new TerminalSize(0, 1)));
         Panel orders = new Panel(new LinearLayout(Direction.VERTICAL));
-        orders.addComponent(new Label("COMMANDES"));
 
-        orders.addComponent(new EmptySpace(new TerminalSize(0,1)));
-        showAllOrders = new CheckBox("Afficher aussi les commandes terminées (payées)                           ");
+        Label titleOrders = new Label("COMMANDES");
+        titleOrders.addStyle(SGR.UNDERLINE);
+        titleOrders.addStyle(SGR.BOLD);
+        titleOrders.setForegroundColor(blue);
+        orders.addComponent(titleOrders);
+
+        orders.addComponent(new EmptySpace(new TerminalSize(0, 1)));
+        showAllOrders = new CheckBox("Afficher aussi les commandes terminées (payées)");
         orders.addComponent(showAllOrders);
 
-        // quand on coche / décoche -> recharger la liste
+        // Quand je coche / décoche -> recharger la liste
         showAllOrders.addListener((checkBox) -> populateListBox());
 
-        orders.addComponent(new EmptySpace(new TerminalSize(0,1)));
+        orders.addComponent(new EmptySpace(new TerminalSize(0, 1)));
         root.addComponent(orders);
 
-        Panel headersLine = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        root.addComponent(headersLine);
-        headersLine.addComponent(emphasize("  Date       "));
-        headersLine.addComponent(new EmptySpace(new TerminalSize(1,0)));
-        headersLine.addComponent(emphasize("Table       "));
-        headersLine.addComponent(new EmptySpace(new TerminalSize(1,0)));
-        headersLine.addComponent(emphasize("Service "));
-        headersLine.addComponent(new EmptySpace(new TerminalSize(1,0)));
-        headersLine.addComponent(emphasize("Pers. "));
-        headersLine.addComponent(new EmptySpace(new TerminalSize(1,0)));
-        headersLine.addComponent(emphasize("Type     "));
-        headersLine.addComponent(new EmptySpace(new TerminalSize(1,0)));
-        headersLine.addComponent(emphasize("En ligne "));
-        headersLine.addComponent(new EmptySpace(new TerminalSize(1,0)));
-        headersLine.addComponent(emphasize("Montant  "));
-        headersLine.addComponent(new EmptySpace(new TerminalSize(1,0)));
-        headersLine.addComponent(emphasize("Paiement"));
+        Panel displayOrdersHeader = new Panel();
 
-        root.addComponent(headersLine);
+        // Le nombre de colonnes dépend du rôle
+        int nbCols = (userlloged.getRole() == User.Role.Employee || userlloged.getRole() == User.Role.Boss) ? 9 : 8;
+        displayOrdersHeader.setLayoutManager(new GridLayout(nbCols));
 
+        List<Label> headers = new ArrayList<>();
+
+
+        if (userlloged.getRole() == User.Role.Employee || userlloged.getRole() == User.Role.Boss) {
+            headers.add(new Label(String.format("%-15s", "Client")));
+        }
+
+        headers.add(new Label(String.format("%-12s", "Date")));
+        headers.add(new Label(String.format("%-14s", "Table")));
+        headers.add(new Label(String.format("%-9s", "Service")));
+        headers.add(new Label(String.format("%-6s", "Pers.")));
+        headers.add(new Label(String.format("%-12s", "Type")));
+        headers.add(new Label(String.format("%-9s", "En ligne")));
+        headers.add(new Label(String.format("%-9s", "Montant")));
+        headers.add(new Label(String.format("%-9s", "Paiement")));
+
+        // Appliquer style uniforme à tous les labels
+        for (Label lbl : headers) {
+            lbl.addStyle(SGR.UNDERLINE);
+            lbl.addStyle(SGR.BOLD);
+            lbl.setForegroundColor(new TextColor.RGB(80, 80, 80));
+            displayOrdersHeader.addComponent(lbl);
+        }
+
+        orders.addComponent(displayOrdersHeader);
+
+        updateTitle(userlloged);
         // Appelle la fonction pour remplir la listBox
         populateListBox();
         root.addComponent(ordersListBox);
@@ -202,7 +231,7 @@ public class OrderListClientView extends BasicWindow {
                         r.getOnline() ? "Oui" : "Non"
                 );
                 reservationListBox.addItem(row, () -> {
-                    if(r.getReservationDate().isBefore(TODAY_DEMO_DATE))
+                    if (r.getReservationDate().isBefore(TODAY_DEMO_DATE))
                         return;
                     editReservation(r);
                 });
@@ -223,43 +252,54 @@ public class OrderListClientView extends BasicWindow {
         getTextGUI().addWindowAndWait(win);
     }
 
-    private void openDetails(Order order) {
-        //  Crée contrôleur + vue des détails
-        var ctrl = new OrderDetailsController(order);
-        var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
-
-        //  Configure l’affichage pour qu’elle s’ouvre par-dessus
-        win.setHints(java.util.Arrays.asList(
-                Window.Hint.MODAL,     // bloque les interactions dessous
-                Window.Hint.CENTERED   // centre la fenêtre
-        ));
-        //  Affiche la fenêtre par-dessus sans fermer celle de la liste
-        getTextGUI().addWindowAndWait(win);
-    }
-
     private void populateListBox() {
         ordersListBox.clearItems();
 
-        boolean hasOrders = false;
-        boolean showAll = showAllOrders.isChecked(); // je récupère l'état du checkBox
+        String filtreNom = clientNameBox.getText().trim().toLowerCase();
+
+        boolean showAll = showAllOrders.isChecked(); // état de la checkbox
+
         for (Order order : ordersList) {
-
+            User client = order.getClient();
             boolean isPaid = order.getPaymentMethod() != null;
-            if (order.getClient().equals(user)) {
 
-                if (showAll || !isPaid){
-                    String display = toString(order);
-                    ordersListBox.addItem(display, () -> controller.openDetails(order));
-                    hasOrders = true;
+            // Je filtre selon le texte saisi
+            boolean correspond = filtreNom.isEmpty()
+                    || client.getLastName().toLowerCase().contains(filtreNom)
+                    || client.getFirstName().toLowerCase().contains(filtreNom);
+
+            boolean visible = false;
+
+            // Détermine si cette commande doit être affichée
+            if (userlloged.getRole() == User.Role.Client) {
+                // Un client ne voit que ses propres commandes
+                if (client.equals(userlloged) && correspond && (showAll || !isPaid)) {
+                    visible = true;
+                }
+            } else {
+                // Employé ou boss voit tout, filtré par nom &&  statut payé
+                if (correspond && (showAll || !isPaid)) {
+                    visible = true;
                 }
             }
-        }
-        if (!hasOrders) {
-            ordersListBox.setSelectedIndex(0);
+
+            if (visible) {
+                String display = toString(order);
+
+                if (userlloged.getRole() == User.Role.Client) {
+                    ordersListBox.addItem(display, () -> controller.openDetails(order));
+                } else {
+                    ordersListBox.addItem(display, () -> controller.openActions(order));
+                }
+            }
+
+            if (ordersListBox.getItemCount() == 0) {
+                ordersListBox.addItem("", () -> {
+                });
+            }
         }
     }
 
-    // Tronque ou pad une chaîne pour qu’elle ait une largeur fixe
     private static String padOrTruncate(String text, int width) {
         if (text == null) text = "";
         if (text.length() > width - 3) {
@@ -268,17 +308,6 @@ public class OrderListClientView extends BasicWindow {
         return String.format("%-" + width + "s", text);
     }
 
-    private Component emphasize(String title) {
-        Panel headerPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-        Label header = new Label(title);
-        header.addStyle(SGR.BOLD);
-        header.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT);
-        String underline = title.replaceAll(".", "─");
-        Label underlineLabel = new Label(underline);
-        headerPanel.addComponent(header);
-        headerPanel.addComponent(underlineLabel);
-        return headerPanel;
-    }
     public double getPrice(Order order) {
         double total = 0.0;
         for (OrderItem item : order.getOrderItems()) {
@@ -289,6 +318,8 @@ public class OrderListClientView extends BasicWindow {
 
     public String toString(Order order) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        String clientfullName = order.getClient().getFirstName() + "," + order.getClient().getLastName();
         String date = order.getOrderDate().format(formatter);
         String tableInfo = (order.getTable() != null)
                 ? "Table " + order.getTable().getId() + " (" + order.getTable().getCapacity() + "p)"
@@ -300,14 +331,26 @@ public class OrderListClientView extends BasicWindow {
         String amount = String.format("%.2f €", getPrice(order));
         String paiement = String.valueOf(order.getPaymentMethod()); //
 
-
-        return "  " + padOrTruncate(date, 14)
-                + padOrTruncate(tableInfo, 15)
-                + padOrTruncate(service, 11)
-                + padOrTruncate(pers, 9)
-                + padOrTruncate(type, 12)
-                + padOrTruncate(online, 12)
-                + padOrTruncate(amount, 12)
-                + padOrTruncate(paiement, 12);
+        if (userlloged.getRole() == User.Role.Client){
+            return    padOrTruncate(date, 16)
+                    + padOrTruncate(tableInfo, 15)
+                    + padOrTruncate(service, 11)
+                    + padOrTruncate(pers, 9)
+                    + padOrTruncate(type, 12)
+                    + padOrTruncate(online, 12)
+                    + padOrTruncate(amount, 12)
+                    + padOrTruncate(paiement, 12);
+        } else if (userlloged.getRole() == User.Role.Employee || userlloged.getRole() == User.Role.Boss){
+            return  " " + padOrTruncate(clientfullName, 16)
+                    + padOrTruncate(date, 13)
+                    + padOrTruncate(tableInfo, 15)
+                    + padOrTruncate(service, 10)
+                    + padOrTruncate(pers, 7)
+                    + padOrTruncate(type, 13)
+                    + padOrTruncate(online, 10)
+                    + padOrTruncate(amount, 10)
+                    + padOrTruncate(paiement, 14);
+        }
+        return null;
     }
 }

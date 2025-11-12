@@ -52,5 +52,19 @@ public class OrderListClientController extends Controller<OrderListClientView> {
         //  Affiche la fenêtre par-dessus sans fermer celle de la liste
         showModal(win);
     }
+
+    public void openActions(Order order) {
+        //  Crée contrôleur + vue actions sur la commande
+        var ctrl = new OrderCheckController(order);
+        var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
+
+        //  Configure l’affichage pour qu’elle s’ouvre par-dessus
+        win.setHints(java.util.Arrays.asList(
+                Window.Hint.MODAL,     // bloque les interactions dessous
+                Window.Hint.CENTERED   // centre la fenêtre
+        ));
+        //  Affiche la fenêtre par-dessus sans fermer celle de la liste
+        showModal(win);
+    }
 }
 
