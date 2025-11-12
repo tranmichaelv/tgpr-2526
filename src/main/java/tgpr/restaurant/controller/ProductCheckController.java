@@ -27,6 +27,7 @@ public class ProductCheckController extends Controller<ProductCheckView> {
 
     public ProductCheckController(int order){
             this.order = order;
+            this.string = "";
     }
 
     public ProductCheckController(String string){

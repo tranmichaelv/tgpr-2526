@@ -42,7 +42,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
             if (product == null) return;
 
             // Si le rôle est boss ou employé : modification
-            if (Security.isBoss() || Security.isEmployee()) {
+            if ((Security.isBoss() || Security.isEmployee()) && view.equals("CarteMenuManagementView")) {
                 controller.productChange(product);
                 reloadData();
                 tableProduct.setSelected(product);
