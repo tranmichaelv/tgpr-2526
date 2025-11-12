@@ -10,7 +10,7 @@ import tgpr.restaurant.view.ProductCheckView;
 import java.util.List;
 
 public class ProductCheckController extends Controller<ProductCheckView> {
-    private final OrderChangeController parent;
+    private  OrderChangeController parent;
     private Runnable onOrderChanged;
 
     public ProductCheckController(OrderChangeController parent) { this.parent = parent; }
