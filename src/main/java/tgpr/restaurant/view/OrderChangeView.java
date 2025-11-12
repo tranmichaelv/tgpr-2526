@@ -49,7 +49,7 @@ public class OrderChangeView extends BasicWindow {
 
         Panel clientLine = new Panel(new LinearLayout(Direction.HORIZONTAL));
         clientLine.addComponent(new Label("Client : "));
-        ComboBox<String> clientBox = new ComboBox<>();
+        clientBox = new ComboBox<>();
         clientBox.setPreferredSize(new TerminalSize(30, 1));
 
         clients = controller.getClients();
@@ -62,6 +62,15 @@ public class OrderChangeView extends BasicWindow {
                 .filter(i -> clients.get(i).getId() == currentClientId)
                 .findFirst().orElse(-1);
         if (idx >= 0) clientBox.setSelectedIndex(idx);
+
+        clientBox.addListener(new ComboBox.Listener() {
+            @Override
+            public void onSelectionChanged(int selectedIndex, int previousSelection, boolean fromUser) {
+                if (selectedIndex >= 0 && selectedIndex < clients.size()) {
+                    controller.getOrder().setClientId(clients.get(selectedIndex).getId());
+                }
+            }
+        });
 
         clientLine.addComponent(clientBox);
         infoSection.addComponent(clientLine);
@@ -307,18 +316,11 @@ public class OrderChangeView extends BasicWindow {
 
         buttons.addComponent(new Button("Modifier la commande", () -> {
             try {
-                //  Nombre de personnes
-                String txt = nbPersonsBox.getText().trim();
-                if (txt.isEmpty()) throw new IllegalArgumentException("Le nombre de personnes est obligatoire.");
-                int nb = Integer.parseInt(txt);
-                controller.getOrder().setEffectivePeopleCount(nb); // ou setNumberOfPeople(nb)
-
-                //  Service sélectionné
-                int sIdx = serviceBox.getSelectedIndex();
-                if (sIdx >= 0 && sIdx < services.size()) {
-                    controller.getOrder().setServiceId(services.get(sIdx).getId());
+                   // Client
+                int cIdx = clientBox.getSelectedIndex();
+                if (cIdx >= 0 && cIdx < clients.size()) {
+                    controller.getOrder().setClientId(clients.get(cIdx).getId());
                 }
-
                 // Table sélectionnée
                 int tIdx = tableBox.getSelectedIndex(); // 0 = "Aucune"
                 if (tIdx <= 0) {
@@ -326,11 +328,20 @@ public class OrderChangeView extends BasicWindow {
                 } else {
                     controller.getOrder().setTableId(tables.get(tIdx - 1).getId()); // <-- tables mise à jour
                 }
+                //  Service sélectionné
+                int sIdx = serviceBox.getSelectedIndex();
+                if (sIdx >= 0 && sIdx < services.size()) {
+                    controller.getOrder().setServiceId(services.get(sIdx).getId());
+                }
+
+                //  Nombre de personnes
+                String txt = nbPersonsBox.getText().trim();
+                if (txt.isEmpty()) throw new IllegalArgumentException("Le nombre de personnes est obligatoire.");
+                int nb = Integer.parseInt(txt);
+                controller.getOrder().setEffectivePeopleCount(nb); // ou setNumberOfPeople(nb)
 
                 //  Valider
                 controller.getOrder().validate();
-
-
 
                 // Affiche vue OrderAdd
                 BasicWindow win = getWindow(controller);
@@ -348,6 +359,12 @@ public class OrderChangeView extends BasicWindow {
         buttons.addComponent(new Button("Annuler", () -> {
             controller.resetToOriginal();
             Order o = controller.getOrder();
+
+            int ci = 0;
+            for (int i = 0; i < clients.size(); i++) {
+                if (clients.get(i).getId() == o.getClientId()) { ci = i; break; }
+            }
+            clientBox.setSelectedIndex(ci);
 
             // Refléter l’état dans l’UI (takeAway/nb/service/tables/réduc)
             takeAwayBox.setChecked(o.getTakeAway());
