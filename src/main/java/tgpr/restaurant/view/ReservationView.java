@@ -10,6 +10,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationController;
 import tgpr.restaurant.model.*;
 
+import javax.swing.border.EmptyBorder;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -171,6 +172,7 @@ public class ReservationView extends BasicWindow {
             calendarGrid.addComponent(new Label(day).centerCenter());
         }
 
+
         // printing each day from current and (if needed) previous month
         List<LocalDate> calendarDays = controller.getCalendarDays(controller.getCurrentMonth());
         for (LocalDate date : calendarDays) {
@@ -278,16 +280,17 @@ public class ReservationView extends BasicWindow {
             ) {
                 dayButton.setEnabled(false);
                 calendarGrid.addComponent(dayButton
-                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER))
-                        .setPreferredSize(daySize)); // without border
+                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.END))
+                        .setPreferredSize(new TerminalSize(6,2))); // without border
             } else {
                 calendarGrid.addComponent(dayButton
-                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER))
-                        .setPreferredSize(daySize)
+                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.BEGINNING))
+                        .setPreferredSize(new TerminalSize(6,1))
                         .withBorder(Borders.singleLine())); // with border
 
             }
         }
+
     }
 
     // method refresh to scroll calendar
