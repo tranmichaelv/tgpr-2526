@@ -43,6 +43,31 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
                 showInfo("Votre réservation a été confirmée !");
             }
 
+
+
+
+            //-----------
+            //  Vérifie s'il y a un panier temporaire et le restaure
+            var panierTemp = tgpr.restaurant.model.Security.getPendingPanier();
+            if (panierTemp != null && !panierTemp.isEmpty()) {
+                for (var entry : panierTemp.entrySet()) {
+                    var produit = entry.getKey();
+                    var quantite = entry.getValue();
+                    for (int i = 0; i < quantite; i++) {
+                        tgpr.restaurant.model.Panier.ajouterProduit(produit);
+                    }
+                }
+                tgpr.restaurant.model.Security.clearPendingPanier();
+                showInfo("Les articles de votre panier ont été restaurés !");
+            }
+
+
+
+
+            // ✅ Message de confirmation (tu peux le changer ou l'enlever)
+            showInfo("Connexion réussie !");
+            // navigateTo(new MenuController()); // Exemple si tu veux rediriger vers le menu
+
             showError(new Error("c'est bon")); // à enlever c'est juste pour tester
             //...
             //...

@@ -1,5 +1,10 @@
 package tgpr.restaurant.model;
 
+import java.util.LinkedHashMap;
+
+import java.util.Map;
+
+
 public class Security {
     private static User loggedUser = null;
     private static Reservation pendingReservation = null;
@@ -53,6 +58,24 @@ public class Security {
     public static void clearPendingReservation() {
         pendingReservation = null;
     }
+
+
+
+    // Panier temporaire (pour les invités)
+    private static Map<Product, Integer> pendingPanier = new LinkedHashMap<>();
+
+    public static void setPendingPanier(Map<Product, Integer> panier) {
+        pendingPanier = panier;
+    }
+
+    public static Map<Product, Integer> getPendingPanier() {
+        return pendingPanier;
+    }
+
+    public static void clearPendingPanier() {
+        pendingPanier.clear();
+    }
+
 
 
 }

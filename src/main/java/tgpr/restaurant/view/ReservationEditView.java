@@ -10,10 +10,15 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationEditController;
 import tgpr.restaurant.model.Reservation;
+import tgpr.restaurant.model.Service;
+import tgpr.restaurant.model.Table;
+import tgpr.restaurant.model.Time;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -177,6 +182,7 @@ public class ReservationEditView extends BasicWindow {
             calendarGrid.addComponent(new Label(day).centerCenter());
         }
 
+
         // printing each day from current and (if needed) previous month
         List<LocalDate> calendarDays = controller.getCalendarDays(controller.getCurrentMonth());
         for (LocalDate date : calendarDays) {
@@ -188,13 +194,46 @@ public class ReservationEditView extends BasicWindow {
                 continue;
             }
 
-            //
             Button dayButton = new Button(String.valueOf(date.getDayOfMonth()));
+            boolean tablesExist = false;
+            boolean allTablesOccupied = false;
+
+            // try-catch to color all taken tables in red (with a certain capacity and for a certain service)
+            try {
+                // saving nbPeople and service type in the following variables
+                int numberOfPeople = nbGuests.getText().isEmpty() ? 0 : Integer.parseInt(nbGuests.getText());
+                String serviceName = midiSoir.getSelectedItem();
+
+
+                if (numberOfPeople > 0 && serviceName != null) {
+                    // saving the day of the week and service Id in the following variables
+                    String weekDay = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
+                    Service service = Service.getByNameAndDay(serviceName, weekDay);
+
+                    if (service != null) { // if a service id is found ...
+                        tablesExist = Table.existsCompatibleTable(numberOfPeople);
+                        if (tablesExist) { // ... and a table exists
+                            Table available = Reservation.findAvailableTable(numberOfPeople, date, service.getId()); // saving an available table
+                            allTablesOccupied = (available == null); // setting available as null
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+
+            // date colored in red if:
+            /*
+            a) a table corresponding to nbPeople or nbPeople + 1 exists
+            b) all tables are occupied
+            c) date is not before today
+             */
+            if (tablesExist && allTablesOccupied && !date.isBefore(Time.getDateChosen().toLocalDate())) {
+                dayButton.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.RED));
+                dayButton.setEnabled(false);
+            }
 
             // listener allowing us to color the day we've chosen in green (if table has been found)
-            dayButton.addListener(btn ->{
+            dayButton.addListener(_ ->{
                 selectedDate = date;
-
                 boolean tableFound = controller.assignTable(nbGuests.getText(), midiSoir.getSelectedItem(), selectedDate);
                 if (tableFound) {
                     if (targetDate != null) {
@@ -227,21 +266,41 @@ public class ReservationEditView extends BasicWindow {
                 }
             });
 
+            LocalDate simulatedToday = Time.getDateChosen().toLocalDate();
+            LocalTime simulatedTodayHour = Time.getDateChosen().toLocalTime();
 
-//            if (current date is before today OR current day of week is monday) {
-            if (date.isBefore(TODAY_DEMO) || date.getDayOfWeek() == DayOfWeek.MONDAY) {
+//            if (current date is before today OR current day of week is monday OR (current day of week is sunday and service is "soir")) {
+            if (
+                    date.isBefore(TODAY_DEMO)
+                            || date.getDayOfWeek() == DayOfWeek.MONDAY
+                            || (date.getDayOfWeek() == DayOfWeek.SUNDAY && midiSoir.getSelectedItem().equalsIgnoreCase("soir"))
+                            /* Check pour la date du jour
+                            exemples:
+                                1) à 13h30, je ne pourrai plus réserver un service du midi pour le jour courant
+                                2) à 20h00, je ne pourrai plus réserver un service du soir pour le jour courant
+                            */
+                            || (date.equals(TODAY_DEMO) && (
+                            ((midiSoir.getSelectedItem().equalsIgnoreCase("midi") &&
+                                    simulatedTodayHour.isAfter(LocalTime.of(11,30))))
+                                    || (midiSoir.getSelectedItem().equalsIgnoreCase("soir") &&
+                                    simulatedTodayHour.isAfter(LocalTime.of(18,30))
+                            )
+                    )
+                    )
+            ) {
                 dayButton.setEnabled(false);
                 calendarGrid.addComponent(dayButton
-                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER))
-                        .setPreferredSize(daySize)); // without border
+                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.END))
+                        .setPreferredSize(new TerminalSize(6,2))); // without border
             } else {
                 calendarGrid.addComponent(dayButton
-                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER))
-                        .setPreferredSize(daySize)
+                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.BEGINNING))
+                        .setPreferredSize(new TerminalSize(6,1))
                         .withBorder(Borders.singleLine())); // with border
 
             }
         }
+
     }
 
     // method refresh to scroll calendar
