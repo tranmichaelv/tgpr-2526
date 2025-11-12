@@ -22,6 +22,7 @@ public class OrderChangeView extends BasicWindow {
 
     private final OrderChangeController controller;
 
+    private ObjectTable<OrderItem> tableProduct;
     protected ComboBox<String> clientBox;
     protected   List<User> clients;
     protected ComboBox<String> tableBox;
@@ -285,7 +286,7 @@ public class OrderChangeView extends BasicWindow {
 
         // Récupère la vue du contrôleur ProductCheck
         ProductCheckController pcc = new ProductCheckController(controller.getOrder().getId());
-//        pcc.setOnOrderChanged(this::refreshArticles);
+        pcc.setOnOrderChanged(this::refreshArticles);
         ProductCheckView productCheckView = pcc.getView();
         productsSection.addComponent(productCheckView);
         productsSection.addComponent(new EmptySpace(new TerminalSize(0,1)));
@@ -295,11 +296,14 @@ public class OrderChangeView extends BasicWindow {
         rebuildArticlesSection();
 
         Panel ligneArticles = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        ligneArticles.addComponent(emphasize("Type     "));
-        ligneArticles.addComponent(emphasize("Produit         "));
-        ligneArticles.addComponent(emphasize("Quantité"));
-        ligneArticles.addComponent(emphasize("Prix unitaire"));
-        ligneArticles.addComponent(emphasize("Total      "));
+        tableProduct = new ObjectTable<>(
+                new ColumnSpec<>("Type     ", OrderItem::getProductType),
+                new ColumnSpec<>("Produit         ", OrderItem::getProductName),
+                new ColumnSpec<>("Quantité", OrderItem::getQuantity),
+                new ColumnSpec<>("Prix unitaire", OrderItem::getPrice),
+                new ColumnSpec<>("Total      ", OrderItem::getTotal));
+
+        ligneArticles.addComponent(tableProduct);
 
         for (var item : controller.getOrder().getOrderItems()) {
             Panel ligne = new Panel(new LinearLayout(Direction.HORIZONTAL));
@@ -552,5 +556,4 @@ public class OrderChangeView extends BasicWindow {
         //  Reconstruit la section Articles (totaux + lignes)
         rebuildArticlesSection();
     }
-
 }

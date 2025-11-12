@@ -5,6 +5,7 @@ import tgpr.framework.Params;
 import tgpr.restaurant.model.Order;
 import tgpr.restaurant.model.OrderItem;
 import tgpr.restaurant.model.Product;
+import tgpr.restaurant.view.OrderChangeView;
 import tgpr.restaurant.view.ProductCheckView;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class ProductCheckController extends Controller<ProductCheckView> {
     String string;
 
     //    private  OrderChangeController parent;
-//    private Runnable onOrderChanged;
+    private Runnable onOrderChanged;
 //
 //    public ProductCheckController(OrderChangeController parent) { this.parent = parent; }
 //
@@ -22,7 +23,7 @@ public class ProductCheckController extends Controller<ProductCheckView> {
 //        this.parent = null;
 //    }
 //    // sert à mettre à jour mes produits de la commande
-//    public void setOnOrderChanged(Runnable r) { this.onOrderChanged = r; }
+    public void setOnOrderChanged(Runnable r) { this.onOrderChanged = r; }
 //    public Order getOrder() { return parent.getOrder(); }
 
     public ProductCheckController(int order){
@@ -77,15 +78,17 @@ public class ProductCheckController extends Controller<ProductCheckView> {
         } else {
             if (orderItem == null) {
                 OrderItem it = new OrderItem();
-                it.setOrderId(size + 1);
+                it.setOrderId(order);
                 it.setProductId(p.getId());
                 it.setQuantity(qty);
                 // prix au moment de la commande
                 it.setPrice(p.getPrice());
                 it.save();
+                if (onOrderChanged != null) onOrderChanged.run();
             } else {
                 orderItem.setQuantity(qty);
                 orderItem.save();
+                if (onOrderChanged != null) onOrderChanged.run();
             }
 //            getOrder().reload();
             // refresh la zone ou les produits sont affichés

@@ -157,4 +157,16 @@ public class OrderItem extends Model {
         return queryList(OrderItem.class, "select * from order_items where `order`=:order",
                 new Params("order", orderId));
     }
+
+    public double getTotal(){
+        return price*quantity;
+    }
+
+    public String getProductName(){
+        return Product.getByKey(productId).getName();
+    }
+
+    public String getProductType(){
+        return String.valueOf(Product.getByKey(productId).getType());
+    }
 }
