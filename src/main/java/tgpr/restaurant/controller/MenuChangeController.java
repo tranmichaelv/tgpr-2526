@@ -1,5 +1,6 @@
 package tgpr.restaurant.controller;
 
+import com.googlecode.lanterna.gui2.*;
 import tgpr.framework.Controller;
 import tgpr.framework.ErrorList;
 import tgpr.restaurant.model.MenuItem;
@@ -84,7 +85,40 @@ public class MenuChangeController extends Controller<MenuChangeView> {
         }
     }
 
-    public void changeOrderItem(){
+    public void changeOrderItem(String titre){
+        BasicWindow popup = new BasicWindow();
+        popup.setTitle(titre);
+        popup.setHints(java.util.List.of(Window.Hint.CENTERED));
+
+
+
+        Panel panel = Panel.gridPanel(1,
+                Margin.of(1,1,1,1),
+                Spacing.of(1));
+
+        ActionListBox list = new ActionListBox();
+        for(MenuItem product : listMenuItems()){
+            list.addItem(product.getProductName(), () -> {
+                if(titre.contains("Supprimer")){
+                    int orderInMenu = product.getOrderInMenu();
+                    product.delete();
+                    List<MenuItem> menuList = MenuItem.getAllInMenu(product.getMenuId());
+                    for (int i = orderInMenu - 1; i < menuList.size(); i++) {
+                        MenuItem currentMenu = menuList.get(i);
+                        currentMenu.setOrderInMenu(i + 1); // si orderInMenu commence à 1
+                        currentMenu.save();
+                    }
+                    popup.close();
+                } else {
+                    navigateTo(new MenuChangeOrderController(product));
+                    popup.close();
+                }
+            });
+        }
+        panel.addComponent(list);
+        panel.addComponent(new Button("Fermer", popup::close));
+        popup.setComponent(panel);
+        tgpr.framework.ViewManager.gui.addWindowAndWait(popup);
 
     }
 

@@ -157,8 +157,8 @@ public class MenuChangeView extends DialogWindow {
     private Panel createButtonPanel(){
         return Panel.horizontalPanel(4,
                 new Button("Fermer", this::close),
-                new Button("Supprimer selectionne"),
-                new Button("Changer ordre"),
+                new Button("Supprimer selectionne", this::deleteItem),
+                new Button("Changer ordre", this::changeOrderOrItem),
                 new Button("Modifier menu",this::changeMenu),
                 new Button("Archiver menu",this::archiveMenu),
                 new Button("Supprimer menu",this::deleteMenu)
@@ -194,12 +194,12 @@ public class MenuChangeView extends DialogWindow {
     }
 
     public void deleteItem(){
-        controller.deleteItem();
+        controller.changeOrderItem("Supprimer");
         reloadData();
     }
 
-    public void changeOrderItem(){
-        controller.changeOrderItem();
+    public void changeOrderOrItem(){
+        controller.changeOrderItem("Changer l'ordre");
         reloadData();
     }
 
