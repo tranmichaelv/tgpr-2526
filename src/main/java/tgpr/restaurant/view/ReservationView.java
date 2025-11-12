@@ -10,10 +10,10 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationController;
 import tgpr.restaurant.model.*;
 
+import javax.swing.border.EmptyBorder;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class ReservationView extends BasicWindow {
     private final ReservationController controller;
     private Label monthLabel;
     private Panel calendarGrid;
-    private TextBox nbGuests;
+    private TextBox nbPeople;
     private ComboBox<String> midiSoir;
     private Label tableLabel;
     private LocalDate selectedDate;
@@ -52,12 +52,12 @@ public class ReservationView extends BasicWindow {
         createGridLayout().addTo(root);
 
         // The following Listeners will refresh the reservation whenever the service or the number of people is changed
-        midiSoir.addListener((newIndex,PrevIndex,byUser)->{
+        midiSoir.addListener((_, _, _)->{
             buildCalendarGrid();
             tableLabel.setText("(non attribuée)");
         });
 
-        nbGuests.setTextChangeListener((newText, changedByUserInteraction) -> {
+        nbPeople.setTextChangeListener((_, _) -> {
             buildCalendarGrid();
             tableLabel.setText("(non attribuée)");
         });
@@ -91,9 +91,9 @@ public class ReservationView extends BasicWindow {
 
         // 1st row
         createGridLayout.addComponent(new Label("Nombre de personnes: "));
-        nbGuests = new TextBox();
-        nbGuests.setValidationPattern(Pattern.compile("[1-9][0-9]*")); // only integers allowed
-        createGridLayout.addComponent(nbGuests);
+        nbPeople = new TextBox();
+        nbPeople.setValidationPattern(Pattern.compile("[1-9][0-9]*")); // only integers allowed
+        createGridLayout.addComponent(nbPeople);
 
         createGridLayout.addComponent(new EmptySpace(), GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER, true, false, 2, 1)); // to skip row
 
@@ -130,7 +130,7 @@ public class ReservationView extends BasicWindow {
         }));
 
         // fixing monthLabel's alignment
-        monthLabel = new Label(centerText(getFormattedMonth(), MONTH_LABEL_WIDTH));
+        monthLabel = new Label(centerText(getFormattedMonth()));
         monthLabel.setPreferredSize(new TerminalSize(MONTH_LABEL_WIDTH, 1));
 
         // adding all components to calendarHeader Panel
@@ -171,6 +171,7 @@ public class ReservationView extends BasicWindow {
             dayLabel.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER));
             calendarGrid.addComponent(new Label(day).centerCenter());
         }
+
 
         // printing each day from current and (if needed) previous month
         List<LocalDate> calendarDays = controller.getCalendarDays(controller.getCurrentMonth());
@@ -221,7 +222,9 @@ public class ReservationView extends BasicWindow {
             }
 
             // listener allowing us to color the day we've chosen in green (if table has been found)
+            dayButton.addListener(_ ->{
                 selectedDate = date;
+                boolean tableFound = controller.assignTable(nbPeople.getText(), midiSoir.getSelectedItem(), selectedDate);
                 if (tableFound) {
                     if (targetDate != null) {
                         targetDate.setTheme(null);
@@ -267,13 +270,13 @@ public class ReservationView extends BasicWindow {
                                 2) à 20h00, je ne pourrai plus réserver un service du soir pour le jour courant
                             */
                             || (date.equals(simulatedToday) && (
-                                    ((midiSoir.getSelectedItem().equalsIgnoreCase("midi") &&
-                                            simulatedTodayHour.isAfter(LocalTime.of(11,30))))
-                                || (midiSoir.getSelectedItem().equalsIgnoreCase("soir") &&
-                                            simulatedTodayHour.isAfter(LocalTime.of(18,30))
-                                    )
+                            ((midiSoir.getSelectedItem().equalsIgnoreCase("midi") &&
+                                    simulatedTodayHour.isAfter(LocalTime.of(11,30))))
+                                    || (midiSoir.getSelectedItem().equalsIgnoreCase("soir") &&
+                                    simulatedTodayHour.isAfter(LocalTime.of(18,30))
                             )
-                            )
+                    )
+                    )
             ) {
                 dayButton.setEnabled(false);
                 calendarGrid.addComponent(dayButton
@@ -287,10 +290,12 @@ public class ReservationView extends BasicWindow {
 
             }
         }
+
     }
 
     // method refresh to scroll calendar
     private void refreshCalendar() {
+        monthLabel.setText(centerText(getFormattedMonth())); // updating month label
         buildCalendarGrid();
         invalidate();
     }

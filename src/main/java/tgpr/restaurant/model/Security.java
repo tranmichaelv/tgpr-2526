@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class Security {
     private static User loggedUser = null;
+    private static Reservation pendingReservation = null;
 
     public static User getLoggedUser() {
         return loggedUser;
@@ -45,7 +46,7 @@ public class Security {
 
     // when guest goes to Login page, setPendingReservation takes current data about reservation
     public static void setPendingReservation(Reservation r) {
-        pendingReservation = r;
+         pendingReservation = r;
     }
 
     // Getter (triggered in SecurityConnectController if user logged in successfully)
@@ -76,23 +77,4 @@ public class Security {
     }
 
 
-
-    // vérifie si l'user est un employee
-    public static boolean isEmployee(){
-        return loggedUser != null && loggedUser.getRole() == User.Role.Employee;
-    }
-    // when guest goes to Login page, setPendingReservation takes current data about reservation
-    public static void setPendingReservation(Reservation r) {
-        pendingReservation = r;
-    }
-
-    // Getter (triggered in SecurityConnectController if user logged in successfully)
-    public static Reservation getPendingReservation() {
-        return pendingReservation;
-    }
-
-    // clearing once we leave login page
-    public static void clearPendingReservation() {
-        pendingReservation = null;
-    }
 }
