@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ViewManager {
-    private static MultiWindowTextGUI gui;
+    public static MultiWindowTextGUI gui;
     private static Window currentWindow;
 
     static {

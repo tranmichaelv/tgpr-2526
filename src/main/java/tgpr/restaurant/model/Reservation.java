@@ -242,4 +242,20 @@ public class Reservation extends Model {
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+
+    // method allowing us to find available tables (LIMIT 1 gives us only the first row)
+    public static Table findAvailableTable(int numberOfPeople, LocalDate date, int serviceId) {
+        return queryOne(Table.class,
+                "SELECT * FROM tables " +
+                        "WHERE capacity IN (:numberOfPeople, :numberOfPeoplePlusOne) " +
+                        "AND id NOT IN (" +
+                        "SELECT `table` FROM reservations WHERE reservation_date = :date AND service = :serviceId" +
+                        ") " +
+                        "ORDER BY capacity ASC LIMIT 1", // starting from rows where nbPeople = capacity (keping rows with nbPeople = capacity + 1 at the botttom)
+                new Params()
+                        .add("numberOfPeople", numberOfPeople)
+                        .add("numberOfPeoplePlusOne", numberOfPeople + 1)
+                        .add("date", date)
+                        .add("serviceId", serviceId));
+    }
 }

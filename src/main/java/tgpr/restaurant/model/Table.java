@@ -145,4 +145,16 @@ public class Table extends Model {
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+
+    // Method used in ReservationView
+    public static boolean existsCompatibleTable(int numberOfPeople) {
+        return queryOne(Table.class,
+                "SELECT * FROM tables WHERE capacity IN (:numberOfPeople, :numberOfPeoplePlusOne) LIMIT 1",
+                new Params()
+                        .add("numberOfPeople", numberOfPeople)
+                        .add("numberOfPeoplePlusOne", numberOfPeople + 1)
+        ) != null;
+    }
+
+
 }

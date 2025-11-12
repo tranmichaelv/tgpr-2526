@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -149,5 +150,21 @@ public class ClosingPeriod extends Model {
         int c = execute("delete from closing_periods where id=:id",
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
+    }
+
+
+    public String getStartDateFormatted() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return startDate.format(formatter);
+    }
+
+    public String getEndDateFormatted() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return endDate.format(formatter);
+    }
+
+    public static LocalDate dateFormatter(String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return LocalDate.parse(date, formatter);
     }
 }
