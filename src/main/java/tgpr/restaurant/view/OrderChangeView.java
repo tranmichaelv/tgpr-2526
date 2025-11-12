@@ -482,24 +482,34 @@ public class OrderChangeView extends BasicWindow {
         double total = controller.getTotal();
         articlesPanel.addComponent(priceSummary(sousTotal, reduction, total));
 
-        // En-têtes colonnes
+        final int W_TYPE  = 13;
+        final int W_PROD  = 28;
+        final int W_QTY   = 10;
+        final int W_PRICE = 14;
+        final int W_TOTAL = 12;
+
         Panel ligneArticles = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        ligneArticles.addComponent(emphasize("Type     "));
-        ligneArticles.addComponent(emphasize("Produit         "));
-        ligneArticles.addComponent(emphasize("Quantité"));
-        ligneArticles.addComponent(emphasize("Prix unitaire"));
-        ligneArticles.addComponent(emphasize("Total      "));
+        ligneArticles.addComponent(emphasize(String.format("%-" + W_TYPE  + "s", "Type")));
+        ligneArticles.addComponent(emphasize(String.format("%-" + W_PROD  + "s", "Produit")));
+        ligneArticles.addComponent(emphasize(String.format("%-" + W_QTY   + "s", "Quantité")));     // <─ aligné à gauche
+        ligneArticles.addComponent(emphasize(String.format("%-" + W_PRICE + "s", "Prix unitaire"))); // <─ aligné à gauche
+        ligneArticles.addComponent(emphasize(String.format("%-" + W_TOTAL + "s", "Total")));         // <─ aligné à gauche
         articlesPanel.addComponent(ligneArticles);
 
-        // Lignes d'articles
+
         for (var item : controller.getOrder().getOrderItems()) {
             Panel ligne = new Panel(new LinearLayout(Direction.HORIZONTAL));
             var product = item.getProduct();
-            ligne.addComponent(new Label(String.format("%-10s", product.getType().toString())));
-            ligne.addComponent(new Label(String.format("%-18s", product.getName())));
-            ligne.addComponent(new Label(String.format("%-10d", item.getQuantity())));
-            ligne.addComponent(new Label(String.format("%-10.2f €", item.getPrice())));
-            ligne.addComponent(new Label(String.format("%.2f €", item.getQuantity() * item.getPrice())));
+
+            String name = product.getName();
+            // éviter de pousser les colonnes
+            if (name.length() > W_PROD) name = name.substring(0, W_PROD);
+
+            ligne.addComponent(new Label(String.format("%-" + W_TYPE + "s", product.getType().toString())));
+            ligne.addComponent(new Label(String.format("%-" + W_PROD + "s", name)));
+            ligne.addComponent(new Label(String.format("%-"  + W_QTY  + "d", item.getQuantity())));
+            ligne.addComponent(new Label(String.format("%" + (W_PRICE - 2) + ".2f\u00A0€", item.getPrice())));
+            ligne.addComponent(new Label(String.format("%" + (W_TOTAL - 2) + ".2f\u00A0€", item.getQuantity() * item.getPrice())));
             articlesPanel.addComponent(ligne);
         }
 
