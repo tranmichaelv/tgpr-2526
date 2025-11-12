@@ -92,6 +92,7 @@ public class SecurityRegisterView extends BasicWindow {
 
     private Panel createButtonPanel(){
         btnRegistration = new Button("S'inscrire", this::validate);
+        btnRegistration.setEnabled(false);
         Panel panel = Panel.horizontalPanel(
                 btnRegistration,
                 new Button("Retour",this::retour),
