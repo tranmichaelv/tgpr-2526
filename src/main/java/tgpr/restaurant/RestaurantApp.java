@@ -35,7 +35,7 @@ public class RestaurantApp {
             // Controller.navigateTo(new OrderAddController(test));
             // Controller.navigateTo(new OrderDeleteController(test));
             // Controller.navigateTo(new OrderPayController(test));
-            Controller.navigateTo(new OrderChangeController(test));
+         //   Controller.navigateTo(new OrderChangeController(test));
             // Controller.navigateTo(new OrderCheckController());
           //  Controller.navigateTo(new CartMenuManagementController());
            // Controller.navigateTo(new TestController());

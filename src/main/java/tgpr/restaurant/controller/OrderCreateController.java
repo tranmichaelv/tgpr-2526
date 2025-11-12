@@ -23,7 +23,7 @@ public class OrderCreateController extends OrderChangeController {
 
         //  Toujours une date pour éviter NPE dans toWeekDay()
         if (o.getOrderDate() == null) {
-            try { o.setOrderDate(LocalDate.now()); } catch (Throwable ignore) {}
+            try { o.setOrderDate(Time.getDateChosen().toLocalDate()); } catch (Throwable ignore) {}
             if (o.getOrderDate() == null) o.setOrderDate(LocalDate.now());
         }
 
