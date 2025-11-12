@@ -284,8 +284,8 @@ public class OrderChangeView extends BasicWindow {
         productsSection.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         // Récupère la vue du contrôleur ProductCheck
-        ProductCheckController pcc = new ProductCheckController(controller);
-        pcc.setOnOrderChanged(this::refreshArticles);
+        ProductCheckController pcc = new ProductCheckController(controller.getOrder().getId());
+//        pcc.setOnOrderChanged(this::refreshArticles);
         ProductCheckView productCheckView = pcc.getView();
         productsSection.addComponent(productCheckView);
         productsSection.addComponent(new EmptySpace(new TerminalSize(0,1)));

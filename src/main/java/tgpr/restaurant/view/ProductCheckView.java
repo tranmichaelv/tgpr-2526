@@ -3,6 +3,7 @@ package tgpr.restaurant.view;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import tgpr.restaurant.controller.ProductCheckController;
+import tgpr.restaurant.model.OrderItem;
 import tgpr.restaurant.model.PanelProductAndMenu;
 import tgpr.restaurant.model.Product;
 import tgpr.restaurant.model.Security;
@@ -25,11 +26,13 @@ import static tgpr.restaurant.model.Security.isEmployee;
 
 public class ProductCheckView extends PanelProductAndMenu<Product> {
     private final ProductCheckController controller;
-    private final String view;
+    private int order;
+    private String view;
 
-    public ProductCheckView(ProductCheckController controller, String view) {
+    public ProductCheckView(ProductCheckController controller, int order, String string) {
         this.controller = controller;
-        this.view = view;
+        this.order = order;
+        this.view = string;
 
         initTable(6);
         // action à éxecuter quand on appuie enter
@@ -44,8 +47,13 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
                 reloadData();
                 tableProduct.setSelected(product);
             } else {
+                OrderItem existing = null;
                 // 0 autorisé si déjà présent suppression
-                var existing = controller.findItem(product);
+                for(OrderItem productInOrder : OrderItem.getAllItemInOrder(order)){
+                    if(product.equals(productInOrder.getProduct())){
+                        existing = productInOrder;
+                    }
+                }
                 Integer qty = askQuantity(
                         "Quantité",
                         "Quantité pour " + product.getName() + " :",
@@ -56,7 +64,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
                 //  Cancel
                 if (qty == null) return;
                 // si qty = 0 on supprime, si > 0 on ajoute ou met à jour la qty
-                controller.addOrSetQuantity(product, qty);
+                controller.addOrSetQuantity(product, qty, existing,order);
             }
         });
     }

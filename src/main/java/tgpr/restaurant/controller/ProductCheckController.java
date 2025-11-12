@@ -10,21 +10,32 @@ import tgpr.restaurant.view.ProductCheckView;
 import java.util.List;
 
 public class ProductCheckController extends Controller<ProductCheckView> {
-    private final OrderChangeController parent;
-    private Runnable onOrderChanged;
+    int order;
+    String string;
 
-    public ProductCheckController(OrderChangeController parent) { this.parent = parent; }
+    //    private  OrderChangeController parent;
+//    private Runnable onOrderChanged;
+//
+//    public ProductCheckController(OrderChangeController parent) { this.parent = parent; }
+//
+//    public ProductCheckController() {
+//        this.parent = null;
+//    }
+//    // sert à mettre à jour mes produits de la commande
+//    public void setOnOrderChanged(Runnable r) { this.onOrderChanged = r; }
+//    public Order getOrder() { return parent.getOrder(); }
 
-    public ProductCheckController() {
-        this.parent = null;
+    public ProductCheckController(int order){
+            this.order = order;
     }
-    // sert à mettre à jour mes produits de la commande
-    public void setOnOrderChanged(Runnable r) { this.onOrderChanged = r; }
-    public Order getOrder() { return parent.getOrder(); }
-    
+
+    public ProductCheckController(String string){
+        this.string = string;
+    }
+
     @Override
     public ProductCheckView getView() {
-        return new ProductCheckView(this,"CarteMenuManagementView");
+        return new ProductCheckView(this, order,string);
     }
 
     // retourne la liste de tous les produits
@@ -46,48 +57,50 @@ public class ProductCheckController extends Controller<ProductCheckView> {
 
     }
     // cherche le produit
-    public OrderItem findItem(Product p) {
-        return OrderItem.queryOne(
-                OrderItem.class,
-                "select * from order_items where `order`=:o and product=:p",
-                new Params("o", getOrder().getId()).add("p", p.getId())
-        );
-    }
+//    public OrderItem findItem(Product p) {
+//        return OrderItem.queryOne(
+//                OrderItem.class,
+//                "select * from order_items where `order`=:o and product=:p",
+//                new Params("o", getOrder().getId()).add("p", p.getId())
+//        );
+//    }
+
     // ajoute un produit ou modifie la quantité
-    public void addOrSetQuantity(Product p, int qty) {
-        var existing = findItem(p);
+    public void addOrSetQuantity(Product p, int qty, OrderItem orderItem, int order) {
         // si mon produit se trouve dans ma commande
         // en mettant la quantité à 0 je le supprime
+        int size = OrderItem.getAllItemInOrder(order).size();
         if (qty == 0) {
-            if (existing != null) removeProduct(p);
+            if (orderItem != null)
+                orderItem.delete();
         } else {
-            if (existing == null) {
+            if (orderItem == null) {
                 OrderItem it = new OrderItem();
-                it.setOrderId(getOrder().getId());
+                it.setOrderId(size + 1);
                 it.setProductId(p.getId());
                 it.setQuantity(qty);
                 // prix au moment de la commande
                 it.setPrice(p.getPrice());
                 it.save();
             } else {
-                existing.setQuantity(qty);
-                existing.save();
+                orderItem.setQuantity(qty);
+                orderItem.save();
             }
-            getOrder().reload();
+//            getOrder().reload();
             // refresh la zone ou les produits sont affichés
-            if (onOrderChanged != null) onOrderChanged.run();
+//            if (onOrderChanged != null) onOrderChanged.run();
         }
     }
 
-        //  supprime un produit de la commande
-        public void removeProduct(Product p) {
-            OrderItem existing = findItem(p);
-            if (existing == null) return;
-            existing.delete();
-
-            getOrder().reload();
-            if (onOrderChanged != null) onOrderChanged.run();
-        }
+//        //  supprime un produit de la commande
+//        public void removeProduct(Product p) {
+//            OrderItem existing = findItem(p);
+//            if (existing == null) return;
+//            existing.delete();
+//
+//            getOrder().reload();
+//            if (onOrderChanged != null) onOrderChanged.run();
+//        }
 
 
 }
