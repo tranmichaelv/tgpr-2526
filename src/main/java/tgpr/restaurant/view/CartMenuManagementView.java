@@ -28,6 +28,8 @@ public class CartMenuManagementView extends DialogWindow {
 
         root.addComponent(controller.getMenuCheckView());
 
+        root.addComponent(new Button("Fermer", this::close).centerCenter());
+
     }
 
 }
