@@ -74,8 +74,9 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
             //...
             // pour se deconnecter, il y a la fonction logout presente dans security
 
-        } else
-            showError(new Error("invalid credentials"));
+        } else {
+            errors.add("invalid credentials");
+        }
 
         return errors;
     }

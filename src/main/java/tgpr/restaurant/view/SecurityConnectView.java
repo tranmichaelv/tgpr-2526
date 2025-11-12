@@ -7,9 +7,12 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.framework.Configuration;
+import tgpr.framework.Error;
 import tgpr.restaurant.controller.SecurityConnectController;
 
 import java.util.List;
+
+import static tgpr.framework.Controller.showError;
 
 public class SecurityConnectView extends BasicWindow {
     private Button btnLogin;
@@ -84,6 +87,8 @@ public class SecurityConnectView extends BasicWindow {
         var errors = controller.login(txtEmail.getText(), txtPassword.getText());
         // s'il y a une erreur le curseur va se focus sur le label email
         if (!errors.isEmpty()) {
+            showError(errors.getFirst());
+            txtPassword.setText("");
             txtEmail.takeFocus();
         }
     }
