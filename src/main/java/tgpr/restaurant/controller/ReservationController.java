@@ -13,27 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.SQLException;
 import java.util.Locale;
-/*
-            In a 5×7 grid (5 rows, 7 columns), we expect to see:
-                - all the days of the current month;
-
-            For example:
-            a) With October 1st being a Wednesday, we need to fill the previous Monday and Tuesday with September 29th and 30th, respectively.
-
-            N.B: for few months, a 6th row may be necessary (that's why gridSize below is 42)
-                        here begins october
-                                |
-                                v
-                lun     mar    mer     jeu     ven     sam     dim
-                                1       2       3       4       5
-                6       7       8       9       10      11      12
-                13      14      15      16      17      18      19
-                20      21      22      23      24      25      26
-                27      28      29      30      31
-                                                 ^
-                                                 |
-                                   here ends october (and starts november)
-*/
 
 public class ReservationController extends Controller<ReservationView> {
 
@@ -98,11 +77,6 @@ public class ReservationController extends Controller<ReservationView> {
                     .getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
 
             Service service = Service.getByNameAndDay(serviceName, weekDay);
-
-//            if (service == null) {
-//                view.showError("Pas de service de " + serviceName + " le " + weekDay);
-//                return false;
-//            }
 
             Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
             if (table == null) {

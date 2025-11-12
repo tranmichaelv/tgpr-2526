@@ -13,7 +13,6 @@ import tgpr.restaurant.model.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class ReservationView extends BasicWindow {
     private final ReservationController controller;
     private Label monthLabel;
     private Panel calendarGrid;
-    private TextBox nbGuests;
+    private TextBox nbPeople;
     private ComboBox<String> midiSoir;
     private Label tableLabel;
     private LocalDate selectedDate;
@@ -52,12 +51,12 @@ public class ReservationView extends BasicWindow {
         createGridLayout().addTo(root);
 
         // The following Listeners will refresh the reservation whenever the service or the number of people is changed
-        midiSoir.addListener((newIndex,PrevIndex,byUser)->{
+        midiSoir.addListener((_, _, _)->{
             buildCalendarGrid();
             tableLabel.setText("(non attribuée)");
         });
 
-        nbGuests.setTextChangeListener((newText, changedByUserInteraction) -> {
+        nbPeople.setTextChangeListener((_, _) -> {
             buildCalendarGrid();
             tableLabel.setText("(non attribuée)");
         });
@@ -91,9 +90,9 @@ public class ReservationView extends BasicWindow {
 
         // 1st row
         createGridLayout.addComponent(new Label("Nombre de personnes: "));
-        nbGuests = new TextBox();
-        nbGuests.setValidationPattern(Pattern.compile("[1-9][0-9]*")); // only integers allowed
-        createGridLayout.addComponent(nbGuests);
+        nbPeople = new TextBox();
+        nbPeople.setValidationPattern(Pattern.compile("[1-9][0-9]*")); // only integers allowed
+        createGridLayout.addComponent(nbPeople);
 
         createGridLayout.addComponent(new EmptySpace(), GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER, true, false, 2, 1)); // to skip row
 
@@ -130,7 +129,7 @@ public class ReservationView extends BasicWindow {
         }));
 
         // fixing monthLabel's alignment
-        monthLabel = new Label(centerText(getFormattedMonth(), MONTH_LABEL_WIDTH));
+        monthLabel = new Label(centerText(getFormattedMonth()));
         monthLabel.setPreferredSize(new TerminalSize(MONTH_LABEL_WIDTH, 1));
 
         // adding all components to calendarHeader Panel
@@ -183,14 +182,47 @@ public class ReservationView extends BasicWindow {
                 continue;
             }
 
-            //
             Button dayButton = new Button(String.valueOf(date.getDayOfMonth()));
+            boolean tablesExist = false;
+            boolean allTablesOccupied = false;
+
+            // try-catch to color all taken tables in red (with a certain capacity and for a certain service)
+            try {
+                // saving nbPeople and service type in the following variables
+                int numberOfPeople = nbPeople.getText().isEmpty() ? 0 : Integer.parseInt(nbPeople.getText());
+                String serviceName = midiSoir.getSelectedItem();
+
+
+                if (numberOfPeople > 0 && serviceName != null) {
+                    // saving the day of the week and service Id in the following variables
+                    String weekDay = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
+                    Service service = Service.getByNameAndDay(serviceName, weekDay);
+
+                    if (service != null) { // if a service id is found ...
+                        tablesExist = Table.existsCompatibleTable(numberOfPeople);
+                        if (tablesExist) { // ... and a table exists
+                            Table available = Reservation.findAvailableTable(numberOfPeople, date, service.getId()); // saving an available table
+                            allTablesOccupied = (available == null); // setting available as null
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+
+            // date colored in red if:
+            /*
+            a) a table corresponding to nbPeople or nbPeople + 1 exists
+            b) all tables are occupied
+            c) date is not before today
+             */
+            if (tablesExist && allTablesOccupied && !date.isBefore(Time.getDateChosen().toLocalDate())) {
+                dayButton.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.RED));
+                dayButton.setEnabled(false);
+            }
 
             // listener allowing us to color the day we've chosen in green (if table has been found)
-            dayButton.addListener(btn ->{
+            dayButton.addListener(_ ->{
                 selectedDate = date;
-
-                boolean tableFound = controller.assignTable(nbGuests.getText(), midiSoir.getSelectedItem(), selectedDate);
+                boolean tableFound = controller.assignTable(nbPeople.getText(), midiSoir.getSelectedItem(), selectedDate);
                 if (tableFound) {
                     if (targetDate != null) {
                         targetDate.setTheme(null);
@@ -237,9 +269,9 @@ public class ReservationView extends BasicWindow {
                             */
                             || (date.equals(simulatedToday) && (
                                     ((midiSoir.getSelectedItem().equalsIgnoreCase("midi") &&
-                                            LocalTime.from(simulatedTodayHour).isAfter(LocalTime.of(11,30))))
+                                            simulatedTodayHour.isAfter(LocalTime.of(11,30))))
                                 || (midiSoir.getSelectedItem().equalsIgnoreCase("soir") &&
-                                            LocalTime.from(simulatedTodayHour).isAfter(LocalTime.of(18,30))
+                                            simulatedTodayHour.isAfter(LocalTime.of(18,30))
                                     )
                             )
                             )
@@ -260,15 +292,15 @@ public class ReservationView extends BasicWindow {
 
     // method refresh to scroll calendar
     private void refreshCalendar() {
-        monthLabel.setText(centerText(getFormattedMonth(), MONTH_LABEL_WIDTH)); // updating month label
+        monthLabel.setText(centerText(getFormattedMonth())); // updating month label
         buildCalendarGrid();
         invalidate();
     }
 
     // The centerText method below is used to fix monthLabel's width (in CalendarHeader method)
-    private String centerText(String text, int width) {
-        int padding = Math.max(0, (width - text.length()) / 2);
-        return " ".repeat(padding) + text + " ".repeat(width - padding - text.length());
+    private String centerText(String text) {
+        int padding = Math.max(0, (MONTH_LABEL_WIDTH - text.length()) / 2);
+        return " ".repeat(padding) + text + " ".repeat(MONTH_LABEL_WIDTH - padding - text.length());
     }
 
     // calendar grid (columns : 7)
@@ -284,11 +316,9 @@ public class ReservationView extends BasicWindow {
         if (!Security.isLogged()) {
             Button cancel = new Button("Annuler");
             // if guest, "annuler" button will navigate back to homepage
-            cancel.addListener(button -> {
-                controller.retour();
-            });
+            cancel.addListener(_ -> controller.retour());
             confirm = new Button("Confirmer la réservation", () -> {
-                int numberOfPeople = Integer.parseInt(nbGuests.getText());
+                int numberOfPeople = Integer.parseInt(nbPeople.getText());
                 String serviceName = midiSoir.getSelectedItem();
                 String tableInfo = tableLabel.getText();
 
@@ -298,7 +328,7 @@ public class ReservationView extends BasicWindow {
                 Service service = Service.getByNameAndDay(serviceName, weekDay);
                 Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
 
-                if (service != null && table != null) {
+                if (table != null) {
                     Reservation r = new Reservation(
                             numberOfPeople,
                             -1, // Temporary clientId
