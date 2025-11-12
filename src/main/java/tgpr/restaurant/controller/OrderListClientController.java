@@ -66,5 +66,18 @@ public class OrderListClientController extends Controller<OrderListClientView> {
         //  Affiche la fenêtre par-dessus sans fermer celle de la liste
         showModal(win);
     }
+
+    public void openCreateNewOrder(){
+
+        var ctrl = new OrderCreateController();
+        var win = ctrl.getView();
+
+        win.setHints(java.util.Arrays.asList(
+                Window.Hint.MODAL,     // bloque les interactions dessous
+                Window.Hint.CENTERED   // centre la fenêtre
+        ));
+
+        showModal(win);
+    }
 }
 

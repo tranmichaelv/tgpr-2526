@@ -132,6 +132,8 @@ public class OrderListClientView extends BasicWindow {
         newReservation = new Button("Nouvelle réservation");
         reservations.addComponent(newReservation);
 
+
+
         // COMMANDES
         root.addComponent(new EmptySpace(new TerminalSize(0, 1)));
         Panel orders = new Panel(new LinearLayout(Direction.VERTICAL));
@@ -185,9 +187,22 @@ public class OrderListClientView extends BasicWindow {
         orders.addComponent(displayOrdersHeader);
 
         updateTitle(userlloged);
-        // Appelle la fonction pour remplir la listBox
+
+        // Remplir la liste de commandes
         populateListBox();
-        root.addComponent(ordersListBox);
+
+        // ✅ Ajouter la liste DANS le panel "orders", pas dans root !
+        orders.addComponent(ordersListBox);
+
+        // Espace avant le bouton
+        orders.addComponent(new EmptySpace(new TerminalSize(0, 1)));
+
+        // Bouton "Nouvelle commande" en bas
+        Button newOrder = new Button("Nouvelle commande", controller::openCreateNewOrder);
+        orders.addComponent(newOrder);
+        // Enfin, ajouter le panel complet au root
+        root.addComponent(orders);
+
     }
 
     // displaying title according to User's type
