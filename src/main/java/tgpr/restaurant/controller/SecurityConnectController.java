@@ -77,7 +77,14 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
 
             //  Message de confirmation (tu peux le changer ou l'enlever)
             showInfo("Connexion réussie ! Bienvenue à nouveau");
-            navigateTo(new OrderListClientController());
+
+            //si la connexion vient du panier, on y retourne
+            if(Security.isFromPanier()) {
+                Security.clearFromPanier();
+                navigateTo(new MenuController());
+            }else{
+                navigateTo(new OrderListClientController());
+            }
 
 
         } else

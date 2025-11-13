@@ -22,7 +22,6 @@ public class Panier {
 
     /**
      * Ajoute un produit au panier.
-     * Si le produit existe déjà, la quantité est incrémentée.
      * Sinon, un nouvel article est ajouté à la collection.
      */
     public static void ajouterProduit(Product produit) {

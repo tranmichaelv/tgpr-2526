@@ -3,6 +3,7 @@ package tgpr.restaurant.controller;
 import com.googlecode.lanterna.gui2.*;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.Product;
+import tgpr.restaurant.model.Security;
 import tgpr.restaurant.view.PanierView;
 
 public class PanierController extends Controller<PanierView> {
@@ -91,6 +92,7 @@ public class PanierController extends Controller<PanierView> {
         tgpr.framework.ViewManager.gui.addWindowAndWait(popup);    }
 
     public void connect(){
+        Security.setFromPanier(true);
         navigateTo(new SecurityConnectController());
     }
 
