@@ -100,5 +100,38 @@ public class OrderListClientController extends Controller<OrderListClientView> {
 
 //        showModal(win);
 //    }
+    public void exit(){
+        Security.login(null);
+        navigateTo(new SecurityLoginController());
+    }
+
+    public void basket(){
+        navigateTo(new PanierController() {
+        });
+    }
+
+    public void menu(){
+        navigateTo(new MenuController());
+    }
+
+    public void changeMenu(){
+        navigateTo(new CartMenuManagementController());
+    }
+
+    public void closing(){
+        navigateTo(new ClosingChangeController());
+    }
+
+    public void changeUser(){
+        navigateTo(new UserChangeController());
+    }
+
+    public void order(){
+        navigateTo(new OrderCreateController(new Order()));
+    }
+
+    public void clientRegister(){
+        navigateTo(new ClientRegisterController());
+    }
 }
 

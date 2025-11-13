@@ -7,7 +7,6 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.gui2.menu.MenuItem;
-import tgpr.restaurant.controller.OrderDetailsController;
 import tgpr.restaurant.controller.OrderListClientController;
 import tgpr.restaurant.controller.ReservationEditController;
 import tgpr.restaurant.model.*;
@@ -16,7 +15,6 @@ import tgpr.restaurant.model.OrderItem;
 import tgpr.restaurant.model.User;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -59,17 +57,21 @@ public class OrderListClientView extends BasicWindow {
         // menuFile nav
         MenuBar header = new MenuBar().addTo(root);
         menuUser = new Menu("Utilisateur");
+        MenuItem menuDisconnect = new MenuItem("Exit",this::exit);
+        menuUser.add(menuDisconnect);
+
         menuNav = new Menu("Navigation");
         header.add(menuUser);
         header.add(menuNav);
-        MenuItem menuBook = new MenuItem("Réserver une table");
-        menuNav.add(menuBook);
-        MenuItem menuFood = new MenuItem("Voir la carte");
-        menuNav.add(menuFood);
-        MenuItem menuBasket = new MenuItem("Voir le panier");
-        menuNav.add(menuBasket);
-        MenuItem menuTables = new MenuItem("Voir les tables");
-        menuNav.add(menuTables);
+
+        if(Security.isClient()){
+            menuClient(menuNav);
+        } else if (Security.isEmployee()) {
+            menuEmployee(menuNav);
+        } else {
+            menuBoss(menuNav);
+        }
+
 
         // exemple du champs ou on peut saisir le nom dun client
         Panel clientNameFilter = new Panel(new LinearLayout(Direction.VERTICAL));
@@ -367,5 +369,81 @@ public class OrderListClientView extends BasicWindow {
                     + padOrTruncate(paiement, 14);
         }
         return null;
+    }
+
+    private void exit(){
+        controller.exit();
+    }
+
+    private void menuClient(Menu menu){
+        MenuItem menuBook = new MenuItem("Réserver une table");
+        menu.add(menuBook);
+        MenuItem menuFood = new MenuItem("Voir la carte", this::menu);
+        menu.add(menuFood);
+        MenuItem menuBasket = new MenuItem("Voir le panier", this::basket);
+        menu.add(menuBasket);
+        MenuItem menuTables = new MenuItem("Voir les tables");
+        menu.add(menuTables);
+
+    }
+
+    private Menu menuEmployee(Menu menu){
+        MenuItem menuBook = new MenuItem("Réserver une table");
+        menu.add(menuBook);
+        MenuItem menuFood = new MenuItem("Enregistrer une commande",this::order);
+        menu.add(menuFood);
+        MenuItem menuCLient = new MenuItem("Enregistrer un client",this::clientRegister);
+        menu.add(menuCLient);
+        MenuItem menuTables = new MenuItem("Voir les tables");
+        menu.add(menuTables);
+
+        return menu;
+    }
+
+    private Menu menuBoss(Menu menu){
+        MenuItem menuBook = new MenuItem("Réserver une table");
+        menu.add(menuBook);
+        MenuItem menuFood = new MenuItem("Enregistrer une commande",this::order);
+        menu.add(menuFood);
+        MenuItem menuCLient = new MenuItem("Enregistrer un client",this::clientRegister);
+        menu.add(menuCLient);
+        MenuItem menuMenu = new MenuItem("Modifier la carte",this::changeMenu);
+        menu.add(menuMenu);
+        MenuItem menuClosing = new MenuItem("Gerer les periodes de fermeture",this::closing);
+        menu.add(menuClosing);
+        MenuItem menuUser = new MenuItem("Gerer les utilisateurs",this::changeUser);
+        menu.add(menuUser);
+        MenuItem menuTables = new MenuItem("Gerer les tables");
+        menu.add(menuTables);
+
+        return menu;
+    }
+
+    private void basket(){
+        controller.basket();
+    }
+
+    private void menu(){
+        controller.menu();
+    }
+
+    private void changeMenu(){
+        controller.changeMenu();
+    }
+
+    private void closing(){
+        controller.closing();
+    }
+
+    private void changeUser(){
+        controller.changeUser();
+    }
+
+    private void order(){
+        controller.order();
+    }
+
+    private void clientRegister(){
+        controller.clientRegister();
     }
 }

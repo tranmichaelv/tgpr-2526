@@ -36,12 +36,12 @@ public class SecurityLoginController extends Controller<SecurityLoginView> {
     public void menu(){navigateTo(new MenuController());}
 
     public void cart(){
-        ClosingPeriod closingPeriod =  Time.restaurantIsClosed();
-        if(closingPeriod != null ){
-            navigateTo(new RestaurantClosedController(closingPeriod));
-        } else {
+//        ClosingPeriod closingPeriod =  Time.restaurantIsClosed();
+//        if(closingPeriod != null ){
+//            navigateTo(new RestaurantClosedController(closingPeriod));
+//        } else {
             navigateTo(new PanierController());
-        }
+//        }
     }
 
     public void checkDate(String date){

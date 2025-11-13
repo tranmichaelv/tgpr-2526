@@ -46,18 +46,21 @@ public class PanierView extends DialogWindow {
         if (Panier.estVide()) {
             root.addComponent(new Label("Votre panier est vide pour le moment."));
         } else {
-            connection = new ActionListBox(new TerminalSize(60, 3));
-            connection.addItem("=== COMMANDE ===", () -> {});
-
-            if (!Security.isLogged()) {
-                connection.addItem("Connexion requise pour passer commande", () -> {
-                    // sauvegarder panier avant d'aller se connecter
-                    Security.setPendingPanier(Panier.getProduits());
-                    this.close();
-                    controller.connect();
+            if(Security.getLoggedUser() == null) {
+                connection = new ActionListBox(new TerminalSize(60, 3));
+                connection.addItem("=== COMMANDE ===", () -> {
                 });
+
+                if (!Security.isLogged()) {
+                    connection.addItem("Connexion requise pour passer commande", () -> {
+                        // sauvegarder panier avant d'aller se connecter
+                        Security.setPendingPanier(Panier.getProduits());
+                        this.close();
+                        controller.connect();
+                    });
+                }
+                root.addComponent(connection);
             }
-            root.addComponent(connection);
 
             ActionListBox listBox = new ActionListBox(new TerminalSize(60, 3));
             int index = 1;

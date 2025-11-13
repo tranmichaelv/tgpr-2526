@@ -1,15 +1,24 @@
 package tgpr.restaurant.controller;
 
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.framework.Controller;
+import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.model.Product;
+import tgpr.restaurant.model.Time;
 import tgpr.restaurant.view.PanierView;
+import tgpr.restaurant.view.RestaurantClosedView;
 
-public class PanierController extends Controller<PanierView> {
+public class PanierController extends Controller<DialogWindow> {
 
     @Override
-    public PanierView getView() {
-        return new PanierView(this);
+    public DialogWindow getView() {
+        ClosingPeriod closingPeriod =  Time.restaurantIsClosed();
+        if(closingPeriod != null ){
+            return new RestaurantClosedController(closingPeriod).getView();
+        } else {
+            return new PanierView(this);
+        }
     }
 
     public void modifierQuantite(Product produit) {

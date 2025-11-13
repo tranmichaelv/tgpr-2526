@@ -43,7 +43,7 @@ public class MenuChangeView extends DialogWindow {
         root.addEmpty();
         createButtonPanel().addTo(root);
 
-
+        cboAddProduct.takeFocus();
     }
 
     public void reloadData() {

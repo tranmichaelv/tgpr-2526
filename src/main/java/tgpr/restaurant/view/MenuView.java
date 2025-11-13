@@ -2,20 +2,24 @@ package tgpr.restaurant.view;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.restaurant.controller.MenuController;
+import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.model.Product;
+import tgpr.restaurant.model.Time;
 
 import java.util.List;
 
-public class MenuView extends BasicWindow {
+public class MenuView extends DialogWindow {
 
     private final MenuController controller;
 
     public MenuView(MenuController controller) {
+        super("Restaurant - Carte du restaurant");
         this.controller = controller;
-        setTitle("Restaurant - Carte du restaurant");
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
+        setCloseWindowWithEscape(true);
 
         Panel root = Panel.gridPanel(1,
                 Margin.of(2, 0, 5, 0),
@@ -35,6 +39,7 @@ public class MenuView extends BasicWindow {
     }
 
     private ActionListBox createMenu(){
+        ClosingPeriod closingPeriod =  Time.restaurantIsClosed();
         ActionListBox listBox = new ActionListBox(new TerminalSize(60, 20));
         // === MENUS ===
         int cpt = 0;
@@ -47,7 +52,12 @@ public class MenuView extends BasicWindow {
         for (Product menu : menus) {
             cpt += 1;
             listBox.addItem("  " + cpt + ". " + menu.getName() + " - " + String.format("%.2f", menu.getPrice()) + " €",
-                    () -> controller.afficherDetailsMenu(menu));
+                    () ->
+                    {if (closingPeriod != null) {
+                        controller.restaurantClosed(closingPeriod);
+                    } else {
+                        controller.afficherDetailsMenu(menu);
+                    }});
         }
 
         // === ENTRÉES ===
@@ -63,7 +73,12 @@ public class MenuView extends BasicWindow {
         for (Product entree : entrees) {
             cpt += 1;
             listBox.addItem("  " + cpt + ". " + entree.getName() + " - " + String.format("%.2f", entree.getPrice()) + " €",
-                    () -> controller.afficherPopupProduit(entree));
+                    () -> {if (closingPeriod != null) {
+                        controller.restaurantClosed(closingPeriod);
+                    } else {
+                        controller.afficherPopupProduit(entree);
+                    }
+                    });
         }
 
         // === PLATS PRINCIPAUX ===
@@ -79,7 +94,12 @@ public class MenuView extends BasicWindow {
         for (Product plat : plats) {
             cpt += 1;
             listBox.addItem("  " + cpt + ". " + plat.getName() + " - " + String.format("%.2f", plat.getPrice()) + " €",
-                    () -> controller.afficherPopupProduit(plat));
+                    () -> {if (closingPeriod != null) {
+                        controller.restaurantClosed(closingPeriod);
+                    } else {
+                        controller.afficherPopupProduit(plat);
+                    }
+                    });
         }
 
         // === DESSERTS ===
@@ -95,7 +115,12 @@ public class MenuView extends BasicWindow {
         for (Product dessert : desserts) {
             cpt += 1;
             listBox.addItem("  " + cpt + ". " + dessert.getName() + " - " + String.format("%.2f", dessert.getPrice()) + " €",
-                    () -> controller.afficherPopupProduit(dessert));
+                    () -> {if (closingPeriod != null) {
+                        controller.restaurantClosed(closingPeriod);
+                    } else {
+                        controller.afficherPopupProduit(dessert);
+                    }
+                    });
         }
 
         // === BOISSONS ===
@@ -121,12 +146,12 @@ public class MenuView extends BasicWindow {
     private Panel createButton(){
         Panel buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttonPanel.addComponent(new Button("Mon Panier", controller::ouvrirPanier));
-        buttonPanel.addComponent(new Button("Retour", this::back));
+        buttonPanel.addComponent(new Button("Retour", this::close));
 
         return buttonPanel;
     }
 
-    private void back(){
-        controller.back();
-    }
+//    private void back(){
+//        controller.back();
+//    }
 }

@@ -15,9 +15,9 @@ public class MenuController extends Controller<MenuView> {
         return new MenuView(this);
     }
 
-    public void back(){
-        navigateTo(new SecurityLoginController());
-    }
+//    public void back(){
+//        navigateTo(new SecurityLoginController());
+//    }
 
     /**
      * Ouvre la page de détails d’un menu sélectionné.
@@ -74,5 +74,10 @@ public class MenuController extends Controller<MenuView> {
         panel.addComponent(boutons);
         popup.setComponent(panel);
         // Affiche la popup de manière modale et bloque l’exécution jusqu’à sa fermeture
-        tgpr.framework.ViewManager.gui.addWindowAndWait(popup);    }
+        tgpr.framework.ViewManager.gui.addWindowAndWait(popup);
+    }
+
+    public void restaurantClosed(ClosingPeriod closingPeriod){
+        navigateTo(new RestaurantClosedController(closingPeriod));
+    }
 }
