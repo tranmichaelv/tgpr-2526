@@ -62,6 +62,15 @@ public class PanierController extends Controller<PanierView> {
             Controller.navigateTo(new PanierController());
         }));
 
+
+
+        //  Supprimer
+//        boutons.addComponent(new Button("Supprimer", () -> {
+//            tgpr.restaurant.model.Panier.supprimerProduit(produit);
+//            popup.close();
+//            Controller.navigateTo(new PanierController());
+//        }));
+
         // Bouton "Supprimer" : supprime complètement le produit du panier
         boutons.addComponent(new Button("Supprimer", () -> {
             tgpr.restaurant.model.Panier.supprimerProduit(produit);
@@ -81,7 +90,7 @@ public class PanierController extends Controller<PanierView> {
         // Affiche la popup de manière modale et bloque l’exécution jusqu’à sa fermeture.
         tgpr.framework.ViewManager.gui.addWindowAndWait(popup);    }
 
-    public void connect() {
+    public void connect(){
         navigateTo(new SecurityConnectController());
     }
 

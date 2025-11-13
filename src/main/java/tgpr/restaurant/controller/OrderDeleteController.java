@@ -26,4 +26,6 @@ public class OrderDeleteController extends Controller<OrderDeleteView> {
             order.delete();
         }
     }
+
+
 }

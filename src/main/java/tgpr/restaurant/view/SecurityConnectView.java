@@ -27,6 +27,7 @@ public class SecurityConnectView extends BasicWindow {
         setTitle("Connexion Restaurant");
         setHints(List.of(Hint.CENTERED));
 
+
         Panel root = Panel.verticalPanel(1);
         setComponent(root);
 

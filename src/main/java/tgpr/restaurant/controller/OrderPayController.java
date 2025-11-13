@@ -8,10 +8,19 @@ import tgpr.restaurant.view.OrderPayView;
 public class OrderPayController extends Controller<OrderPayView> {
     private final Order order;
 
-    public OrderPayController(Order order) { this.order = order; }
-    public Order getOrder() { return order; }
+    public OrderPayController(Order order) {
+        this.order = order;
+    }
+    public Order getOrder() {
+        return order;
+    }
+//    @Override
+//    public OrderPayView getView() {
+//        return new OrderPayView(this);
+//    }
 
-    @Override public OrderPayView getView() {
+    @Override
+    public OrderPayView getView() {
         return new OrderPayView(this);
     }
 
@@ -22,3 +31,4 @@ public class OrderPayController extends Controller<OrderPayView> {
         order.save();
     }
 }
+

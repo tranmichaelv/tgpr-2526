@@ -14,6 +14,7 @@ import java.util.List;
 
 public class SecurityConnectController extends Controller<SecurityConnectView> {
     // exit
+//    User user =
     public void exit() {
         System.exit(0);
     }
@@ -76,7 +77,7 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
 
             //  Message de confirmation (tu peux le changer ou l'enlever)
             showInfo("Connexion réussie ! Bienvenue à nouveau");
-            navigateTo(new MenuController());
+            navigateTo(new OrderListClientController());
 
 
         } else

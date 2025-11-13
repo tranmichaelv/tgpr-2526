@@ -19,9 +19,8 @@ public class OrderPayView extends BasicWindow {
     public OrderPayView(OrderPayController controller) {
         this.controller = controller;
 
-        Order order = controller.getOrder();
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        Order order = controller.getOrder(); // on récupère la commande sélectionnée
         setTitle("Enregistrer le paiement");
 
         Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
@@ -30,15 +29,14 @@ public class OrderPayView extends BasicWindow {
 
         root.addComponent(sectionHeader("Informations de la commande:"));
         root.addComponent(new EmptySpace());
-        Panel info = new Panel(new LinearLayout(Direction.VERTICAL));
-
+        Panel info = new Panel(new GridLayout(2));
         // ajout des informations de la commande
 
         String client = (order != null && order.getClient() != null)
                 ? order.getClient().getFirstName() + " " + order.getClient().getLastName()
                 : "(inconnu)";
         String date = (order != null && order.getOrderDate() != null)
-                ? order.getOrderDate().format(df) : "-";
+                ? order.getOrderDate().format(formatter) : "-";
         String table = (order != null && order.getTable() != null)
                 ? "Table " + order.getTable().getId() : "Aucune";
         String type = (order != null && order.getTakeAway()) ? "À emporter" : "Sur place";

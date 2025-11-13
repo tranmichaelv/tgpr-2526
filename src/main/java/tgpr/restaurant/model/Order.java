@@ -389,4 +389,21 @@ public class Order extends Model {
             case SUNDAY -> Service.WeekDay.Dimanche;
         };
     }
+
+    public double calculateSubTotal(){
+        return getOrderItems()
+                .stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
+
+    public double calculateDiscount(){
+        double subTotal = calculateSubTotal();
+        double discountRate = getDiscount() != null ? getDiscount() : 0.0;
+        return subTotal * discountRate / 100.0;
+    }
+
+    public double calculateTotal(){
+        return calculateSubTotal() - calculateDiscount();
+    }
 }
