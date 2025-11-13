@@ -9,6 +9,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import tgpr.framework.Controller;
 import tgpr.restaurant.controller.OrderAddController;
 import tgpr.restaurant.controller.OrderChangeController;
+import tgpr.restaurant.controller.OrderCreateController;
 import tgpr.restaurant.controller.ProductCheckController;
 import tgpr.restaurant.model.*;
 import com.googlecode.lanterna.gui2.ComboBox;
@@ -318,7 +319,10 @@ public class OrderChangeView extends BasicWindow {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttons.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
-        buttons.addComponent(new Button("Modifier la commande", () -> {
+        String label = (controller instanceof OrderCreateController)
+                ? "Créer la commande"
+                : "Modifier la commande";
+        buttons.addComponent(new Button(label, () -> {
             try {
                    // Client
                 int cIdx = clientBox.getSelectedIndex();
@@ -355,13 +359,18 @@ public class OrderChangeView extends BasicWindow {
                         );
                     }
                 }
-
+                if (controller instanceof OrderCreateController occ) {
+                    occ.validateForCreation();
+                }
                 //  Valider
                 controller.getOrder().validate();
 
                 // Affiche vue OrderAdd
                 BasicWindow win = getWindow(controller);
                 getTextGUI().addWindowAndWait(win);
+                if (controller instanceof OrderCreateController) {
+                    this.close();
+                }
 
             } catch (NumberFormatException e) {
                 MessageDialog.showMessageDialog(getTextGUI(), "Erreur",
@@ -555,5 +564,13 @@ public class OrderChangeView extends BasicWindow {
         controller.getOrder().setDiscount(value);
         //  Reconstruit la section Articles (totaux + lignes)
         rebuildArticlesSection();
+    }
+    @Override
+    public void close() {
+        // Si on est en mode création, on veut aussi nettoyer le brouillon
+        if (controller instanceof OrderCreateController) {
+            controller.resetToOriginal();
+        }
+        super.close();
     }
 }

@@ -341,14 +341,7 @@ public class Order extends Model {
         if (getService() == null || getService().getWeekDay() != orderDay) {
             errors.add("Le service ne correspond pas au jour de la commande.");
         }
-        Service s = getService();
-        LocalTime now = LocalTime.now();
-        /*if (s.getStartTime() != null && s.getEndTime() != null) {
-            if (now.isBefore(s.getStartTime()) || now.isAfter(s.getEndTime())) {
-                errors.add("Le service n'est pas disponible à l'heure actuelle.");
-            }
-        }
-        */
+
         // Les clients doivent avoir le rôle CLIENT
         if (getClient().getRole() != User.Role.Client) {
             errors.add("Le client sélectionné doit avoir le rôle 'client'.");

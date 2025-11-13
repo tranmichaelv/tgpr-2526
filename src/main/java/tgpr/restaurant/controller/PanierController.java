@@ -113,7 +113,7 @@ public class PanierController extends Controller<PanierView> {
             order.setClientId(tgpr.restaurant.model.Security.getUser().getId());
         }
 
-        // Définit la date (sinon قاعدة البيانات ترفض null)
+        // Définit la date (sinon  null)
         order.setOrderDate(java.time.LocalDate.now());
 
         // Récupère un service existant pour éviter l'erreur SQL
@@ -140,4 +140,8 @@ public class PanierController extends Controller<PanierView> {
         // Ouvre la vue de création
         navigateTo(new OrderCreateController(order));
     }
+
+
+
+
 }
