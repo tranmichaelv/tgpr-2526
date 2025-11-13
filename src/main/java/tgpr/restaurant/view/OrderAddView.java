@@ -11,7 +11,7 @@ public class OrderAddView extends OrderAddOrDelete<OrderAddController> {
     // méthode qui crée la commande
     @Override
     protected void onYes() {
-        controller.createOrder();
+      //  controller.createOrder();
         close();
     }
 }
