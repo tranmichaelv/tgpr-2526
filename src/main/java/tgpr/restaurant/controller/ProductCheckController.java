@@ -42,7 +42,7 @@ public class ProductCheckController extends Controller<ProductCheckView> {
 
     // retourne la liste de tous les produits
     public List<Product> listProduct(){
-        return Product.getOrderProduct();
+        return Product.getOrderProductAll();
     }
 
     public List<Product> listProductAndMenu(){

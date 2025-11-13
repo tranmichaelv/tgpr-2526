@@ -225,12 +225,26 @@ public class Product extends Model {
                         "order by type, name;");
     }
 
+    public static List<Product> getOrderProductAll() {
+        return queryList(Product.class,
+                "select * " +
+                        "from products where type != 'menu' " +
+                        "order by type, name;");
+    }
+
     // retourne la liste de tous les produits qui sont de type menu et
     // ordonné par nom
     public static List<Product> getOrderMenu() {
         return queryList(Product.class,
                 "select * from products " +
                         "where type = 'menu' and archived is false " +
+                        "order by name;");
+    }
+
+    public static List<Product> getOrderMenuAll() {
+        return queryList(Product.class,
+                "select * from products " +
+                        "where type = 'menu' and archived " +
                         "order by name;");
     }
 

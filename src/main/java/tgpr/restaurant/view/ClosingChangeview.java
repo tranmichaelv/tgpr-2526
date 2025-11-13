@@ -282,6 +282,7 @@ public class ClosingChangeview extends DialogWindow {
             reloadData();
             clearFieldsPanel();
         }
+        closingPeriod = null;
     }
 
     private boolean hasErrors(){
@@ -306,6 +307,7 @@ public class ClosingChangeview extends DialogWindow {
             reloadData();
             clearFieldsPanel();
         }
+        closingPeriod = null;
     }
 
 }

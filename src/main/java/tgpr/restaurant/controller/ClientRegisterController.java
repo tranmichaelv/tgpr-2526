@@ -7,6 +7,8 @@ import tgpr.restaurant.model.UserValidator;
 import tgpr.restaurant.view.ClientRegisterView;
 
 public class ClientRegisterController extends Controller<ClientRegisterView> {
+    String DEFAULT_PASSWORD = "Password1,";
+
     @Override
     public ClientRegisterView getView() {
         return new ClientRegisterView(this);
@@ -43,6 +45,7 @@ public class ClientRegisterController extends Controller<ClientRegisterView> {
         user.setFirstName(firstname);
         user.setEmail(email);
         user.setPhone(formated);
+        user.setPassword(DEFAULT_PASSWORD);
         user.setRole(User.Role.Client);
         user.save();
 

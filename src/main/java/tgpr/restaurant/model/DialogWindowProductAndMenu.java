@@ -127,6 +127,7 @@ public abstract class DialogWindowProductAndMenu<E> extends DialogWindow {
                     new Button("Annuler", this::close),
                     btnSave,
                     new Button("Archiver", this::archive),
+                    new Button("Desarchiver", this::unarchive),
                     new Button("Supprimer", this::delete)
             );
         } else {
@@ -168,6 +169,12 @@ public abstract class DialogWindowProductAndMenu<E> extends DialogWindow {
 
     public void archive(){
         product.setArchived(true);
+        product.save();
+        close();
+    }
+
+    public void unarchive(){
+        product.setArchived(false);
         product.save();
         close();
     }

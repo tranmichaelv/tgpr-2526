@@ -122,8 +122,9 @@ public class MenuChangeController extends Controller<MenuChangeView> {
 
     }
 
-    public void deleteItem(){
-
+    public void desarchiveMenu(){
+        this.menu.setArchived(false);
+        this.menu.save();
     }
 
 }

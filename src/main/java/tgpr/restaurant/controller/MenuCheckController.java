@@ -15,7 +15,7 @@ public class MenuCheckController extends Controller<MenuCheckView> {
 
     // retourne la liste de tous les menus
     public List<Product> listMenu(){
-        return Product.getOrderMenu();
+        return Product.getOrderMenuAll();
     }
 
     // va vers le controlleur qui permet de modifier le produit sélectionné

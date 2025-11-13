@@ -29,6 +29,7 @@ public class MenuCheckView extends PanelProductAndMenu<Product> {
     @Override
     public ObjectTable<Product> createTable() {
         return new ObjectTable<>(
+                new ColumnSpec<>("Archived", p -> p.getArchived() ? "oui" : "non" ),
                 new ColumnSpec<>("Nom", Product::getName),
                 new ColumnSpec<>("Prix", Product::getPriceFormatted),
                 new ColumnSpec<>("Description", Product::getDescription)

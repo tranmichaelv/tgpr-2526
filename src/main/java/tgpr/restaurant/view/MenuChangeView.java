@@ -161,6 +161,7 @@ public class MenuChangeView extends DialogWindow {
                 new Button("Changer ordre", this::changeOrderOrItem),
                 new Button("Modifier menu",this::changeMenu),
                 new Button("Archiver menu",this::archiveMenu),
+                new Button("Desarchiver menu",this::desarchiveMenu),
                 new Button("Supprimer menu",this::deleteMenu)
         );
     }
@@ -201,6 +202,12 @@ public class MenuChangeView extends DialogWindow {
     public void changeOrderOrItem(){
         controller.changeOrderItem("Changer l'ordre");
         reloadData();
+    }
+
+    public void desarchiveMenu(){
+        controller.desarchiveMenu();
+        reloadData();
+        close();
     }
 
 }

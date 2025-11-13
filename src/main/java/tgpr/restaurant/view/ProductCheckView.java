@@ -35,6 +35,8 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
         this.view = string;
 
         initTable(6);
+        if(Security.isBoss() && view.equals("CarteMenuManagementView"))
+            createButtonAddPanel("Ajouter produit", this::addNewProduct);
         // action à éxecuter quand on appuie enter
         tableProduct.setSelectAction(() -> {
             // récupère le produit sélectionné
@@ -42,7 +44,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
             if (product == null) return;
 
             // Si le rôle est boss ou employé : modification
-            if ((Security.isBoss() || Security.isEmployee()) && view.equals("CarteMenuManagementView")) {
+            if ((Security.isBoss() && view.equals("CarteMenuManagementView"))) {
                 controller.productChange(product);
                 reloadData();
                 tableProduct.setSelected(product);
@@ -90,12 +92,22 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
     // crée une table avec differentes colonnes
     @Override
     public ObjectTable<Product> createTable() {
-        return new ObjectTable<>(
-                new ColumnSpec<>("Nom", Product::getName),
-                new ColumnSpec<>("Type", Product::getType),
-                new ColumnSpec<>("Prix", Product::getPriceFormatted),
-                new ColumnSpec<>("Description", Product::getDescription)
-        );
+        if(Security.isBoss() && view.equals("CarteMenuManagementView")){
+            return new ObjectTable<>(
+                    new ColumnSpec<>("Archived", p -> p.getArchived() ? "oui" : "non" ),
+                    new ColumnSpec<>("Nom", Product::getName),
+                    new ColumnSpec<>("Type", Product::getType),
+                    new ColumnSpec<>("Prix", Product::getPriceFormatted),
+                    new ColumnSpec<>("Description", Product::getDescription)
+            );
+        } else {
+            return new ObjectTable<>(
+                    new ColumnSpec<>("Nom", Product::getName),
+                    new ColumnSpec<>("Type", Product::getType),
+                    new ColumnSpec<>("Prix", Product::getPriceFormatted),
+                    new ColumnSpec<>("Description", Product::getDescription)
+            );
+        }
     }
 
     // spécifie l'action à exécuter quand on presse ENTER sur une ligne
@@ -124,6 +136,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
         controller.addNewProduct();
         reloadData();
     }
+
     // demande la quantité pour un produit / menu
     // doit etre positif sauf pour supprimer un produit déjà présent dans ma commande
     private Integer askQuantity(String title, String desc, int initial, boolean allowZero) {
