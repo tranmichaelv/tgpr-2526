@@ -3,13 +3,13 @@ package tgpr.restaurant;
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
 import tgpr.framework.Tools;
-import tgpr.restaurant.controller.OrderAddController;
-import tgpr.restaurant.controller.OrderCheckController;
-import tgpr.restaurant.controller.OrderDeleteController;
-import tgpr.restaurant.controller.TestController;
+
+import tgpr.restaurant.controller.*;
 import tgpr.restaurant.model.Order;
-import tgpr.restaurant.controller.SecurityLoginController;
+
 import tgpr.restaurant.model.User;
+
+import java.time.LocalDate;
 
 public class RestaurantApp {
     public final static String DATABASE_SCRIPT_FILE = "/database/tgpr-2526-c03.sql";
@@ -30,19 +30,24 @@ public class RestaurantApp {
                         " pour " + r.getNumberOfPeople() + " personnes" +
                         " à une table de " + r.getTable().getCapacity() + " places.");
             }
-            Order test = Order.getByKey(4);
+            //Order test = Order.getByKey(4);
             // Controller.navigateTo(new TestController());
             // Controller.navigateTo(new OrderAddController(test));
             // Controller.navigateTo(new OrderDeleteController(test));
             // Controller.navigateTo(new OrderPayController(test));
-            Controller.navigateTo(new SecurityLoginController());
+         //   Controller.navigateTo(new OrderChangeController(test));
             // Controller.navigateTo(new OrderCheckController());
           //  Controller.navigateTo(new CartMenuManagementController());
            // Controller.navigateTo(new TestController());
           //  Controller.navigateTo(new OrderAddController(test));
 
+//            Order newOrder = new Order();
+//            newOrder.setOrderDate(LocalDate.now()); // ou LocalDate.now()
 
-         //   Controller.navigateTo(new SecurityLoginController());
+            //Controller.navigateTo(new OrderCreateController(newOrder));
+
+
+            Controller.navigateTo(new SecurityLoginController());
 
         }
     }

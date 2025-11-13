@@ -13,7 +13,7 @@ public class CartMenuManagementController extends Controller<CartMenuManagementV
     }
 
     public Panel getProductCheckView(){
-        ProductCheckController productCheckController = new ProductCheckController();
+        ProductCheckController productCheckController = new ProductCheckController("CarteMenuManagementView");
         return productCheckController.getView();
     }
 

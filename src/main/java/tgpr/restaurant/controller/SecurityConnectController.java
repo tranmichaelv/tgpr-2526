@@ -53,40 +53,34 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
 
 
             //------
-
-
             // Vérifie s'il y a un panier temporaire et le restaure
             var panierTemp = Security.getPendingPanier();
             if (panierTemp != null && !panierTemp.isEmpty()) {
                 for (var entry : panierTemp.entrySet()) {
                     var produit = entry.getKey();
                     var quantite = entry.getValue();
-                    for (int i = 0; i < quantite; i++) {
-                        Panier.ajouterProduit(produit);
+
+                    // Vérifie si le produit est déjà dans le panier
+                    var panierActuel = Panier.getProduits();
+                    if (!panierActuel.containsKey(produit)) {
+                        // S'il n'existe pas encore → on l'ajoute
+                        for (int i = 0; i < quantite; i++) {
+                            Panier.ajouterProduit(produit);
+                        }
                     }
+                    // sinon on ne fait rien (pour éviter la duplication)
                 }
+
                 Security.clearPendingPanier();
-                showInfo("Les articles de votre panier ont été restaurés !");
             }
 
+            //  Message de confirmation (tu peux le changer ou l'enlever)
+            showInfo("Connexion réussie ! Bienvenue à nouveau");
+            navigateTo(new MenuController());
 
 
-
-
-
-            // ✅ Message de confirmation (tu peux le changer ou l'enlever)
-            showInfo("Connexion réussie !");
-            // navigateTo(new MenuController()); // Exemple si tu veux rediriger vers le menu
-
-            showError(new Error("c'est bon")); // à enlever c'est juste pour tester
-            //...
-            //...
-            //...
-            // pour se deconnecter, il y a la fonction logout presente dans security
-
-        } else {
-            errors.add("invalid credentials");
-        }
+        } else
+            showError(new Error("invalid credentials"));
 
         return errors;
     }

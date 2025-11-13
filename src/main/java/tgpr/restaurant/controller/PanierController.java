@@ -62,15 +62,6 @@ public class PanierController extends Controller<PanierView> {
             Controller.navigateTo(new PanierController());
         }));
 
-
-
-        //  Supprimer
-//        boutons.addComponent(new Button("Supprimer", () -> {
-//            tgpr.restaurant.model.Panier.supprimerProduit(produit);
-//            popup.close();
-//            Controller.navigateTo(new PanierController());
-//        }));
-
         // Bouton "Supprimer" : supprime complètement le produit du panier
         boutons.addComponent(new Button("Supprimer", () -> {
             tgpr.restaurant.model.Panier.supprimerProduit(produit);
@@ -90,25 +81,54 @@ public class PanierController extends Controller<PanierView> {
         // Affiche la popup de manière modale et bloque l’exécution jusqu’à sa fermeture.
         tgpr.framework.ViewManager.gui.addWindowAndWait(popup);    }
 
-
-
-
-    //------
-//    public void connect() {
-//        // Si l'utilisateur n'est pas connecté, on sauvegarde le panier actuel
-//        if (!tgpr.restaurant.model.Security.isLogged()) {
-//            tgpr.restaurant.model.Security.setPendingPanier(tgpr.restaurant.model.Panier.getProduits());
-//            Controller.showInfo("Veuillez vous connecter pour continuer votre commande.");
-//            navigateTo(new SecurityConnectController());
-//            return;
-//        }
-//
-//        // Si déjà connecté, on peut continuer normalement (par exemple aller à la confirmation)
-//        Controller.showInfo("Vous êtes déjà connecté !");
-//    }
-
     public void connect() {
         navigateTo(new SecurityConnectController());
     }
 
+
+
+
+
+//    public void openOrderCreate() {
+//        // créer une nouvelle commande vide (brouillon)
+//        var order = new tgpr.restaurant.model.Order();
+//        navigateTo(new OrderCreateController(order));
+//    }
+
+    public void openOrderCreate() {
+        // Crée une commande vide
+        var order = new tgpr.restaurant.model.Order();
+
+        // Définit le client connecté
+        if (tgpr.restaurant.model.Security.isLogged()) {
+            order.setClientId(tgpr.restaurant.model.Security.getUser().getId());
+        }
+
+        // Définit la date (sinon قاعدة البيانات ترفض null)
+        order.setOrderDate(java.time.LocalDate.now());
+
+        // Récupère un service existant pour éviter l'erreur SQL
+        var allServices = tgpr.restaurant.model.Service.getAll();
+        if (!allServices.isEmpty()) {
+            order.setServiceId(allServices.get(0).getId());
+        }
+
+        // Sauvegarde pour générer l'ID de la commande
+        order.save();
+
+        // Copie les produits du panier dans la table order_items
+        for (var entry : tgpr.restaurant.model.Panier.getProduits().entrySet()) {
+            var produit = entry.getKey();
+            var quantite = entry.getValue();
+
+            var item = new tgpr.restaurant.model.OrderItem();
+            item.setOrderId(order.getId());
+            item.setProductId(produit.getId());
+            item.setQuantity(quantite);
+            item.setPrice(produit.getPrice());
+            item.save(); //  sauvegarde réelle dans la base
+        }
+        // Ouvre la vue de création
+        navigateTo(new OrderCreateController(order));
+    }
 }

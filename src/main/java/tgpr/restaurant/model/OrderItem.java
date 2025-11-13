@@ -152,4 +152,21 @@ public class OrderItem extends Model {
 			new Params("order", orderId).add("product", productId));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+
+    public static List<OrderItem> getAllItemInOrder(int orderId) {
+        return queryList(OrderItem.class, "select * from order_items where `order`=:order",
+                new Params("order", orderId));
+    }
+
+    public double getTotal(){
+        return price*quantity;
+    }
+
+    public String getProductName(){
+        return Product.getByKey(productId).getName();
+    }
+
+    public String getProductType(){
+        return String.valueOf(Product.getByKey(productId).getType());
+    }
 }

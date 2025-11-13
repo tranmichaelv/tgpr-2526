@@ -22,17 +22,18 @@ public class OrderChangeView extends BasicWindow {
 
     private final OrderChangeController controller;
 
-    private ComboBox<String> clientBox;
-    private  List<User> clients;
-    private ComboBox<String> tableBox;
-    private  List<Table> tables;
-    private ComboBox<String> serviceBox;
-    private List<Service> services;
-    private CheckBox takeAwayBox;
-    private TextBox nbPersonsBox;
-    private TextBox reductionBox;
-    private Label priceSummaryLabel;
-    private Panel articlesPanel;
+    private ObjectTable<OrderItem> tableProduct;
+    protected ComboBox<String> clientBox;
+    protected   List<User> clients;
+    protected ComboBox<String> tableBox;
+    protected   List<Table> tables;
+    protected ComboBox<String> serviceBox;
+    protected List<Service> services;
+    protected CheckBox takeAwayBox;
+    protected TextBox nbPersonsBox;
+    protected TextBox reductionBox;
+    protected Label priceSummaryLabel;
+    protected Panel articlesPanel;
 
     public OrderChangeView(OrderChangeController controller) {
         this.controller = controller;
@@ -284,7 +285,7 @@ public class OrderChangeView extends BasicWindow {
         productsSection.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         // Récupère la vue du contrôleur ProductCheck
-        ProductCheckController pcc = new ProductCheckController(controller);
+        ProductCheckController pcc = new ProductCheckController(controller.getOrder().getId());
         pcc.setOnOrderChanged(this::refreshArticles);
         ProductCheckView productCheckView = pcc.getView();
         productsSection.addComponent(productCheckView);
@@ -295,11 +296,14 @@ public class OrderChangeView extends BasicWindow {
         rebuildArticlesSection();
 
         Panel ligneArticles = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        ligneArticles.addComponent(emphasize("Type     "));
-        ligneArticles.addComponent(emphasize("Produit         "));
-        ligneArticles.addComponent(emphasize("Quantité"));
-        ligneArticles.addComponent(emphasize("Prix unitaire"));
-        ligneArticles.addComponent(emphasize("Total      "));
+        tableProduct = new ObjectTable<>(
+                new ColumnSpec<>("Type     ", OrderItem::getProductType),
+                new ColumnSpec<>("Produit         ", OrderItem::getProductName),
+                new ColumnSpec<>("Quantité", OrderItem::getQuantity),
+                new ColumnSpec<>("Prix unitaire", OrderItem::getPrice),
+                new ColumnSpec<>("Total      ", OrderItem::getTotal));
+
+        ligneArticles.addComponent(tableProduct);
 
         for (var item : controller.getOrder().getOrderItems()) {
             Panel ligne = new Panel(new LinearLayout(Direction.HORIZONTAL));
@@ -339,6 +343,18 @@ public class OrderChangeView extends BasicWindow {
                 if (txt.isEmpty()) throw new IllegalArgumentException("Le nombre de personnes est obligatoire.");
                 int nb = Integer.parseInt(txt);
                 controller.getOrder().setEffectivePeopleCount(nb); // ou setNumberOfPeople(nb)
+
+                if (controller.getOrder().getTableId() != null) {
+                    // Recalcule les tables réellement dispo maintenant
+                    List<Table> avail = controller.getAvailableTables();
+                    Integer tid = controller.getOrder().getTableId();
+                    boolean stillFree = avail.stream().anyMatch(t -> t.getId() == tid);
+                    if (!stillFree) {
+                        throw new IllegalArgumentException(
+                                "La table choisie n'est plus disponible pour ce service à cette date."
+                        );
+                    }
+                }
 
                 //  Valider
                 controller.getOrder().validate();
@@ -408,7 +424,7 @@ public class OrderChangeView extends BasicWindow {
 
     }
         // méthode pour mettre la vue OrderAdd au milieu quand on crée la commande modifié
-    private static BasicWindow getWindow(OrderChangeController controller) {
+    protected static BasicWindow getWindow(OrderChangeController controller) {
         OrderAddController nextController = new OrderAddController(controller.getOrder());
         BasicWindow win = nextController.getView();
         win.setFixedSize(new TerminalSize(60, 20));
@@ -421,7 +437,7 @@ public class OrderChangeView extends BasicWindow {
 
 
     // méthode couleur + style css
-    private Component sectionHeader(String title) {
+    protected Component sectionHeader(String title) {
         Label header = new Label(title);
         header.addStyle(SGR.BOLD);
         header.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT);
@@ -429,7 +445,7 @@ public class OrderChangeView extends BasicWindow {
     }
 
     // méthode qui souligne + style css
-    private Component emphasize(String title) {
+    protected Component emphasize(String title) {
         Panel headerPanel = new Panel(new LinearLayout(Direction.VERTICAL));
 
         // Label principal (gras + couleur)
@@ -449,7 +465,7 @@ public class OrderChangeView extends BasicWindow {
         return headerPanel;
     }
     // méthode qui fait le calcul du prix de la commande + style css
-    private Component priceSummary(double sousTotal, double reduction, double total) {
+    protected Component priceSummary(double sousTotal, double reduction, double total) {
         Panel summary = new Panel(new LinearLayout(Direction.HORIZONTAL));
 
        priceSummaryLabel = new Label(String.format(
@@ -540,5 +556,4 @@ public class OrderChangeView extends BasicWindow {
         //  Reconstruit la section Articles (totaux + lignes)
         rebuildArticlesSection();
     }
-
 }
