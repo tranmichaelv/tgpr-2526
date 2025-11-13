@@ -40,7 +40,11 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
             Reservation pending = Security.getPendingReservation();
             if (pending != null) {
                 pending.setClientId(user.getId());
-                pending.save();
+                if (user.getRole() == User.Role.Client) {
+                    // only client can book for himself
+                    // boss and employees must book for another person (whose role is client)
+                    pending.save();
+                }
                 Security.clearPendingReservation();
                 showInfo("Votre réservation a été confirmée !");
             }
