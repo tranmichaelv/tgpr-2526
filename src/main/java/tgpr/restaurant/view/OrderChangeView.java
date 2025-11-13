@@ -365,12 +365,19 @@ public class OrderChangeView extends BasicWindow {
                 //  Valider
                 controller.getOrder().validate();
 
+                if(controller instanceof OrderCreateController){
+                    controller.getOrder().setId(0); // ou null, selon ton implémentation
+                    controller.getOrder()    .save();
+                }
+
                 // Affiche vue OrderAdd
                 BasicWindow win = getWindow(controller);
                 getTextGUI().addWindowAndWait(win);
                 if (controller instanceof OrderCreateController) {
                     this.close();
                 }
+
+
 
             } catch (NumberFormatException e) {
                 MessageDialog.showMessageDialog(getTextGUI(), "Erreur",
