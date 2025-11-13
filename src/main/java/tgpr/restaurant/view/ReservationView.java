@@ -31,6 +31,7 @@ public class ReservationView extends BasicWindow {
     private ComboBox<String> midiSoir;
     private Label tableLabel;
     private LocalDate selectedDate;
+    private LocalTime selectedHour;
     private Button confirm;
     private Button targetDate = null ;
 
@@ -48,7 +49,10 @@ public class ReservationView extends BasicWindow {
 
         root.addComponent(new EmptySpace(new TerminalSize(0,1))); // upper padding
 
-        createHeader().addTo(root);
+        // si l'utilisateur est un guest
+        if (Security.isLogged()) {
+            createHeader().addTo(root);
+        }
         createGridLayout().addTo(root);
 
         // The following Listeners will refresh the reservation whenever the service or the number of people is changed
@@ -92,7 +96,7 @@ public class ReservationView extends BasicWindow {
         // 1st row
         createGridLayout.addComponent(new Label("Nombre de personnes: "));
         nbPeople = new TextBox();
-        nbPeople.setValidationPattern(Pattern.compile("[1-9][0-9]*")); // only integers allowed
+        nbPeople.setValidationPattern(Pattern.compile("[1-9][0-9]?")); // only integers allowed, max 2 numbers
         createGridLayout.addComponent(nbPeople);
 
         createGridLayout.addComponent(new EmptySpace(), GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER, true, false, 2, 1)); // to skip row

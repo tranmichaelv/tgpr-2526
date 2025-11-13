@@ -60,6 +60,21 @@ public class Security {
     }
 
 
+    //méthodes pour identifier la prochaine vue apres la connexion
+    private static boolean fromPanier=false;
+
+    public static void setFromPanier(boolean value){
+        fromPanier=value;
+
+    }
+    public static boolean isFromPanier(){
+        return fromPanier;
+    }
+
+    public static void clearFromPanier(){
+        fromPanier = false;
+    }
+
 
     // Panier temporaire (pour les invités)
     private static Map<Product, Integer> pendingPanier = new LinkedHashMap<>();

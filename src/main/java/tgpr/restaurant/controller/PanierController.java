@@ -6,6 +6,7 @@ import tgpr.framework.Controller;
 import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.model.Product;
 import tgpr.restaurant.model.Time;
+import tgpr.restaurant.model.Security;
 import tgpr.restaurant.view.PanierView;
 import tgpr.restaurant.view.RestaurantClosedView;
 
