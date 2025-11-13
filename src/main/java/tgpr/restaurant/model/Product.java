@@ -130,9 +130,6 @@ public class Product extends Model {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
         return id == product.id;
-        //return Double.compare(product.price, price) == 0 &&
-        //                Objects.equals(name, product.name) &&
-        //                type == product.type;
     }
 
     @Override
@@ -244,7 +241,7 @@ public class Product extends Model {
     public static List<Product> getOrderMenuAll() {
         return queryList(Product.class,
                 "select * from products " +
-                        "where type = 'menu' and archived " +
+                        "where type = 'menu' " +
                         "order by name;");
     }
 
@@ -253,6 +250,7 @@ public class Product extends Model {
     public static List<Product> getOrderProductAndMenu() {
         return queryList(Product.class,
                 "select * from products " +
+                        "where archived = false " +
                         "order by type, name;");
     }
 

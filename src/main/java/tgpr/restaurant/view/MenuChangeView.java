@@ -81,6 +81,7 @@ public class MenuChangeView extends DialogWindow {
             controller.menuActions(product);
             // stocke les changements dans la liste et le renvoi
             reloadData();
+            checkDouble();
             //  repart sur la ligne de l'élément stocké
             tableProduct.setSelected(product);
         });
@@ -177,6 +178,7 @@ public class MenuChangeView extends DialogWindow {
         btnAdd.setEnabled(errors.isEmpty());
         cboAddProduct.takeFocus();
     }
+
     public void deleteMenu(){
         controller.deleteMenu();
         reloadData();
@@ -197,6 +199,7 @@ public class MenuChangeView extends DialogWindow {
     public void deleteItem(){
         controller.changeOrderItem("Supprimer");
         reloadData();
+        checkDouble();
     }
 
     public void changeOrderOrItem(){

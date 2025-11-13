@@ -3,7 +3,6 @@ package tgpr.restaurant.controller;
 import tgpr.framework.Controller;
 import tgpr.framework.Model;
 import tgpr.restaurant.RestaurantApp;
-import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.model.Time;
 import tgpr.restaurant.view.SecurityLoginView;
 
@@ -36,12 +35,7 @@ public class SecurityLoginController extends Controller<SecurityLoginView> {
     public void menu(){navigateTo(new MenuController());}
 
     public void cart(){
-//        ClosingPeriod closingPeriod =  Time.restaurantIsClosed();
-//        if(closingPeriod != null ){
-//            navigateTo(new RestaurantClosedController(closingPeriod));
-//        } else {
-            navigateTo(new PanierController());
-//        }
+        navigateTo(new PanierController());
     }
 
     public void checkDate(String date){

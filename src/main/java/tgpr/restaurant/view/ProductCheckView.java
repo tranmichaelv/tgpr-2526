@@ -94,7 +94,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
     public ObjectTable<Product> createTable() {
         if(Security.isBoss() && view.equals("CarteMenuManagementView")){
             return new ObjectTable<>(
-                    new ColumnSpec<>("Archived", p -> p.getArchived() ? "oui" : "non" ),
+                    new ColumnSpec<>("Archived", p -> p.getArchived() ? "X" : "" ),
                     new ColumnSpec<>("Nom", Product::getName),
                     new ColumnSpec<>("Type", Product::getType),
                     new ColumnSpec<>("Prix", Product::getPriceFormatted),
