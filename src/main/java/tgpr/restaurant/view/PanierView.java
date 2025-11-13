@@ -49,21 +49,12 @@ public class PanierView extends DialogWindow {
             connection = new ActionListBox(new TerminalSize(60, 3));
             connection.addItem("=== COMMANDE ===", () -> {});
 
-
-
-//            if(!Security.isLogged()) {
-//                //Security.setPendingPanier();
-//                // si pas connecte alors
-//                connection.addItem("Connexion requise pour passer commande", this::connect);
-//            }
-
-
             if (!Security.isLogged()) {
                 connection.addItem("Connexion requise pour passer commande", () -> {
                     // sauvegarder panier avant d'aller se connecter
                     Security.setPendingPanier(Panier.getProduits());
-                    controller.connect();
                     this.close();
+                    controller.connect();
                 });
             }
             root.addComponent(connection);
@@ -126,17 +117,24 @@ public class PanierView extends DialogWindow {
         }
     }
 
+//    private void commander() {
+//        if(Security.isLogged()){
+//            // si user connecte alors commande sinon mets le message
+//            Controller.showInfo("Vous pouvez maintenant finaliser votre commande.");
+//        } else {
+//            Controller.showInfo("Vous devez vous connecter pour passer une commande !");
+//        }
+//    }
+
     private void commander() {
-        if(Security.isLogged()){
-            // si user connecte alors commande sinon mets le message
-            Controller.showInfo("C'est bon !");
+        if (Security.isLogged()) {
+            // Si l'utilisateur est connecté → on ouvre la création de commande
+            this.close();
+            controller.openOrderCreate();  // ➕ نفتح vue ديال création
         } else {
             Controller.showInfo("Vous devez vous connecter pour passer une commande !");
         }
     }
 
-    private void connect(){
 
-        controller.connect();
-    }
 }

@@ -77,4 +77,7 @@ public class Security {
     }
 
 
+    public static User getUser() {
+        return loggedUser;
+    }
 }
