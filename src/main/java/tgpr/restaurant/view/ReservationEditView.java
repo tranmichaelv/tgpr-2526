@@ -121,10 +121,10 @@ public class ReservationEditView extends BasicWindow {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
         Button cancel = new Button("Annuler", this::close);
         Button delete = new Button("Supprimer");
-        if (Security.isBoss()) {
-            reservation.delete();
-            close();
-        }
+        delete.addListener(_ -> {
+                    controller.deleteReservation(reservation);
+                    close();
+        });
         confirm = new Button("Confirmer");
         confirm.setEnabled(false);
         buttons.addComponent(cancel);
