@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 public class OrderListClientView extends BasicWindow {
@@ -79,6 +80,7 @@ public class OrderListClientView extends BasicWindow {
         Panel clientNameFilter = new Panel(new LinearLayout(Direction.VERTICAL));
         clientNameFilter.addComponent(new Label("Filtrer par nom de client: "));
         clientNameBox = new TextBox(new TerminalSize(20, 1));
+        clientNameBox.setValidationPattern(Pattern.compile("^[A-Za-z]+(?: [A-Za-z]*)*$"));
         clientNameBox.setTextChangeListener((newText, buUser) -> populateListBox());
         // affichage du filtre uniquement pour le boss et l'employee
         if (Security.isLogged() && !Security.isClient()) {
