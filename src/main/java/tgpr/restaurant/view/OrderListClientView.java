@@ -238,8 +238,11 @@ public class OrderListClientView extends BasicWindow {
         ));
     }
 
+     public void refreshReservation() {
+        updateReservationList(reservationListBox, reservationList, true);
+    }
 
-    private void updateReservationList(ActionListBox reservationListBox, List<Reservation> allReservations, boolean showAll) {
+    public void updateReservationList(ActionListBox reservationListBox, List<Reservation> allReservations, boolean showAll) {
         reservationListBox.clearItems();
 
         for (Reservation r : allReservations) {

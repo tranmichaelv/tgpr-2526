@@ -9,10 +9,7 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationEditController;
-import tgpr.restaurant.model.Reservation;
-import tgpr.restaurant.model.Service;
-import tgpr.restaurant.model.Table;
-import tgpr.restaurant.model.Time;
+import tgpr.restaurant.model.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -124,6 +121,10 @@ public class ReservationEditView extends BasicWindow {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
         Button cancel = new Button("Annuler", this::close);
         Button delete = new Button("Supprimer");
+        if (Security.isBoss()) {
+            reservation.delete();
+            close();
+        }
         confirm = new Button("Confirmer");
         confirm.setEnabled(false);
         buttons.addComponent(cancel);
@@ -334,4 +335,6 @@ public class ReservationEditView extends BasicWindow {
     public void showError(String message) {
         MessageDialog.showMessageDialog(getTextGUI(), "Erreur", message);
     }
+
+
 }
