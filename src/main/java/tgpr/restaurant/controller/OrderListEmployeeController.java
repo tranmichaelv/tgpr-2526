@@ -4,6 +4,7 @@ import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Window;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.Order;
+import tgpr.restaurant.model.Security;
 import tgpr.restaurant.model.User;
 import tgpr.restaurant.view.OrderListEmployeeView;
 
@@ -18,7 +19,7 @@ public class OrderListEmployeeController extends Controller<OrderListEmployeeVie
     }
 
     public User getUser() {
-        return User.getByKey(1);
+        return Security.getLoggedUser();
     }
 
     @Override

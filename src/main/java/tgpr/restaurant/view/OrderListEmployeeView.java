@@ -81,7 +81,7 @@ public class OrderListEmployeeView extends BasicWindow {
 
         boolean showAll = showAllOrders.isChecked(); // je récupère l'état du checkBox
         for (Order order : ordersList) {
-            if (order.getClient().equals(user)) {
+            if ( order.getEmployee() != null && order.getClient().equals(user)) {
 
                 boolean isPaid = order.getPaymentMethod() != null;
                 if (showAll || !isPaid){
