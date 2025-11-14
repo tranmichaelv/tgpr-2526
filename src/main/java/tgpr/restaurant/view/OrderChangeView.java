@@ -373,11 +373,8 @@ public class OrderChangeView extends BasicWindow {
                 // Affiche vue OrderAdd
                 BasicWindow win = getWindow(controller);
                 getTextGUI().addWindowAndWait(win);
-                if (controller instanceof OrderCreateController) {
-                    this.close();
-                }
 
-
+                this.close();
 
             } catch (NumberFormatException e) {
                 MessageDialog.showMessageDialog(getTextGUI(), "Erreur",
