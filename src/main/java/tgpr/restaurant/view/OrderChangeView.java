@@ -572,10 +572,6 @@ public class OrderChangeView extends BasicWindow {
     }
     @Override
     public void close() {
-        // Si on est en mode création, on veut aussi nettoyer le brouillon
-        if (controller instanceof OrderCreateController) {
-            controller.resetToOriginal();
-        }
         super.close();
     }
 }
