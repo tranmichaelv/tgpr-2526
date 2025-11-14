@@ -346,7 +346,12 @@ public class OrderListClientView extends BasicWindow {
                 if (userlloged.getRole() == User.Role.Client) {
                     ordersListBox.addItem(display, () -> controller.openDetails(order));
                 } else {
-                    ordersListBox.addItem(display, () ->{ controller.openActions(order);refreshOrders();});
+                    ordersListBox.addItem(display, () ->{
+                        if(!isPaid){
+                            controller.openActions(order);refreshOrders();
+                        }else
+                            controller.openDetails(order);
+                    });
                 }
             }
 
