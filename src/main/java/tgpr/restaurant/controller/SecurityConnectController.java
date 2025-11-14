@@ -47,7 +47,11 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
                     pending.save();
                 }
                 Security.clearPendingReservation();
-                showInfo("Votre réservation a été confirmée !");
+                showInfo( // only client can book a table for himself
+                        user.getRole() == User.Role.Client ?
+                                "Votre réservation a été confirmée"
+                                : "Le personnel du restaurant ne peut pas réserver pour lui-même. Réservation annulée.\n"
+                );
             }
 
 

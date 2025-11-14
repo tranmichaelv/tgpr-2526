@@ -10,7 +10,6 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationController;
 import tgpr.restaurant.model.*;
 
-import javax.swing.border.EmptyBorder;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -31,7 +30,6 @@ public class ReservationView extends BasicWindow {
     private ComboBox<String> midiSoir;
     private Label tableLabel;
     private LocalDate selectedDate;
-    private LocalTime selectedHour;
     private Button confirm;
     private Button targetDate = null ;
 
@@ -214,13 +212,24 @@ public class ReservationView extends BasicWindow {
                 }
             } catch (Exception ignored) {}
 
+            selectedDate = Time.getDateChosen().toLocalDate();
+            LocalTime selectedHour = Time.getDateChosen().toLocalTime();
+            LocalTime maxMidi = LocalTime.of(11,30);
+            LocalTime maxSoir = LocalTime.of(18,30);
             // date colored in red if:
             /*
             a) a table corresponding to nbPeople or nbPeople + 1 exists
             b) all tables are occupied
-            c) date is not before today
+            c) date is not before today and not today OR date is today before 11:30 a.m. for "midi" OR date is today before 18:30 p.m for "soir"
              */
-            if (tablesExist && allTablesOccupied && !date.isBefore(Time.getDateChosen().toLocalDate())) {
+            if (tablesExist
+                    && (
+                        !date.isBefore(selectedDate) && !date.isEqual(selectedDate)
+                                || (date.isEqual(selectedDate) && selectedHour.isBefore(maxMidi) && midiSoir.getSelectedItem().equals("midi"))
+                                || (date.isEqual(selectedDate) && selectedHour.isBefore(maxSoir) && midiSoir.getSelectedItem().equals("soir"))
+                    )
+                    && allTablesOccupied
+            ) {
                 dayButton.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.RED));
                 dayButton.setEnabled(false);
             }
