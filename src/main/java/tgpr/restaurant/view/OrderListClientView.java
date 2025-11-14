@@ -27,12 +27,12 @@ public class OrderListClientView extends BasicWindow {
     public static final LocalDate TODAY_DEMO_DATE = Time.getDateChosen().toLocalDate();
     public static final LocalTime TODAY_DEMO_TIME = Time.getDateChosen().toLocalTime();
     private final OrderListClientController controller;
-    private final List<Order> ordersList = Order.getAll();
+    private List<Order> ordersList = Order.getAll();
     private final List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model
     private final Menu menuNav;
     private final Menu menuUser;
     private User userlloged;
-    private final TextBox clientNameBox;
+    private  TextBox clientNameBox;
     private boolean hasOrders = false;
     // la liste sera scrollable et sélectionnable
     private final ActionListBox ordersListBox = new ActionListBox(new TerminalSize(120, 10));
@@ -74,11 +74,14 @@ public class OrderListClientView extends BasicWindow {
 
 
         // exemple du champs ou on peut saisir le nom dun client
-        Panel clientNameFilter = new Panel(new LinearLayout(Direction.VERTICAL));
-        clientNameFilter.addComponent(new Label("Filtrer par nom de client: "));
-        clientNameBox = new TextBox(new TerminalSize(20, 1));
-        clientNameBox.setTextChangeListener((newText, buUser) -> populateListBox());
-        clientNameBox.addTo(root);
+        if (userlloged.getRole() == User.Role.Boss || userlloged.getRole() == User.Role.Employee){
+            Panel clientNameFilter = new Panel(new LinearLayout(Direction.VERTICAL));
+            clientNameFilter.addComponent(new Label("Filtrer par nom de client: "));
+            clientNameBox = new TextBox(new TerminalSize(20, 1));
+            clientNameBox.setTextChangeListener((newText, buUser) -> populateListBox());
+            clientNameBox.addTo(root);
+        }
+
 
 
         // Creating sub-Panel reservations
@@ -193,18 +196,25 @@ public class OrderListClientView extends BasicWindow {
         // Remplir la liste de commandes
         populateListBox();
 
-        // ✅ Ajouter la liste DANS le panel "orders", pas dans root !
+
         orders.addComponent(ordersListBox);
 
         // Espace avant le bouton
         orders.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
-        // Bouton "Nouvelle commande" en bas
-        Button newOrder = new Button("Nouvelle commande", () -> controller.openCreateNewOrder());
-        orders.addComponent(newOrder);
+        // Bouton "Nouvelle commande"
+        if (userlloged.getRole() == User.Role.Boss || userlloged.getRole() == User.Role.Employee){
+            Button newOrder = new Button("Nouvelle commande", this::newOrder);
+            orders.addComponent(newOrder);
+        }
+
         // Enfin, ajouter le panel complet au root
         root.addComponent(orders);
 
+    }
+    public void newOrder (){
+        controller.openCreateNewOrder();
+        refreshOrders();
     }
 
     // displaying title according to User's type
@@ -269,28 +279,29 @@ public class OrderListClientView extends BasicWindow {
         getTextGUI().addWindowAndWait(win);
     }
 
-    private void populateListBox() {
+     private void populateListBox() {
         ordersListBox.clearItems();
 
-        String filtreNom = clientNameBox.getText().trim().toLowerCase();
+        //String filtreNom = clientNameBox.getText().trim().toLowerCase();
+         String filtreNom = clientNameBox != null ? clientNameBox.getText().trim().toLowerCase() : "";
 
-        boolean showAll = showAllOrders.isChecked(); // état de la checkbox
+         boolean showAll = showAllOrders.isChecked(); // état de la checkbox
 
         for (Order order : ordersList) {
-            User client = order.getClient();
+
             boolean isPaid = order.getPaymentMethod() != null;
 
             // Je filtre selon le texte saisi
             boolean correspond = filtreNom.isEmpty()
-                    || client.getLastName().toLowerCase().contains(filtreNom)
-                    || client.getFirstName().toLowerCase().contains(filtreNom);
+                    || order.getClient().getLastName().toLowerCase().contains(filtreNom)
+                    || order.getClient().getFirstName().toLowerCase().contains(filtreNom);
 
             boolean visible = false;
 
             // Détermine si cette commande doit être affichée
             if (userlloged.getRole() == User.Role.Client) {
                 // Un client ne voit que ses propres commandes
-                if (client.equals(userlloged) && correspond && (showAll || !isPaid)) {
+                if (order.getClient().equals(userlloged) && correspond && (showAll || !isPaid)) {
                     visible = true;
                 }
             } else {
@@ -306,7 +317,7 @@ public class OrderListClientView extends BasicWindow {
                 if (userlloged.getRole() == User.Role.Client) {
                     ordersListBox.addItem(display, () -> controller.openDetails(order));
                 } else {
-                    ordersListBox.addItem(display, () -> controller.openActions(order));
+                    ordersListBox.addItem(display, () ->{ controller.openActions(order);refreshOrders();});
                 }
             }
 
@@ -315,6 +326,14 @@ public class OrderListClientView extends BasicWindow {
                 });
             }
         }
+    }
+
+    // cette partie concerne le refreshOrders après les modification appliquées sur les commandes
+    public  void  refreshOrders() {
+        ordersList.clear();
+        ordersList.addAll(Order.getAll());
+        populateListBox();
+        ordersListBox.invalidate();
     }
 
     private static String padOrTruncate(String text, int width) {

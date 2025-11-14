@@ -53,7 +53,7 @@ public class ReservationView extends BasicWindow {
         }
         createGridLayout().addTo(root);
 
-        // The following Listeners will refresh the reservation whenever the service or the number of people is changed
+        // The following Listeners will refreshOrders the reservation whenever the service or the number of people is changed
         midiSoir.addListener((_, _, _)->{
             buildCalendarGrid();
             tableLabel.setText("(non attribuée)");
@@ -306,7 +306,7 @@ public class ReservationView extends BasicWindow {
 
     }
 
-    // method refresh to scroll calendar
+    // method refreshOrders to scroll calendar
     private void refreshCalendar() {
         monthLabel.setText(centerText(getFormattedMonth())); // updating month label
         buildCalendarGrid();

@@ -261,7 +261,7 @@ public class TerminalScreen extends AbstractScreen {
         getTerminal().setBackgroundColor(TextColor.ANSI.DEFAULT);
         getTerminal().clearScreen();
         getTerminal().resetColorAndSGR();
-        scrollHint = null; // discard any scroll hint for full refresh
+        scrollHint = null; // discard any scroll hint for full refreshOrders
 
         EnumSet<SGR> currentSGR = EnumSet.noneOf(SGR.class);
         TextColor currentForegroundColor = TextColor.ANSI.DEFAULT;
@@ -316,7 +316,7 @@ public class TerminalScreen extends AbstractScreen {
      * <p>
      * <b>Be aware:</b> directly modifying the underlying terminal will most likely result in unexpected behaviour if
      * you then go on and try to interact with the Screen. The Screen's back-buffer/front-buffer will not know about
-     * the operations you are going on the Terminal and won't be able to properly generate a refresh unless you enforce
+     * the operations you are going on the Terminal and won't be able to properly generate a refreshOrders unless you enforce
      * a {@code Screen.RefreshType.COMPLETE}, at which the entire terminal area will be repainted according to the 
      * back-buffer of the {@code Screen}.
      * @return Underlying terminal used by the screen
@@ -363,20 +363,20 @@ public class TerminalScreen extends AbstractScreen {
 
         super.scrollLines(firstLine, lastLine, distance);
 
-        // Save scroll hint for next refresh:
+        // Save scroll hint for next refreshOrders:
         ScrollHint newHint = new ScrollHint(firstLine,lastLine,distance);
         if (scrollHint == null) {
             // no scroll hint yet: use the new one:
             scrollHint = newHint;
         } else //noinspection StatementWithEmptyBody
             if (scrollHint == ScrollHint.INVALID) {
-            // scroll ranges already inconsistent since latest refresh!
+            // scroll ranges already inconsistent since latest refreshOrders!
             // leave at INVALID
         } else if (scrollHint.matches(newHint)) {
             // same range: just accumulate distance:
             scrollHint.distance += newHint.distance;
         } else {
-            // different scroll range: no scroll-optimization for next refresh
+            // different scroll range: no scroll-optimization for next refreshOrders
             this.scrollHint = ScrollHint.INVALID;
         }
     }
