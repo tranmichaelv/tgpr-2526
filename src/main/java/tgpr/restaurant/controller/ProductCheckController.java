@@ -71,7 +71,6 @@ public class ProductCheckController extends Controller<ProductCheckView> {
     public void addOrSetQuantity(Product p, int qty, OrderItem orderItem, int order) {
         // si mon produit se trouve dans ma commande
         // en mettant la quantité à 0 je le supprime
-        int size = OrderItem.getAllItemInOrder(order).size();
         if (qty == 0) {
             if (orderItem != null)
                 orderItem.delete();
@@ -84,15 +83,16 @@ public class ProductCheckController extends Controller<ProductCheckView> {
                 // prix au moment de la commande
                 it.setPrice(p.getPrice());
                 it.save();
-                if (onOrderChanged != null) onOrderChanged.run();
             } else {
                 orderItem.setQuantity(qty);
                 orderItem.save();
-                if (onOrderChanged != null) onOrderChanged.run();
             }
 //            getOrder().reload();
             // refreshOrders la zone ou les produits sont affichés
 //            if (onOrderChanged != null) onOrderChanged.run();
+        }
+        if (onOrderChanged != null) {
+            onOrderChanged.run();
         }
     }
 
