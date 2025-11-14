@@ -365,15 +365,8 @@ public class OrderChangeView extends BasicWindow {
                 //  Valider
                 controller.getOrder().validate();
 
+                controller.getOrder().save();
 
-                if (controller instanceof OrderCreateController) {
-                    // pour une nouvelle commande jamais enregistrée
-                    if (controller.getOrder().getId() == 0) {
-                        controller.getOrder().save();   // INSERT
-                    }
-                } else {
-                    controller.getOrder().save();       // UPDATE
-                }
 
                 // Affiche vue OrderAdd
                 BasicWindow win = getWindow(controller);
