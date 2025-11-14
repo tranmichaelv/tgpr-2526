@@ -91,7 +91,7 @@ public class ProductCheckController extends Controller<ProductCheckView> {
                 if (onOrderChanged != null) onOrderChanged.run();
             }
 //            getOrder().reload();
-            // refresh la zone ou les produits sont affichés
+            // refreshOrders la zone ou les produits sont affichés
 //            if (onOrderChanged != null) onOrderChanged.run();
         }
     }

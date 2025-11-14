@@ -67,6 +67,8 @@ public class OrderListClientController extends Controller<OrderListClientView> {
         var ctrl = new OrderCheckController(order);
         var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
 
+        ctrl.setOnCloseCallBack(() -> view.refreshOrders());
+
         //  Configure l’affichage pour qu’elle s’ouvre par-dessus
         win.setHints(java.util.Arrays.asList(
                 Window.Hint.MODAL,     // bloque les interactions dessous
@@ -88,7 +90,6 @@ public class OrderListClientController extends Controller<OrderListClientView> {
 
         showModal(win);
     }
-
 //    public void openCreateNewOrder(){
 //
 //        var ctrl = new OrderCreateController(order);

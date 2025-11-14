@@ -33,7 +33,7 @@ public class OrderCheckView extends BasicWindow {
         actionListBox.addItem("Éditer la commande", controller::openChangeView);
         actionListBox.addItem("Voir les détails", controller::openDetailsView);
         actionListBox.addItem("Enregistrer le paiement", controller::openRegisterPaymentView);
-        actionListBox.addItem("Annuler", controller::openCancelOrderView);
+        actionListBox.addItem("Supprimer",this::supprimer);
         mainPanel.addComponent(actionListBox);
 
         root.addComponent(mainPanel, BorderLayout.Location.CENTER);
@@ -47,6 +47,13 @@ public class OrderCheckView extends BasicWindow {
     public Panel buttonCancel() {
         Panel buttonPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
         buttonPanel.addComponent(new Button("Cancel", this::close));
+
         return buttonPanel;
+    }
+    public void supprimer(){
+        controller.openCancelOrderView();
+
+        this.close();
+
     }
 }

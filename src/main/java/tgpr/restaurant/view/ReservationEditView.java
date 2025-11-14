@@ -304,7 +304,7 @@ public class ReservationEditView extends BasicWindow {
 
     }
 
-    // method refresh to scroll calendar
+    // method refreshOrders to scroll calendar
     private void refreshCalendar() {
         monthLabel.setText(centerText(getFormattedMonth(), MONTH_LABEL_WIDTH)); // updating month label
         buildCalendarGrid();

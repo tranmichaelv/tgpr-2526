@@ -24,7 +24,7 @@ public abstract class PanelProductAndMenu<E> extends Panel {
     }
 
     // envoie les donnes des produits
-    // dans une table et les refresh à chaque appel de cette classe
+    // dans une table et les refreshOrders à chaque appel de cette classe
     public void reloadData(){
         // vide le tableau
         tableProduct.clear();
