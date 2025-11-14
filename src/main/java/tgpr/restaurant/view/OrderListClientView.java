@@ -80,8 +80,12 @@ public class OrderListClientView extends BasicWindow {
         clientNameFilter.addComponent(new Label("Filtrer par nom de client: "));
         clientNameBox = new TextBox(new TerminalSize(20, 1));
         clientNameBox.setTextChangeListener((newText, buUser) -> populateListBox());
-        clientNameBox.addTo(root);
-
+        // affichage du filtre uniquement pour le boss et l'employee
+        if (Security.isLogged() && !Security.isClient()) {
+            root.addComponent(new EmptySpace(new TerminalSize(0,1)));
+            clientNameFilter.addTo(root);
+            clientNameBox.addTo(root);
+        }
 
         // Creating sub-Panel reservations
         Panel reservations = new Panel(new LinearLayout(Direction.VERTICAL));
