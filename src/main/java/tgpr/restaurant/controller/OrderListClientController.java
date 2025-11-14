@@ -114,6 +114,8 @@ public class OrderListClientController extends Controller<OrderListClientView> {
         navigateTo(new MenuController());
     }
 
+    public void reservation() { navigateTo(new ReservationController()); }
+
     public void changeMenu(){
         navigateTo(new CartMenuManagementController());
     }

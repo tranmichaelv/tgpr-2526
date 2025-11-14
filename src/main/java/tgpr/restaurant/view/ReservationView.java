@@ -37,7 +37,6 @@ public class ReservationView extends BasicWindow {
 
         this.controller = controller;
 
-
         setTitle("Réserver une table");
         setHints(List.of(Hint.CENTERED));
 
@@ -48,7 +47,7 @@ public class ReservationView extends BasicWindow {
         root.addComponent(new EmptySpace(new TerminalSize(0,1))); // upper padding
 
         // si l'utilisateur est un guest
-        if (Security.isLogged()) {
+        if (!Security.isLogged()) {
             createHeader().addTo(root);
         }
         createGridLayout().addTo(root);
@@ -329,42 +328,48 @@ public class ReservationView extends BasicWindow {
     // buttons "Annuler" and "Confirmer la réservation". Will be reworked later (to match model's logic)
     private Panel buttonsAtBottom() {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
-        if (!Security.isLogged()) {
-            Button cancel = new Button("Annuler");
             // if guest, "annuler" button will navigate back to homepage
-            cancel.addListener(_ -> controller.retour());
-            confirm = new Button("Confirmer la réservation", () -> {
-                int numberOfPeople = Integer.parseInt(nbPeople.getText());
-                String serviceName = midiSoir.getSelectedItem();
-                String tableInfo = tableLabel.getText();
+            if (!Security.isLogged()) {
+                Button cancel = new Button("Annuler");
+                cancel.addListener(_ -> controller.retour());
+                confirm = new Button("Confirmer la réservation", () -> {
+                    int numberOfPeople = Integer.parseInt(nbPeople.getText());
+                    String serviceName = midiSoir.getSelectedItem();
+                    String tableInfo = tableLabel.getText();
 
-                String weekDay = selectedDate.getDayOfWeek()
-                        .getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
+                    String weekDay = selectedDate.getDayOfWeek()
+                            .getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
 
-                Service service = Service.getByNameAndDay(serviceName, weekDay);
-                Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
+                    Service service = Service.getByNameAndDay(serviceName, weekDay);
+                    Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
 
-                if (table != null) {
-                    Reservation r = new Reservation(
-                            numberOfPeople,
-                            -1, // Temporary clientId
-                            table.getId(),
-                            service.getId(),
-                            true,
-                            selectedDate
-                    );
+                    if (table != null) {
+                        Reservation r = new Reservation(
+                                numberOfPeople,
+                                -1, // Temporary clientId
+                                table.getId(),
+                                service.getId(),
+                                true,
+                                selectedDate
+                        );
 
-                    Security.setPendingReservation(r); // the chosen reservation is temporary saved with setPendingReservation in Security class
-                }
+                        Security.setPendingReservation(r); // the chosen reservation is temporary saved with setPendingReservation in Security class
+                    }
 
 
-                ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, serviceName, tableInfo);
-                dialog.showDialog(getTextGUI());
-            });
-            confirm.setEnabled(false);
-            buttons.addComponent(cancel);
-            buttons.addComponent(confirm);
-        }
+                    ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, serviceName, tableInfo);
+                    dialog.showDialog(getTextGUI());
+                });
+                confirm.setEnabled(false);
+                buttons.addComponent(cancel);
+                buttons.addComponent(confirm);
+            } else {
+                Button cancel = new Button("Annuler");
+                cancel.addListener(_ -> close());
+                Button confirm = new Button("Confirmer");
+                buttons.addComponent(cancel);
+                buttons.addComponent(confirm);
+            }
         return buttons;
     }
 
