@@ -142,8 +142,6 @@ public class OrderListClientView extends BasicWindow {
         newReservation = new Button("Nouvelle réservation");
         reservations.addComponent(newReservation);
 
-
-
         // COMMANDES
         root.addComponent(new EmptySpace(new TerminalSize(0, 1)));
         Panel orders = new Panel(new LinearLayout(Direction.VERTICAL));
@@ -238,10 +236,6 @@ public class OrderListClientView extends BasicWindow {
         ));
     }
 
-     public void refreshReservation() {
-        updateReservationList(reservationListBox, reservationList, true);
-    }
-
     public void updateReservationList(ActionListBox reservationListBox, List<Reservation> allReservations, boolean showAll) {
         reservationListBox.clearItems();
 
@@ -259,9 +253,14 @@ public class OrderListClientView extends BasicWindow {
                         r.getOnline() ? "Oui" : "Non"
                 );
                 reservationListBox.addItem(row, () -> {
-                    if (r.getReservationDate().isBefore(TODAY_DEMO_DATE))
-                        return;
-                    editReservation(r);
+                    if ((r.getReservationDate().isBefore(TODAY_DEMO_DATE) || controller.ReservationWithOrder(r.getId()))) { // if before today(demo) OR if with associated order
+                        if (!Security.isBoss()) // user is not boss
+                            controller.showInfo("Seule les réservations dans le futur " + "\n" + "et sans commande peuvent être modifiés" + "\n" + "ou supprimés");
+                        else // user is boss
+                            controller.deleteReservation(r);
+                    } else { // if all the previous conditions are not respected (De Morgan), tabled can be modifie
+                        editReservation(r);
+                    }
                 });
             }
         }

@@ -3,6 +3,7 @@ import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Window;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.Order;
+import tgpr.restaurant.model.Reservation;
 import tgpr.restaurant.model.Security;
 import tgpr.restaurant.model.User;
 import tgpr.restaurant.view.OrderListClientView;
@@ -134,6 +135,16 @@ public class OrderListClientController extends Controller<OrderListClientView> {
 
     public void clientRegister(){
         navigateTo(new ClientRegisterController());
+    }
+
+    // Method verifying if a reservation id exists in Order Tabel (by calling DoesReservationExists method in Reservation Model)
+    public boolean ReservationWithOrder (int rID) {
+        return Reservation.DoesReservationExists(rID) != null;
+    }
+
+    public void deleteReservation(Reservation r){
+        if (askConfirmation("Vous étes sur de vouloir supprimer","suppression"))
+            r.delete();
     }
 }
 
