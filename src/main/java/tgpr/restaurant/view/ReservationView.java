@@ -31,7 +31,7 @@ public class ReservationView extends BasicWindow {
     private Label tableLabel;
     private LocalDate selectedDate;
     private Button confirm;
-    private Button targetDate = null ;
+    private Button targetDate;
 
     public ReservationView(ReservationController controller) {
 
@@ -64,7 +64,8 @@ public class ReservationView extends BasicWindow {
         });
 
         createCalendarHeader().addTo(root);
-        root.addComponent(createCalendarGridPanel());
+        calendarGrid = createCalendarGridPanel();
+        root.addComponent(calendarGrid);
         root.addComponent(buttonsAtBottom());
 
         root.addComponent(new EmptySpace(new TerminalSize(0,1)));

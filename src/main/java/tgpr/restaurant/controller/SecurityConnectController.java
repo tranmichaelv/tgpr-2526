@@ -20,6 +20,7 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
     }
 
     public void back(){
+        Security.clearPendingReservation(); // if the user comes from the reservation page and has a change of heart, the current pending reservation must be cleaned
         navigateTo(new SecurityLoginController());
     }
 
