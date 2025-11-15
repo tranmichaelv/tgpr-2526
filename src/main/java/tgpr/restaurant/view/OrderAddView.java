@@ -8,10 +8,9 @@ public class OrderAddView extends OrderAddOrDelete<OrderAddController> {
         super(controller,controller.getOrder() ,"Confirmation", "Voulez-vous créer cette commande ?", "Yes");
     }
 
-    // méthode qui crée la commande
+    // bouton Oui
     @Override
     protected void onYes() {
-      //  controller.createOrder();
         close();
     }
 }

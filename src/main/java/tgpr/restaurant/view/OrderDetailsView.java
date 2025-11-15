@@ -56,17 +56,3 @@ public class OrderDetailsView extends BasicWindow {
         setComponent(root);
     }
 }
-
-// 🔹 Exemple de calcul de sous-total et total
-//    private double calculateSubtotal(Order order) {
-//        return order.getOrderItems().stream()
-//                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
-//                .sum();
-//    }
-//
-//    private double calculateTotal(Order order) {
-//        double subtotal = calculateSubtotal(order);
-//        double discount = (order.getDiscount() != null) ? order.getDiscount() : 0.0;
-//        return subtotal - discount;
-//    }
-//

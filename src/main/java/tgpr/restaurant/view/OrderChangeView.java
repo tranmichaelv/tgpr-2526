@@ -153,7 +153,7 @@ public class OrderChangeView extends BasicWindow {
         }
 
         //  Maintenant que le service courant est bien défini,
-        // charger les tables disponibles pour CE service
+        // charger les tables disponibles pour ce service
         List<Table> newTables = controller.getAvailableTables();
         tables = newTables;
         tableBox.clearItems();
@@ -294,7 +294,7 @@ public class OrderChangeView extends BasicWindow {
                 rebuildArticlesSection();
                 try { getTextGUI().updateScreen(); } catch (Exception ignored) {}
             } else {
-                // Trop de décimales → on tronque
+                // Trop de décimales, on tronque
                 if (clean.contains(".")) {
                     int dotIndex = clean.indexOf(".");
                     if (dotIndex + 3 < clean.length()) {
@@ -538,8 +538,8 @@ public class OrderChangeView extends BasicWindow {
     private Double parseReduction(String s) {
         if (s == null) return null;
         s = s.trim();
-        // champ vide => pas de réduction (null)
-        if (s.isEmpty()) return null;
+        // champ vide, pas de réduction (null)
+        if (s.isEmpty()) return 0.00;
         // accepter la virgule
         s = s.replace(',', '.');
         try {
@@ -551,8 +551,8 @@ public class OrderChangeView extends BasicWindow {
             if (v > st) v = st;
             return v;
         } catch (NumberFormatException e) {
-            // invalide => ignorer (affiché 0.00 en bas)
-            return null;
+            // invalide, ignorer (affiché 0.00 en bas)
+            return 0.00;
         }
     }
 
@@ -614,8 +614,8 @@ public class OrderChangeView extends BasicWindow {
         //  Save la réduction tapée dans le modèle avant de reconstruire
         Double value = parseReduction(reductionBox.getText());
         controller.getOrder().setDiscount(value);
-        //  Reconstruit la section Articles (totaux + lignes)
 
+        //  Reconstruit la section Articles (totaux + lignes)
         Order fresh = Order.getByKey(controller.getOrder().getId());
         controller.getOrder().getOrderItems().clear();
         controller.getOrder().getOrderItems().addAll(fresh.getOrderItems());
