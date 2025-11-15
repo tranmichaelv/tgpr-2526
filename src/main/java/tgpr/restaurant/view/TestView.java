@@ -1,6 +1,10 @@
 package tgpr.restaurant.view;
 
-import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.ColumnSpec;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.ObjectTable;
+import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.restaurant.controller.TestController;
 import tgpr.restaurant.model.User;
@@ -39,7 +43,6 @@ public class TestView extends DialogWindow {
                 .addTo(panel);
 
         tblUsers.setSelectAction(this::displayUser);
-
         return panel;
     }
 

@@ -145,4 +145,23 @@ public class Table extends Model {
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
     }
+
+    // Method used in ReservationView
+    public static boolean existsCompatibleTable(int numberOfPeople) {
+        return queryOne(Table.class,
+                "SELECT * FROM tables WHERE capacity IN (:numberOfPeople, :numberOfPeoplePlusOne) LIMIT 1",
+                new Params()
+                        .add("numberOfPeople", numberOfPeople)
+                        .add("numberOfPeoplePlusOne", numberOfPeople + 1)
+        ) != null;
+    }
+
+    public static Table nextId(){
+        return queryOne(Table.class, "SELECT AUTO_INCREMENT as id, capacity, location " +
+                        "FROM information_schema.TABLES, tables " +
+                        "WHERE TABLE_SCHEMA = 'tgpr-2526-c03' " +
+                "AND TABLE_NAME = 'tables'", new Params());
+
+    }
+
 }

@@ -6,11 +6,13 @@ import tgpr.framework.Params;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class MenuItem extends Model {
@@ -59,6 +61,22 @@ public class MenuItem extends Model {
         return Product.getByKey(productId);
     }
 
+    public String getProductName() {
+        return Product.getByKey(productId).getName();
+    }
+
+    public String getProductPriceFormatted() {
+        return Product.getByKey(productId).getPrice() + "0 €";
+    }
+
+    public Product.Type getProductType() {
+        return Product.getByKey(productId).getType();
+    }
+
+    public String getMenuName(){
+        return Product.getByKey(menuId).getName();
+    }
+
     private int orderInMenu;
 
     public int getOrderInMenu() {
@@ -67,6 +85,12 @@ public class MenuItem extends Model {
 
     public void setOrderInMenu(int orderInMenu) {
         this.orderInMenu = orderInMenu;
+    }
+
+    public static List<MenuItem> getAllInMenu(int menu){
+        return queryList(MenuItem.class, "select * from menu_items " +
+                        "where menu=:menu",
+                new Params("menu", menu));
     }
 
     @Override

@@ -197,7 +197,7 @@ public class Reservation extends Model {
     }
 
     public static List<Reservation> getAll() {
-        return queryList(Reservation.class, "select * from reservations");
+        return queryList(Reservation.class, "select * from reservations order by reservation_date DESC"); // added order by DESC to show last reservations first
     }
 
     public Reservation save() {
@@ -241,5 +241,40 @@ public class Reservation extends Model {
         int c = execute("delete from reservations where id=:id",
 			new Params("id", id));
         Assert.isTrue(c == 1, "Something went wrong");
+    }
+
+    // method allowing us to find available tables (LIMIT 1 gives us only the first row)
+    public static Table findAvailableTable(int numberOfPeople, LocalDate date, int serviceId) {
+        return queryOne(Table.class,
+                "SELECT * FROM tables " +
+                        "WHERE capacity IN (:numberOfPeople, :numberOfPeoplePlusOne) " +
+                        "AND id NOT IN (" +
+                        "SELECT `table` FROM reservations WHERE reservation_date = :date AND service = :serviceId" +
+                        ") " +
+                        "ORDER BY capacity ASC LIMIT 1", // starting from rows where nbPeople = capacity (keping rows with nbPeople = capacity + 1 at the botttom)
+                new Params()
+                        .add("numberOfPeople", numberOfPeople)
+                        .add("numberOfPeoplePlusOne", numberOfPeople + 1)
+                        .add("date", date)
+                        .add("serviceId", serviceId));
+    }
+
+    // Checking if a Reservation has been converted to Order
+    public static Order DoesReservationExists(int ReservationId) {
+        return queryOne(Order.class,
+                "SELECT * FROM orders o WHERE o.reservation = :reservationID LIMIT 1",
+                new Params().add("reservationID", ReservationId));
+    }
+
+    public static List<Reservation> getNumberOfReservationsByTable(int table){
+        return queryList(Reservation.class, "select * from reservations " +
+                "where `table`=:table", new Params("table", table));
+    }
+
+    public static User getIdUserByFullName(String lastName, String firstName) {
+        return queryOne(User.class, "select u.id from users u where u.last_name=:lastName and u.first_name=:firstName",
+                new Params()
+                        .add("lastName", lastName)
+                        .add("firstName", firstName));
     }
 }
