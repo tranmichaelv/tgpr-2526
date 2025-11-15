@@ -38,7 +38,7 @@ public class ClientRegisterView extends DialogWindow {
         setComponent(root);
 
         root.addComponent(createFieldsPanel());
-        root.addComponent(createButtonPanel());
+        createButtonPanel().addTo(root).centerCenter();
     }
 
     private Panel createFieldsPanel(){

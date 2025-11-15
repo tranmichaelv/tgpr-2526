@@ -35,6 +35,7 @@ public class OrderChangeView extends BasicWindow {
     protected TextBox reductionBox;
     protected Label priceSummaryLabel;
     protected Panel articlesPanel;
+    protected boolean creationFinalisee = false;
 
     public OrderChangeView(OrderChangeController controller) {
         this.controller = controller;
@@ -365,24 +366,15 @@ public class OrderChangeView extends BasicWindow {
                 //  Valider
                 controller.getOrder().validate();
 
+                controller.getOrder().save();
 
-                if (controller instanceof OrderCreateController) {
-                    // pour une nouvelle commande jamais enregistrée
-                    if (controller.getOrder().getId() == 0) {
-                        controller.getOrder().save();   // INSERT
-                    }
-                } else {
-                    controller.getOrder().save();       // UPDATE
-                }
+                creationFinalisee = true;
 
                 // Affiche vue OrderAdd
                 BasicWindow win = getWindow(controller);
                 getTextGUI().addWindowAndWait(win);
-                if (controller instanceof OrderCreateController) {
-                    this.close();
-                }
 
-
+                this.close();
 
             } catch (NumberFormatException e) {
                 MessageDialog.showMessageDialog(getTextGUI(), "Erreur",
@@ -523,65 +515,78 @@ public class OrderChangeView extends BasicWindow {
     }
 
         // Affichage article
-    private void rebuildArticlesSection() {
-        if (articlesPanel == null) return;
-        articlesPanel.removeAllComponents();
+        private void rebuildArticlesSection() {
+            if (articlesPanel == null) return;
+            articlesPanel.removeAllComponents();
 
-        articlesPanel.addComponent(sectionHeader("Articles de la commande:"));
-        articlesPanel.addComponent(new EmptySpace(new TerminalSize(0,1)));
+            articlesPanel.addComponent(sectionHeader("Articles de la commande:"));
+            articlesPanel.addComponent(new EmptySpace(new TerminalSize(0,1)));
 
-        // Totaux à jour
-        double sousTotal = controller.getSousTotal();
-        double reduction = controller.getReduction();
-        double total = controller.getTotal();
-        articlesPanel.addComponent(priceSummary(sousTotal, reduction, total));
+            // Totaux à jour
+            double sousTotal = controller.getSousTotal();
+            double reduction = controller.getReduction();
+            double total = controller.getTotal();
+            articlesPanel.addComponent(priceSummary(sousTotal, reduction, total));
 
-        final int W_TYPE  = 13;
-        final int W_PROD  = 28;
-        final int W_QTY   = 10;
-        final int W_PRICE = 14;
-        final int W_TOTAL = 12;
+            final int W_TYPE  = 13;
+            final int W_PROD  = 28;
+            final int W_QTY   = 10;
+            final int W_PRICE = 14;
+            final int W_TOTAL = 12;
 
-        Panel ligneArticles = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        ligneArticles.addComponent(emphasize(String.format("%-" + W_TYPE  + "s", "Type")));
-        ligneArticles.addComponent(emphasize(String.format("%-" + W_PROD  + "s", "Produit")));
-        ligneArticles.addComponent(emphasize(String.format("%-" + W_QTY   + "s", "Quantité")));     // <─ aligné à gauche
-        ligneArticles.addComponent(emphasize(String.format("%-" + W_PRICE + "s", "Prix unitaire"))); // <─ aligné à gauche
-        ligneArticles.addComponent(emphasize(String.format("%-" + W_TOTAL + "s", "Total")));         // <─ aligné à gauche
-        articlesPanel.addComponent(ligneArticles);
+            Panel ligneArticles = new Panel(new LinearLayout(Direction.HORIZONTAL));
+            ligneArticles.addComponent(emphasize(String.format("%-" + W_TYPE  + "s", "Type")));
+            ligneArticles.addComponent(emphasize(String.format("%-" + W_PROD  + "s", "Produit")));
+            ligneArticles.addComponent(emphasize(String.format("%-" + W_QTY   + "s", "Quantité")));
+            ligneArticles.addComponent(emphasize(String.format("%-" + W_PRICE + "s", "Prix unitaire")));
+            ligneArticles.addComponent(emphasize(String.format("%-" + W_TOTAL + "s", "Total")));
+            articlesPanel.addComponent(ligneArticles);
 
+            // on n'affiche plus les items dont la quantité vaut 0
+            for (var item : controller.getOrder().getOrderItems()) {
 
-        for (var item : controller.getOrder().getOrderItems()) {
-            Panel ligne = new Panel(new LinearLayout(Direction.HORIZONTAL));
-            var product = item.getProduct();
+                if (item.getQuantity() == 0) {
+                    // quantité 0 = on considère que l’article est "supprimé" visuellement
+                    continue;
+                }
 
-            String name = product.getName();
-            // éviter de pousser les colonnes
-            if (name.length() > W_PROD) name = name.substring(0, W_PROD);
+                Panel ligne = new Panel(new LinearLayout(Direction.HORIZONTAL));
+                var product = item.getProduct();
 
-            ligne.addComponent(new Label(String.format("%-" + W_TYPE + "s", product.getType().toString())));
-            ligne.addComponent(new Label(String.format("%-" + W_PROD + "s", name)));
-            ligne.addComponent(new Label(String.format("%-"  + W_QTY  + "d", item.getQuantity())));
-            ligne.addComponent(new Label(String.format("%" + (W_PRICE - 2) + ".2f\u00A0€", item.getPrice())));
-            ligne.addComponent(new Label(String.format("%" + (W_TOTAL - 2) + ".2f\u00A0€", item.getQuantity() * item.getPrice())));
-            articlesPanel.addComponent(ligne);
+                String name = product.getName();
+                if (name.length() > W_PROD) name = name.substring(0, W_PROD);
+
+                ligne.addComponent(new Label(String.format("%-" + W_TYPE + "s", product.getType().toString())));
+                ligne.addComponent(new Label(String.format("%-" + W_PROD + "s", name)));
+                ligne.addComponent(new Label(String.format("%-"  + W_QTY  + "d", item.getQuantity())));
+                ligne.addComponent(new Label(String.format("%" + (W_PRICE - 2) + ".2f\u00A0€", item.getPrice())));
+                ligne.addComponent(new Label(String.format("%" + (W_TOTAL - 2) + ".2f\u00A0€", item.getQuantity() * item.getPrice())));
+
+                articlesPanel.addComponent(ligne);
+            }
+
+            articlesPanel.addComponent(new EmptySpace(new TerminalSize(0, 4)));
         }
-
-        articlesPanel.addComponent(new EmptySpace(new TerminalSize(0, 4)));
-    }
 
     private void refreshArticles() {
         //  Save la réduction tapée dans le modèle avant de reconstruire
         Double value = parseReduction(reductionBox.getText());
         controller.getOrder().setDiscount(value);
         //  Reconstruit la section Articles (totaux + lignes)
+
+        Order fresh = Order.getByKey(controller.getOrder().getId());
+        controller.getOrder().getOrderItems().clear();
+        controller.getOrder().getOrderItems().addAll(fresh.getOrderItems());
         rebuildArticlesSection();
+        try {
+            getTextGUI().updateScreen();
+        } catch (Exception ignored) {
+        }
     }
     @Override
     public void close() {
-        // Si on est en mode création, on veut aussi nettoyer le brouillon
-        if (controller instanceof OrderCreateController) {
-            controller.resetToOriginal();
+        if (controller instanceof OrderCreateController occ && !creationFinalisee) {
+            occ.resetToOriginal();
         }
         super.close();
     }

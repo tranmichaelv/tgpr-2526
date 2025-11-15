@@ -450,7 +450,7 @@ public class OrderListClientView extends BasicWindow {
         menu.add(menuFood);
         MenuItem menuBasket = new MenuItem("Voir le panier", this::basket);
         menu.add(menuBasket);
-        MenuItem menuTables = new MenuItem("Voir les tables");
+        MenuItem menuTables = new MenuItem("Voir les tables",this::tables);
         menu.add(menuTables);
 
     }
@@ -462,7 +462,7 @@ public class OrderListClientView extends BasicWindow {
         menu.add(menuFood);
         MenuItem menuCLient = new MenuItem("Enregistrer un client",this::clientRegister);
         menu.add(menuCLient);
-        MenuItem menuTables = new MenuItem("Voir les tables");
+        MenuItem menuTables = new MenuItem("Voir les tables",this::tables);
         menu.add(menuTables);
 
         return menu;
@@ -481,7 +481,7 @@ public class OrderListClientView extends BasicWindow {
         menu.add(menuClosing);
         MenuItem menuUser = new MenuItem("Gerer les utilisateurs",this::changeUser);
         menu.add(menuUser);
-        MenuItem menuTables = new MenuItem("Gerer les tables");
+        MenuItem menuTables = new MenuItem("Gerer les tables",this::tables);
         menu.add(menuTables);
 
         return menu;
@@ -519,5 +519,9 @@ public class OrderListClientView extends BasicWindow {
 
     private void clientRegister(){
         controller.clientRegister();
+    }
+
+    private void tables(){
+        controller.tables();
     }
 }

@@ -399,4 +399,9 @@ public class Order extends Model {
     public double calculateTotal(){
         return calculateSubTotal() - calculateDiscount();
     }
+
+    public static List<Order> getNumberOfOrdersByTable(int table){
+        return queryList(Order.class, "select * from orders " +
+                "where `table`=:table", new Params("table", table));
+    }
 }

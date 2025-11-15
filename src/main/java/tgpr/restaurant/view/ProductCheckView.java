@@ -26,12 +26,10 @@ import static tgpr.restaurant.model.Security.isEmployee;
 
 public class ProductCheckView extends PanelProductAndMenu<Product> {
     private final ProductCheckController controller;
-    private int order;
-    private String view;
+    private final String view;
 
     public ProductCheckView(ProductCheckController controller, int order, String string) {
         this.controller = controller;
-        this.order = order;
         this.view = string;
 
         initTable(6);

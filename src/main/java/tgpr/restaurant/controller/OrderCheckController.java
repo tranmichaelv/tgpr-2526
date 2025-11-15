@@ -55,6 +55,11 @@ public class OrderCheckController extends Controller<OrderCheckView> {
         ));
         // Je passe par la vue pour accéder au TextGUI
         view.getTextGUI().addWindowAndWait(win);
+        view.close();
+        // refresh auto
+        if (onCloseCallBack != null) {
+            onCloseCallBack.run();
+        }
     }
 
     public void setOnCloseCallBack(Runnable callBack){

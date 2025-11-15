@@ -77,7 +77,7 @@ public class ClosingChangeview extends DialogWindow {
             // remplis-les different txtbox avec les donnees
             fillFieldsPanel(closingPeriod);
             // stocke les changements dans la liste et le renvoi
-            reloadData();
+//            reloadData();
             //  repart sur la ligne de l'élément stocké
             tableClosingPeriod.setSelected(closingPeriod);
         });
