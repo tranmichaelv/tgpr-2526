@@ -31,11 +31,11 @@ public class OrderListClientView extends BasicWindow {
     public LocalTime TODAY_DEMO_TIME = Time.getDateChosen().toLocalTime();
     private final OrderListClientController controller;
     private List<Order> ordersList = Order.getAll();
-    private final List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model
+    private  List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model
     private final Menu menuNav;
     private final Menu menuUser;
     private User userlloged;
-    private  TextBox clientNameBox;
+    private TextBox clientNameBox;
     private boolean hasOrders = false;
     // la liste sera scrollable et sélectionnable
     private final ActionListBox ordersListBox = new ActionListBox(new TerminalSize(120, 10));
@@ -61,14 +61,14 @@ public class OrderListClientView extends BasicWindow {
         // menuFile nav
         MenuBar header = new MenuBar().addTo(root);
         menuUser = new Menu("Utilisateur");
-        MenuItem menuDisconnect = new MenuItem("Exit",this::exit);
+        MenuItem menuDisconnect = new MenuItem("Exit", this::exit);
         menuUser.add(menuDisconnect);
 
         menuNav = new Menu("Navigation");
         header.add(menuUser);
         header.add(menuNav);
 
-        if(Security.isClient()){
+        if (Security.isClient()) {
             menuClient(menuNav);
         } else if (Security.isEmployee()) {
             menuEmployee(menuNav);
@@ -85,7 +85,7 @@ public class OrderListClientView extends BasicWindow {
         clientNameBox.setTextChangeListener((newText, buUser) -> populateListBox());
         // affichage du filtre uniquement pour le boss et l'employee
         if (Security.isLogged() && !Security.isClient()) {
-            root.addComponent(new EmptySpace(new TerminalSize(0,1)));
+            root.addComponent(new EmptySpace(new TerminalSize(0, 1)));
             clientNameFilter.addTo(root);
             clientNameBox.addTo(root);
         }
@@ -96,7 +96,6 @@ public class OrderListClientView extends BasicWindow {
             clientNameBox.setTextChangeListener((newText, buUser) -> populateListBox());
             clientNameBox.addTo(root);
         }*/
-
 
 
         // Creating sub-Panel reservations
@@ -219,7 +218,7 @@ public class OrderListClientView extends BasicWindow {
         orders.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         // Bouton "Nouvelle commande"
-        if (userlloged.getRole() == User.Role.Boss || userlloged.getRole() == User.Role.Employee){
+        if (userlloged.getRole() == User.Role.Boss || userlloged.getRole() == User.Role.Employee) {
             Button newOrder = new Button("Nouvelle commande", this::newOrder);
             orders.addComponent(newOrder);
         }
@@ -228,7 +227,8 @@ public class OrderListClientView extends BasicWindow {
         root.addComponent(orders);
 
     }
-    public void newOrder (){
+
+    public void newOrder() {
         controller.openCreateNewOrder();
         refreshOrders();
     }
@@ -295,12 +295,12 @@ public class OrderListClientView extends BasicWindow {
                                         if (!Security.isBoss()) // user is not boss
                                             controller.showInfo("Seule les réservations dans le futur " + "\n" + "et sans commande peuvent être modifiés" + "\n" + "ou supprimés");
                                         else // user is boss
-                                            controller.deleteReservation(r);
+                                            controller.deleteReservation(r, reservationListBox, reservationList);
                                     } else { // if all the previous conditions are not respected (De Morgan), tabled can be modifie
                                         editReservation(r);
                                     }
-                                }
-                        );
+                            refreshReservationList();
+                        });
                     }
                 } else {
                     reservationListBox.addItem(row, () -> {
@@ -308,12 +308,12 @@ public class OrderListClientView extends BasicWindow {
                                     if (!Security.isBoss()) // user is not boss
                                         controller.showInfo("Seule les réservations dans le futur " + "\n" + "et sans commande peuvent être modifiés" + "\n" + "ou supprimés");
                                     else // user is boss
-                                        controller.deleteReservation(r);
-                                } else { // if all the previous conditions are not respected (De Morgan), tabled can be modifie
+                                        controller.deleteReservation(r, reservationListBox, reservationList);
+                                } else { // if all the previous conditions are not respected (De Morgan), tabled can be modified
                                     editReservation(r);
                                 }
-                            }
-                    );
+                                refreshReservationList();
+                    });
                 }
             }
         }
@@ -347,9 +347,9 @@ public class OrderListClientView extends BasicWindow {
         ordersListBox.clearItems();
 
         //String filtreNom = clientNameBox.getText().trim().toLowerCase();
-         String filtreNom = clientNameBox != null ? clientNameBox.getText().trim().toLowerCase() : "";
+        String filtreNom = clientNameBox != null ? clientNameBox.getText().trim().toLowerCase() : "";
 
-         boolean showAll = showAllOrders.isChecked(); // état de la checkbox
+        boolean showAll = showAllOrders.isChecked(); // état de la checkbox
 
         for (Order order : ordersList) {
             User client = order.getClient();
@@ -381,10 +381,11 @@ public class OrderListClientView extends BasicWindow {
                 if (userlloged.getRole() == User.Role.Client) {
                     ordersListBox.addItem(display, () -> controller.openDetails(order));
                 } else {
-                    ordersListBox.addItem(display, () ->{
-                        if(!isPaid){
-                            controller.openActions(order);refreshOrders();
-                        }else
+                    ordersListBox.addItem(display, () -> {
+                        if (!isPaid) {
+                            controller.openActions(order);
+                            refreshOrders();
+                        } else
                             controller.openDetails(order);
                     });
                 }
@@ -398,7 +399,7 @@ public class OrderListClientView extends BasicWindow {
     }
 
     // cette partie concerne le refreshOrders après les modification appliquées sur les commandes
-    public  void  refreshOrders() {
+    public void refreshOrders() {
         ordersList.clear();
         ordersList.addAll(Order.getAll());
         populateListBox();
@@ -436,8 +437,8 @@ public class OrderListClientView extends BasicWindow {
         String amount = String.format("%.2f €", getPrice(order));
         String paiement = String.valueOf(order.getPaymentMethod()); //
 
-        if (userlloged.getRole() == User.Role.Client){
-            return    padOrTruncate(date, 16)
+        if (userlloged.getRole() == User.Role.Client) {
+            return padOrTruncate(date, 16)
                     + padOrTruncate(tableInfo, 15)
                     + padOrTruncate(service, 11)
                     + padOrTruncate(pers, 9)
@@ -445,8 +446,8 @@ public class OrderListClientView extends BasicWindow {
                     + padOrTruncate(online, 12)
                     + padOrTruncate(amount, 12)
                     + padOrTruncate(paiement, 12);
-        } else if (userlloged.getRole() == User.Role.Employee || userlloged.getRole() == User.Role.Boss){
-            return  " " + padOrTruncate(clientfullName, 16)
+        } else if (userlloged.getRole() == User.Role.Employee || userlloged.getRole() == User.Role.Boss) {
+            return " " + padOrTruncate(clientfullName, 16)
                     + padOrTruncate(date, 13)
                     + padOrTruncate(tableInfo, 15)
                     + padOrTruncate(service, 10)
@@ -459,59 +460,59 @@ public class OrderListClientView extends BasicWindow {
         return null;
     }
 
-    private void exit(){
+    private void exit() {
         controller.exit();
     }
 
-    private void menuClient(Menu menu){
+    private void menuClient(Menu menu) {
         MenuItem menuBook = new MenuItem("Réserver une table", this::reservation);
         menu.add(menuBook);
         MenuItem menuFood = new MenuItem("Voir la carte", this::menu);
         menu.add(menuFood);
         MenuItem menuBasket = new MenuItem("Voir le panier", this::basket);
         menu.add(menuBasket);
-        MenuItem menuTables = new MenuItem("Voir les tables",this::tables);
+        MenuItem menuTables = new MenuItem("Voir les tables", this::tables);
         menu.add(menuTables);
 
     }
 
-    private Menu menuEmployee(Menu menu){
+    private Menu menuEmployee(Menu menu) {
         MenuItem menuBook = new MenuItem("Réserver une table");
         menu.add(menuBook);
-        MenuItem menuFood = new MenuItem("Enregistrer une commande",this::order);
+        MenuItem menuFood = new MenuItem("Enregistrer une commande", this::order);
         menu.add(menuFood);
-        MenuItem menuCLient = new MenuItem("Enregistrer un client",this::clientRegister);
+        MenuItem menuCLient = new MenuItem("Enregistrer un client", this::clientRegister);
         menu.add(menuCLient);
-        MenuItem menuTables = new MenuItem("Voir les tables",this::tables);
+        MenuItem menuTables = new MenuItem("Voir les tables", this::tables);
         menu.add(menuTables);
 
         return menu;
     }
 
-    private Menu menuBoss(Menu menu){
+    private Menu menuBoss(Menu menu) {
         MenuItem menuBook = new MenuItem("Réserver une table");
         menu.add(menuBook);
-        MenuItem menuFood = new MenuItem("Enregistrer une commande",this::order);
+        MenuItem menuFood = new MenuItem("Enregistrer une commande", this::order);
         menu.add(menuFood);
-        MenuItem menuCLient = new MenuItem("Enregistrer un client",this::clientRegister);
+        MenuItem menuCLient = new MenuItem("Enregistrer un client", this::clientRegister);
         menu.add(menuCLient);
-        MenuItem menuMenu = new MenuItem("Modifier la carte",this::changeMenu);
+        MenuItem menuMenu = new MenuItem("Modifier la carte", this::changeMenu);
         menu.add(menuMenu);
-        MenuItem menuClosing = new MenuItem("Gerer les periodes de fermeture",this::closing);
+        MenuItem menuClosing = new MenuItem("Gerer les periodes de fermeture", this::closing);
         menu.add(menuClosing);
-        MenuItem menuUser = new MenuItem("Gerer les utilisateurs",this::changeUser);
+        MenuItem menuUser = new MenuItem("Gerer les utilisateurs", this::changeUser);
         menu.add(menuUser);
-        MenuItem menuTables = new MenuItem("Gerer les tables",this::tables);
+        MenuItem menuTables = new MenuItem("Gerer les tables", this::tables);
         menu.add(menuTables);
 
         return menu;
     }
 
-    private void basket(){
+    private void basket() {
         controller.basket();
     }
 
-    private void menu(){
+    private void menu() {
         controller.menu();
     }
 
@@ -521,27 +522,32 @@ public class OrderListClientView extends BasicWindow {
         getTextGUI().addWindowAndWait(win);
     }
 
-    private void changeMenu(){
+    private void changeMenu() {
         controller.changeMenu();
     }
 
-    private void closing(){
+    private void closing() {
         controller.closing();
     }
 
-    private void changeUser(){
+    private void changeUser() {
         controller.changeUser();
     }
 
-    private void order(){
+    private void order() {
         controller.order();
     }
 
-    private void clientRegister(){
+    private void clientRegister() {
         controller.clientRegister();
     }
 
-    private void tables(){
+    private void tables() {
         controller.tables();
+    }
+
+    private void refreshReservationList(){
+        reservationList=Reservation.getAll();
+        updateReservationList(reservationListBox,reservationList,false);
     }
 }
