@@ -258,4 +258,9 @@ public class Reservation extends Model {
                         .add("date", date)
                         .add("serviceId", serviceId));
     }
+
+    public static List<Reservation> getNumberOfReservationsByTable(int table){
+        return queryList(Reservation.class, "select * from reservations " +
+                "where `table`=:table", new Params("table", table));
+    }
 }

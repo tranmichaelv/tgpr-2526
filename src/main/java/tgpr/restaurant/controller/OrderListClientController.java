@@ -133,5 +133,9 @@ public class OrderListClientController extends Controller<OrderListClientView> {
     public void clientRegister(){
         navigateTo(new ClientRegisterController());
     }
+
+    public void tables(){
+        navigateTo(new TablesCheckController());
+    }
 }
 
