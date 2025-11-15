@@ -99,7 +99,10 @@ public class OrderCreateController extends OrderChangeController {
         }
 
         // SI aucune erreur OK
-        if (errors.isEmpty()) return;
+        if (errors.isEmpty()){
+            Panier.vider();
+            return;
+        };
 
         // Sinon, on forme un message identique à validate()
         String msg = String.join("\n", errors);

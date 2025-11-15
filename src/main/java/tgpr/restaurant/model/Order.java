@@ -263,7 +263,7 @@ public class Order extends Model {
     }
 
     public static List<Order> getAll() {
-        return queryList(Order.class, "select * from orders");
+        return queryList(Order.class, "select * from orders order by order_date desc");
     }
 
     public Order save() {
