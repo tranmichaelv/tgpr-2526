@@ -19,7 +19,7 @@ public class SecurityLoginView extends BasicWindow{
         this.controller = controller;
 
         // titre
-        setTitle("Restaurant - page d'acceuil");
+        setTitle("Restaurant - page d'accueil");
         setHints(List.of(Hint.CENTERED));
 
 
@@ -34,8 +34,8 @@ public class SecurityLoginView extends BasicWindow{
     }
 
     /*
-        differentes classes ont été crees pour separer les differentes sections comme
-        indiques sur les screenshot pour l'instant juste la vue est faite
+        différentes classes ont été crees pour séparer les différentes sections comme
+        indiqués sur les screenshots pour l'instant juste la vue est faite
      */
 
     // rajoute toutes les classes crees dans le panel
@@ -66,7 +66,7 @@ public class SecurityLoginView extends BasicWindow{
 
     // reservation
     private Panel createReservationPanel(){
-        Button reservation = new Button("Reserver une table", this::reservation);
+        Button reservation = new Button("Réserver une table", this::reservation);
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,
                 reservation).center();
 
@@ -90,7 +90,7 @@ public class SecurityLoginView extends BasicWindow{
 
     // reset - Exit
     private Panel createDebugPanel() {
-        Button reset = new Button("Renitialiser la BD", this::seedData);
+        Button reset = new Button("Réinitialiser la BD", this::seedData);
         Button exit = new Button("Quitter", this::exit);
 
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,

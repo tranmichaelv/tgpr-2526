@@ -29,7 +29,7 @@ public class ClosingChangeView extends DialogWindow {
     private boolean isFilling = false;
 
     public ClosingChangeView(ClosingChangeController controller) {
-        super("Gestion de la periode de fermeture");
+        super("Gestion de la période de fermeture");
         this.controller = controller;
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
@@ -61,7 +61,7 @@ public class ClosingChangeView extends DialogWindow {
     }
 
     private Component createTable() {
-        // crée une table avec differentes colonnes
+        // crée une table avec différentes colonnes
         tableClosingPeriod = new ObjectTable<>(
                 new ColumnSpec<>("Date debut", ClosingPeriod::getStartDateFormatted).setWidth(12),
                 new ColumnSpec<>("Date fin", ClosingPeriod::getEndDateFormatted).setWidth(12),
@@ -90,7 +90,7 @@ public class ClosingChangeView extends DialogWindow {
     private Panel createFieldsPanel(){
         Panel panel = new Panel();
 
-        lblTitle = new Label("NOUVELLE PERIODE DE FERMETURE ")
+        lblTitle = new Label("NOUVELLE PÉRIODE DE FERMETURE ")
                 .addStyle(SGR.BORDERED)
                 .setForegroundColor(TextColor.ANSI.GREEN_BRIGHT);
         panel.addComponent(lblTitle);
@@ -123,7 +123,7 @@ public class ClosingChangeView extends DialogWindow {
         return panel;
     }
 
-    // reset les txtbox
+    // reset les txtBox
     private void clearFieldsPanel(){
         txtStartDate.setText("");
         txtEndDate.setText("");
@@ -141,9 +141,9 @@ public class ClosingChangeView extends DialogWindow {
 
     // remplis avec les informations given
     private void fillFieldsPanel(ClosingPeriod closingPeriod){
-        // isFilling permet d'attendre que tout sois set avant de faire quoique ce soit
-        // sinon il va d'abord set txtStartDate mais dans le validator
-        // il va mettre en comparaison le startDate du current avec le endDate du previous
+        // isFilling permet d'attendre que tout soit set avant de faire quoique ce soit
+        // sinon il va d'abord set txtStartDate mais dans le validator,
+        // il va mettre en comparaison le startDate du current avec endDate du previous
         isFilling = true;
 
         txtStartDate.setText(closingPeriod.getStartDateFormatted());

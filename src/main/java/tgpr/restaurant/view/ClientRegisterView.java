@@ -24,7 +24,7 @@ public class ClientRegisterView extends DialogWindow {
     private final TextBox txtPhone = new TextBox(new TerminalSize(35,1));
 
     private final Label lblErrorLastName = new Label("Nom requis").setForegroundColor(TextColor.ANSI.RED);
-    private final Label lblErrorFirstName = new Label("Prenom requis").setForegroundColor(TextColor.ANSI.RED);
+    private final Label lblErrorFirstName = new Label("Prénom requis").setForegroundColor(TextColor.ANSI.RED);
     private final Label lblErrorEmail = new Label("Email requis").setForegroundColor(TextColor.ANSI.RED);
     private final Label lblErrorPassword = new Label("Mot de passe requis").setForegroundColor(TextColor.ANSI.RED);
     private final Label lblErrorPasswordConfirm = new Label("Confirmation requise").setForegroundColor(TextColor.ANSI.RED);
@@ -55,7 +55,7 @@ public class ClientRegisterView extends DialogWindow {
         panel.addEmpty();
         lblErrorLastName.addTo(panel);
 
-        panel.addComponent(new Label("Prenom :"));
+        panel.addComponent(new Label("Prénom :"));
         txtFirstName.addTo(panel)
                 .setTextChangeListener((txt, byUser) -> check());
         panel.addEmpty();
@@ -81,7 +81,7 @@ public class ClientRegisterView extends DialogWindow {
         panel.addEmpty();
         lblErrorPasswordConfirm.addTo(panel);
 
-        panel.addComponent(new Label("Telephone :"));
+        panel.addComponent(new Label("Téléphone :"));
         txtPhone.addTo(panel)
                 .setTextChangeListener((txt, byUser) -> check());
         panel.addEmpty();

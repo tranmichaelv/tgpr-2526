@@ -6,14 +6,12 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
-import tgpr.framework.Controller;
 import tgpr.restaurant.controller.OrderAddController;
 import tgpr.restaurant.controller.OrderChangeController;
 import tgpr.restaurant.controller.OrderCreateController;
 import tgpr.restaurant.controller.ProductCheckController;
 import tgpr.restaurant.model.*;
 import com.googlecode.lanterna.gui2.ComboBox;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -165,9 +163,9 @@ public class OrderChangeView extends BasicWindow {
         //  Sélectionner la table de la commande comme affichage de base
         Integer currentTableId = controller.getOrder().getTableId();
         if (currentTableId == null) {
-            tableBox.setSelectedIndex(0); // a emporter
+            tableBox.setSelectedIndex(0); // à emporter
         } else {
-            int idx2 = 0; // a emporter
+            int idx2 = 0; // à emporter
             for (int i = 0; i < tables.size(); i++) {
                 if (tables.get(i).getId() == currentTableId) {
                     idx2 = i + 1;
@@ -204,7 +202,7 @@ public class OrderChangeView extends BasicWindow {
                     tableBox.addItem("Table " + t.getId() + " (" + t.getCapacity() + "p)");
                 }
 
-                //  essayer de re-sélectionner la table que l’utilisateur avait choisie (si encore dispo)
+                //  essayer de re-sélectionner la table que l’utilisateur avait choisie (si encore disponible)
                 int idxToSelect = 0; // "Aucune"
                 if (uiSelectedTableId != null) {
                     for (int j = 0; j < newTables.size(); j++) {
@@ -246,7 +244,7 @@ public class OrderChangeView extends BasicWindow {
         peopleLine.addComponent(nbPersonsBox);
         infoSection.addComponent(peopleLine);
 
-        // si c'est une commande à emporter alors
+        // si c'est une commande à emporter alors,
         // on affiche 'Aucune' pour Table et 1 pour nb personne
         takeAwayBox.addListener(checked -> {
             boolean takeAway = checked;
@@ -281,9 +279,9 @@ public class OrderChangeView extends BasicWindow {
 
         reductionLine.addComponent(reductionBox);
         infoSection.addComponent(reductionLine);
-        // Mise à jour dynamique du prix quand on tape dans réduction
+        // Mise à jour dynamique du prix quand on tape dans "réduction"
         reductionBox.setTextChangeListener((newText, changedByUser) -> {
-            // Nettoye le texte
+            // Nettoyer le texte
             String clean = newText.replace(',', '.').trim();
 
             // Vérifie et limite à 2 décimales
@@ -372,7 +370,7 @@ public class OrderChangeView extends BasicWindow {
                 if (tIdx <= 0) {
                     controller.getOrder().setTableId(null);
                 } else {
-                    controller.getOrder().setTableId(tables.get(tIdx - 1).getId()); // <-- tables mise à jour
+                    controller.getOrder().setTableId(tables.get(tIdx - 1).getId()); // ← tables mise à jour
                 }
                 //  Service sélectionné
                 int sIdx = serviceBox.getSelectedIndex();
@@ -387,7 +385,7 @@ public class OrderChangeView extends BasicWindow {
                 controller.getOrder().setEffectivePeopleCount(nb); // ou setNumberOfPeople(nb)
 
                 if (controller.getOrder().getTableId() != null) {
-                    // Recalcule les tables réellement dispo maintenant
+                    // Recalcule les tables réellement disponibles maintenant
                     List<Table> avail = controller.getAvailableTables();
                     Integer tid = controller.getOrder().getTableId();
                     boolean stillFree = avail.stream().anyMatch(t -> t.getId() == tid);
@@ -412,7 +410,7 @@ public class OrderChangeView extends BasicWindow {
                 getTextGUI().addWindowAndWait(win);
 
                 this.close();
-                // ne ferme plus la page apres avoir commander avec un client
+                // ne ferme plus la page apres avoir commandé avec un client
                 // redirect vers la liste des commandes
                 if (controller instanceof OrderCreateController occ && Security.isClient()) {
                     occ.goBackToList();
@@ -462,7 +460,7 @@ public class OrderChangeView extends BasicWindow {
             int ti = 0; if (tId != null) for (int i = 0; i < tables.size(); i++) if (tables.get(i).getId() == tId) { ti = i + 1; break; }
             tableBox.setSelectedIndex(ti);
 
-            // Articles: totaux + lignes
+            // Articles : totaux + lignes
             rebuildArticlesSection();
 
             try { getTextGUI().updateScreen(); } catch (Exception ignored) {}
@@ -485,7 +483,7 @@ public class OrderChangeView extends BasicWindow {
         setComponent(root);
 
     }
-        // méthode pour mettre la vue OrderAdd au milieu quand on crée la commande modifié
+        // méthode pour mettre la vue OrderAdd au milieu quand on crée la commande modifiée
     protected static BasicWindow getWindow(OrderChangeController controller) {
         OrderAddController nextController = new OrderAddController(controller.getOrder());
         BasicWindow win = nextController.getView();
@@ -591,7 +589,7 @@ public class OrderChangeView extends BasicWindow {
             ligneArticles.addComponent(emphasize(String.format("%-" + W_TOTAL + "s", "Total")));
             articlesPanel.addComponent(ligneArticles);
 
-            // on n'affiche plus les items dont la quantité vaut 0
+            // on n'affiche plus les items dont la quantité vaut 0.
             for (var item : controller.getOrder().getOrderItems()) {
 
                 if (item.getQuantity() == 0) {

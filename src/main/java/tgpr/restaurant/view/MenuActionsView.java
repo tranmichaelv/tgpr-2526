@@ -30,7 +30,7 @@ public class MenuActionsView extends DialogWindow {
 
     private Panel createButtonPanel(){
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Beginning,
-                new Button("Supprimer selectionne",this::delete),
+                new Button("Supprimer sélectionné",this::delete),
                 new Button("Changer ordre",this::changeOrder),
                 new Button("Annuler",this::close)
         );

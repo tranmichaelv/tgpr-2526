@@ -21,7 +21,7 @@ public class SecurityRegisterView extends BasicWindow {
     private final TextBox txtNumber = new TextBox(new TerminalSize(30,1));
 
     private final Label lblErrorLastName = new Label("Nom requis");
-    private final Label lblErrorFirstName = new Label("Prenom requis");
+    private final Label lblErrorFirstName = new Label("Prénom requis");
     private final Label lblErrorEmail = new Label("Email requis");
     private final Label lblErrorPassword = new Label("Mot de passe requis");
     private final Label lblErrorPasswordConfirm = new Label("Confirmation requise");
@@ -124,7 +124,7 @@ public class SecurityRegisterView extends BasicWindow {
         );
     }
 
-    // pour les le code ci-dessous, il serait plus interressant au niveau de la vitesse
+    // pour les le code ci-dessous, il serait plus intéressant au niveau de la vitesse
     // de faire une fonction pour chaque check pour que le code ne check pas plusieurs fois
     // ce qu'il a deja check
     private void check() {

@@ -22,7 +22,7 @@ public class MenuChangeOrderController extends Controller<MenuChangeOrderView> {
     }
 
     public void changeOrder(String numberToChange){
-        // l'orderInMenu du produit à changer
+        // orderInMenu du produit à changer
         int curentOrderInMenu = menu.getOrderInMenu();
         // nombre entrer
         int numberInput = Integer.parseInt(numberToChange);

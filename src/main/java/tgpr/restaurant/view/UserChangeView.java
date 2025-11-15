@@ -9,13 +9,13 @@ import tgpr.restaurant.model.User;
 
 import java.util.List;
 
-public class UserChangeview extends DialogWindow {
+public class UserChangeView extends DialogWindow {
     private final UserChangeController controller;
     private final User userToFocus;
 
     private ObjectTable<User> table;
 
-    public UserChangeview(UserChangeController controller, User userToFocus) {
+    public UserChangeView(UserChangeController controller, User userToFocus) {
         super("Gestion des utilisateurs");
         this.controller = controller;
         this.userToFocus = userToFocus;
@@ -50,11 +50,11 @@ public class UserChangeview extends DialogWindow {
                 new ColumnSpec<>("Email", User::getEmail).setWidth(30),
                 new ColumnSpec<>("Role", User::getRole).setWidth(10),
                 new ColumnSpec<>("Statut", (User user) -> user.getBlocked() ? "Désactivé" : "Actif").setWidth(10),
-                new ColumnSpec<>("Telephone", User::getPhone).setWidth(15)
+                new ColumnSpec<>("Téléphone", User::getPhone).setWidth(15)
         );
         table.sizeTo(115, 15);
 
-        // spécifie l'action a exécuter quand on presse Enter ou la barre d'espace
+        // spécifie l'action à exécuter quand on presse Enter ou la barre d'espace
         table.setSelectAction(() -> {
             var user = table.getSelected();
             controller.editUser(user);

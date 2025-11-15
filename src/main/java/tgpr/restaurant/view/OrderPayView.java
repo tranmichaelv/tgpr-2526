@@ -117,7 +117,7 @@ public class OrderPayView extends BasicWindow {
 
         root.addComponent(new EmptySpace(new TerminalSize(1,1)));
 
-        // pré-sélection si déjà défini
+        // pré-sélection si déjà définie
         if (order != null && order.getPaymentMethod() != null) {
             String preset = capitalize(order.getPaymentMethod().name()); // Cash/Card/Other
             cbMethod.setSelectedItem(preset);

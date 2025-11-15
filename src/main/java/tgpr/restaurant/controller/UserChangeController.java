@@ -2,11 +2,11 @@ package tgpr.restaurant.controller;
 
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.User;
-import tgpr.restaurant.view.UserChangeview;
+import tgpr.restaurant.view.UserChangeView;
 
 import java.util.List;
 
-public class UserChangeController extends Controller<UserChangeview> {
+public class UserChangeController extends Controller<UserChangeView> {
     private final User userToFocus;
 
     public UserChangeController(User userToFocus){
@@ -14,8 +14,8 @@ public class UserChangeController extends Controller<UserChangeview> {
     }
 
     @Override
-    public UserChangeview getView() {
-        return new UserChangeview(this, userToFocus);
+    public UserChangeView getView() {
+        return new UserChangeView(this, userToFocus);
     }
 
     public List<User> getAllUsers(){

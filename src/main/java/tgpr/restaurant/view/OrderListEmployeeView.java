@@ -42,7 +42,7 @@ public class OrderListEmployeeView extends BasicWindow {
         showAllOrders = new CheckBox("Afficher aussi les commandes terminées (payées)                           ");
         orders.addComponent(showAllOrders);
 
-        // quand on coche / décoche -> recharger la liste
+        // quand on coche / décoche → recharger la liste.
         showAllOrders.addListener((checkBox) -> populateListBox());
         orders.addComponent(new EmptySpace(new TerminalSize(0,1)));
         root.addComponent(orders);
@@ -128,7 +128,7 @@ public class OrderListEmployeeView extends BasicWindow {
 
     public String toString(Order order) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String clientfullName = order.getClient().getFirstName() + "," + order.getClient().getLastName();
+        String clientFullName = order.getClient().getFirstName() + "," + order.getClient().getLastName();
         String date = order.getOrderDate().format(formatter);
         String tableInfo = (order.getTable() != null)
                 ? "Table " + order.getTable().getId() + " (" + order.getTable().getCapacity() + "p)"
@@ -140,7 +140,7 @@ public class OrderListEmployeeView extends BasicWindow {
         String amount = String.format("%.2f €", getPrice(order));
         String paiement = order.getPaymentMethod() == null ? "En cours" : String.valueOf(order.getPaymentMethod());
 
-        return "  " + padOrTruncate(clientfullName, 12)
+        return "  " + padOrTruncate(clientFullName, 12)
                 + padOrTruncate(date, 16)
                 + padOrTruncate(tableInfo, 15)
                 + padOrTruncate(service, 11)

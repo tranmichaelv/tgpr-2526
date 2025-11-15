@@ -4,11 +4,11 @@ import tgpr.framework.Controller;
 import tgpr.restaurant.model.Product;
 import tgpr.restaurant.view.MenuAddView;
 
-public class MenuAddControler extends Controller<MenuAddView> {
+public class MenuAddController extends Controller<MenuAddView> {
     private final MenuAddView view;
     private final Product product;
 
-    public MenuAddControler(Product product) {
+    public MenuAddController(Product product) {
         this.product = product;
         view = new MenuAddView(this, product);
     }

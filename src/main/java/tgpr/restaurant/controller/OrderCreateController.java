@@ -71,7 +71,7 @@ public class OrderCreateController extends OrderChangeController {
         Order o = getOrder();
         Service s = o.getService();
 
-        //  Vérif service terminé
+        //  Vérification service terminé
         if (s != null && s.getStartTime() != null && s.getEndTime() != null) {
 
             LocalTime now = Time.getDateChosen().toLocalTime();  // Heure simulée
@@ -82,17 +82,17 @@ public class OrderCreateController extends OrderChangeController {
             }
         }
 
-        // Vérif utilisateur n'a pas choisi de client
+        // Vérification utilisateur n'a pas choisi de client
         if (o.getClientId() == 0) {
             errors.add("Veuillez sélectionner un client.");
         }
 
-        //  Vérif nombre de personnes
+        //  Vérification nombre de personnes
         if (o.getEffectivePeopleCount() <= 0) {
             errors.add("Le nombre de personnes doit être supérieur à 0.");
         }
 
-        //  Vérif disponibilité de la table
+        //  Vérification disponibilité de la table
         if (o.getTableId() != null) {
             boolean stillFree = getAvailableTables().stream()
                     .anyMatch(t -> t.getId() == o.getTableId());

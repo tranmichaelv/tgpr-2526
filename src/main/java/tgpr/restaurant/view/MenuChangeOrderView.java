@@ -40,13 +40,13 @@ public class MenuChangeOrderView extends DialogWindow {
         String texte = "Nouvel ordre pour '" + productName + "' :";
         int texteLength = texte.length();
 
-        Label lbltexte = new Label(texte);
+        Label lblTexte = new Label(texte);
         txtNumberToChange = new TextBox(new TerminalSize(texteLength,1), String.valueOf(orderInMenu))
                 .setTextChangeListener((txt, byUser) -> check());
 
         Panel panel = Panel.verticalPanel();
 
-        lbltexte.addTo(panel);
+        lblTexte.addTo(panel);
         panel.addEmpty();
         txtNumberToChange.addTo(panel);
         lblErrorNumberToChange.setForegroundColor(TextColor.ANSI.RED).addTo(panel);

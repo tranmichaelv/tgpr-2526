@@ -26,7 +26,7 @@ public class MenuChangeView extends DialogWindow {
     private final Button btnAdd = new Button("Ajouter",this::addProductToMenu);
 
     public MenuChangeView(MenuChangeController controller, Product menu) {
-        super("Gerer les composant du menu: " + menu.getName());
+        super("Gérer les composant du menu: " + menu.getName());
         this.menu = menu;
         this.controller = controller;
 
@@ -36,7 +36,7 @@ public class MenuChangeView extends DialogWindow {
         Panel root = Panel.gridPanel(1, Margin.of(0,1,0,1));
         setComponent(root);
 
-        creaTable().addTo(root);
+        createTable().addTo(root);
         createPricePanel().addTo(root);
         root.addEmpty();
         createAddProductPanel().addTo(root);
@@ -61,8 +61,8 @@ public class MenuChangeView extends DialogWindow {
         updateTitle();
     }
 
-    private Component creaTable() {
-        // crée une table avec differentes colonnes
+    private Component createTable() {
+        // crée une table avec différentes colonnes
         tableProduct = new ObjectTable<>(
                 new ColumnSpec<>("Produit", MenuItem::getProductName),
                 new ColumnSpec<>("Type", MenuItem::getProductType),
@@ -77,7 +77,7 @@ public class MenuChangeView extends DialogWindow {
 
             // récupère l'objet couramment sélectionné en naviguant dessus
             var product = tableProduct.getSelected();
-            // va vers le controlleur qui permet de changer le produit
+            // va vers le controller qui permet de changer le produit
             controller.menuActions(product);
             // stocke les changements dans la liste et le renvoi
             reloadData();
@@ -158,11 +158,11 @@ public class MenuChangeView extends DialogWindow {
     private Panel createButtonPanel(){
         return Panel.horizontalPanel(4,
                 new Button("Fermer", this::close),
-                new Button("Supprimer selectionne", this::deleteItem),
+                new Button("Supprimer sélectionné", this::deleteItem),
                 new Button("Changer ordre", this::changeOrderOrItem),
                 new Button("Modifier menu",this::changeMenu),
                 new Button("Archiver menu",this::archiveMenu),
-                new Button("Desarchiver menu",this::desarchiveMenu),
+                new Button("Désarchiver menu",this::unarchiveMenu),
                 new Button("Supprimer menu",this::deleteMenu)
         );
     }
@@ -207,8 +207,8 @@ public class MenuChangeView extends DialogWindow {
         reloadData();
     }
 
-    public void desarchiveMenu(){
-        controller.desarchiveMenu();
+    public void unarchiveMenu(){
+        controller.unarchiveMenu();
         reloadData();
         close();
     }

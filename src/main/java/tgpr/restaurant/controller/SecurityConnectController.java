@@ -30,7 +30,7 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
         return new SecurityConnectView(this);
     }
 
-    // login il faut mettre la suite
+    // login il, faut mettre la suite
     public List<Error> login(String email, String password) {
         var errors = new ErrorList();
         // check si l'email et le mdp sont bons
@@ -64,17 +64,17 @@ public class SecurityConnectController extends Controller<SecurityConnectView> {
             if (panierTemp != null && !panierTemp.isEmpty()) {
                 for (var entry : panierTemp.entrySet()) {
                     var produit = entry.getKey();
-                    var quantite = entry.getValue();
+                    var quantity = entry.getValue();
 
                     // Vérifie si le produit est déjà dans le panier
                     var panierActuel = Panier.getProduits();
                     if (!panierActuel.containsKey(produit)) {
                         // S'il n'existe pas encore → on l'ajoute
-                        for (int i = 0; i < quantite; i++) {
+                        for (int i = 0; i < quantity; i++) {
                             Panier.ajouterProduit(produit);
                         }
                     }
-                    // sinon on ne fait rien (pour éviter la duplication)
+                    // sinon, on ne fait rien (pour éviter la duplication).
                 }
 
                 Security.clearPendingPanier();

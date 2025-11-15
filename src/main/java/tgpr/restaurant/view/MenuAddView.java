@@ -1,15 +1,15 @@
 package tgpr.restaurant.view;
 
-import tgpr.restaurant.controller.MenuAddControler;
+import tgpr.restaurant.controller.MenuAddController;
 import tgpr.restaurant.model.DialogWindowProductAndMenu;
 import tgpr.restaurant.model.Product;
 
 import java.util.List;
 
-public class MenuAddView extends DialogWindowProductAndMenu<MenuAddControler> {
+public class MenuAddView extends DialogWindowProductAndMenu<MenuAddController> {
     private static final List<Product.Type> SortableFields = List.of(Product.Type.Menu);
 
-    public MenuAddView(MenuAddControler controller, Product product) {
+    public MenuAddView(MenuAddController controller, Product product) {
         super(controller.isNew() ? "Nouveau menu" : "Modifier le menu",
                 controller, product);
     }
