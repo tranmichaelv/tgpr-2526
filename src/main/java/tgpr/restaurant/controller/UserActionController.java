@@ -1,11 +1,14 @@
 package tgpr.restaurant.controller;
 
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.User;
 import tgpr.restaurant.view.UserActionView;
+import tgpr.restaurant.view.UserDetailsView;
 
 public class UserActionController extends Controller<UserActionView> {
-    private User user;
+    User user;
 
     public UserActionController(User user){
         this.user = user;
@@ -13,7 +16,7 @@ public class UserActionController extends Controller<UserActionView> {
 
     @Override
     public UserActionView getView() {
-        return new UserActionView(this, user);
+        return new UserActionView(this);
     }
 
     public void block(){
@@ -21,9 +24,16 @@ public class UserActionController extends Controller<UserActionView> {
         user.save();
     }
 
+    public void unblock(){
+        user.setBlocked(false);
+        user.save();
+    }
+
+    public User getUser() {
+        return user;
+    }
+
     public void details(){
-        //
-        // navigateTo(le controller qui permet de voir les details)
-        //
+        navigateTo(new UserDetailsController(user));
     }
 }
