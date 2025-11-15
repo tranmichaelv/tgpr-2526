@@ -128,7 +128,7 @@ public class OrderListClientController extends Controller<OrderListClientView> {
     }
 
     public void changeUser(){
-        navigateTo(new UserChangeController());
+        navigateTo(new UserChangeController(null));
     }
 
     public void order(){

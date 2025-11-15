@@ -12,19 +12,11 @@ import java.util.List;
 
 public class ProductCheckController extends Controller<ProductCheckView> {
     int order;
-    String string;
+    String string; // permet de savoir sur quelle vue on se trouve
 
-    //    private  OrderChangeController parent;
     private Runnable onOrderChanged;
-//
-//    public ProductCheckController(OrderChangeController parent) { this.parent = parent; }
-//
-//    public ProductCheckController() {
-//        this.parent = null;
-//    }
-//    // sert à mettre à jour mes produits de la commande
+
     public void setOnOrderChanged(Runnable r) { this.onOrderChanged = r; }
-//    public Order getOrder() { return parent.getOrder(); }
 
     public ProductCheckController(int order){
             this.order = order;
@@ -40,32 +32,26 @@ public class ProductCheckController extends Controller<ProductCheckView> {
         return new ProductCheckView(this, order, string);
     }
 
-    // retourne la liste de tous les produits
+    // tous les produits != menu
     public List<Product> listProduct(){
         return Product.getOrderProductAll();
     }
 
+    // tous les produits non archived
     public List<Product> listProductAndMenu(){
         return Product.getOrderProductAndMenu();
     }
 
-    // va vers le controlleur qui permet de modifier le produit sélectionné
+    // changer de produit
     public void productChange(Product product){
         navigateTo(new ProductChangeController(product));
     }
 
+    // ajouter un nouveau produit
     public void addNewProduct(){
         navigateTo(new ProductChangeController(new Product()));
 
     }
-    // cherche le produit
-//    public OrderItem findItem(Product p) {
-//        return OrderItem.queryOne(
-//                OrderItem.class,
-//                "select * from order_items where `order`=:o and product=:p",
-//                new Params("o", getOrder().getId()).add("p", p.getId())
-//        );
-//    }
 
     // ajoute un produit ou modifie la quantité
     public void addOrSetQuantity(Product p, int qty, OrderItem orderItem, int order) {
@@ -87,24 +73,10 @@ public class ProductCheckController extends Controller<ProductCheckView> {
                 orderItem.setQuantity(qty);
                 orderItem.save();
             }
-//            getOrder().reload();
-            // refreshOrders la zone ou les produits sont affichés
-//            if (onOrderChanged != null) onOrderChanged.run();
+
         }
         if (onOrderChanged != null) {
             onOrderChanged.run();
         }
     }
-
-//        //  supprime un produit de la commande
-//        public void removeProduct(Product p) {
-//            OrderItem existing = findItem(p);
-//            if (existing == null) return;
-//            existing.delete();
-//
-//            getOrder().reload();
-//            if (onOrderChanged != null) onOrderChanged.run();
-//        }
-
-
 }

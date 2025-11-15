@@ -8,9 +8,15 @@ import tgpr.restaurant.view.UserChangeview;
 import java.util.List;
 
 public class UserChangeController extends Controller<UserChangeview> {
+    User userToFocus;
+
+    public UserChangeController(User userToFocus){
+        this.userToFocus = userToFocus;
+    }
+
     @Override
     public UserChangeview getView() {
-        return new UserChangeview(this);
+        return new UserChangeview(this, userToFocus);
     }
 
     public List<User> getAllUsers(){

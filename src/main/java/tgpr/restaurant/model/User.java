@@ -260,7 +260,7 @@ public class User extends Model {
 
     // cherche un user avec l'email correspondant au string
     public static User getByEmail(String email) {
-        return queryOne(User.class,"select * from users where email=:email",
+        return queryOne(User.class,"select * from users where email= lower(:email)",
                 new Params("email", email)); // Mets le string email dans :email
     }
 

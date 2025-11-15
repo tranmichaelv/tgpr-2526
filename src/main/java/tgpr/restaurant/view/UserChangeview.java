@@ -4,19 +4,21 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import tgpr.framework.ViewManager;
 import tgpr.restaurant.controller.UserChangeController;
 import tgpr.restaurant.model.User;
 
 import java.util.List;
 
 public class UserChangeview extends DialogWindow {
-    private ObjectTable<User> table;
-    private UserChangeController controller;
+    UserChangeController controller;
+    User userToFocus;
 
-    public UserChangeview(UserChangeController controller) {
+    private ObjectTable<User> table;
+
+    public UserChangeview(UserChangeController controller, User userToFocus) {
         super("Gestion des utilisateurs");
         this.controller = controller;
+        this.userToFocus = userToFocus;
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
         setCloseWindowWithEscape(true);
@@ -29,6 +31,8 @@ public class UserChangeview extends DialogWindow {
         root.addComponent(createTitre());
         root.addComponent(createTable());
         root.addComponent(createButton());
+
+        table.takeFocus();
     }
 
     private Panel createTitre(){
@@ -40,7 +44,7 @@ public class UserChangeview extends DialogWindow {
     }
 
     public Component createTable() {
-        table = new ObjectTable<User>(
+        table = new ObjectTable<>(
                 new ColumnSpec<>("Nom", User::getLastName).setWidth(20),
                 new ColumnSpec<>("Prenom", User::getFirstName).setWidth(20),
                 new ColumnSpec<>("Email", User::getEmail).setWidth(30),
@@ -73,6 +77,11 @@ public class UserChangeview extends DialogWindow {
         table.add(users);
         // requis à cause d'un bug quand on ferme la fenêtre popup avec la touche Escape
         table.invalidate();
+
+        if (userToFocus != null) {
+//            table.takeFocus();
+            table.setSelected(userToFocus);
+        }
     }
 
     private Panel createButton(){

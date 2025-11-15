@@ -6,6 +6,7 @@ import com.googlecode.lanterna.graphics.SimpleTheme;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationController;
 import tgpr.restaurant.model.*;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-public class ReservationView extends BasicWindow {
+public class ReservationView extends DialogWindow {
     public static final String[] DAYS = new String[]{"Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"};
     private static final int MONTH_LABEL_WIDTH = 20;
     private final ReservationController controller;
@@ -34,10 +35,9 @@ public class ReservationView extends BasicWindow {
     private Button targetDate;
 
     public ReservationView(ReservationController controller) {
-
+        super("Réserver une table");
         this.controller = controller;
 
-        setTitle("Réserver une table");
         setHints(List.of(Hint.CENTERED));
 
         Panel root = Panel.verticalPanel(1);

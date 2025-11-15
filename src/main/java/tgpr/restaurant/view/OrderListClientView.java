@@ -4,6 +4,7 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.gui2.menu.MenuItem;
@@ -243,12 +244,11 @@ public class OrderListClientView extends BasicWindow {
             roleLabel = "unknown";
         }
 
-        setTitle(String.format("Restaurant (%s, %s - %s) - Date simulée: %s %s",
+        setTitle(String.format("Restaurant (%s, %s - %s) - Date simulée: %s",
                 user.getFirstName(),
                 user.getFirstName(),
                 roleLabel,
-                TODAY_DEMO_DATE.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                TODAY_DEMO_TIME.format(DateTimeFormatter.ofPattern("HH:mm"))
+                Time.getDateChosenToString()
         ));
     }
 
@@ -284,7 +284,7 @@ public class OrderListClientView extends BasicWindow {
 
     private void createNewReservation() {
         var ctrl = new ReservationController();
-        BasicWindow win = ctrl.getView();
+        DialogWindow win = ctrl.getView();
 
         win.setHints(Arrays.asList(
                 Window.Hint.MODAL,

@@ -20,6 +20,7 @@ public class SecurityLoginController extends Controller<SecurityLoginView> {
 
     public void seedData() {
         Model.seedData(RestaurantApp.DATABASE_SCRIPT_FILE);
+        showInfo("Database reinitialized");
     }
 
     public void login(){

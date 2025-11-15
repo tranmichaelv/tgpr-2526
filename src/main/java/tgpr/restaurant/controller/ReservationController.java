@@ -1,27 +1,29 @@
 package tgpr.restaurant.controller;
 
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.framework.Controller;
-import tgpr.restaurant.model.Reservation;
-import tgpr.restaurant.model.Service;
-import tgpr.restaurant.model.Table;
-import tgpr.restaurant.model.Time;
+import tgpr.restaurant.model.*;
 import tgpr.restaurant.view.ReservationView;
 
 import java.time.*;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.SQLException;
 import java.util.Locale;
 
-public class ReservationController extends Controller<ReservationView> {
+public class ReservationController extends Controller<DialogWindow> {
 
     private final ReservationView view = new ReservationView(this); // ReservationView has now access to this controller's methods
     private YearMonth currentMonth = YearMonth.from(Time.getDateChosen());
 
     @Override
-    public ReservationView getView() {
-        return view;
+    public DialogWindow getView() {
+        ClosingPeriod closingPeriod =  Time.restaurantIsClosed();
+        if(closingPeriod != null ){
+            return new RestaurantClosedController(closingPeriod).getView();
+        } else {
+            return view;
+        }
     }
 
     public void retour(){
@@ -37,11 +39,11 @@ public class ReservationController extends Controller<ReservationView> {
 
         for (int i = 1; i < startDayOfWeek; i++) {
             days.add(null);
-        } // for loop allowing us to reach the day of the week where the month starts
+        } // for loop allowing us to reach the day of the week when the month starts
 
         // adding current month's days
-        int lenghtOfCurrentMonth = month.lengthOfMonth();
-        for (int i = 1; i <= lenghtOfCurrentMonth; i++) {
+        int lengthOfCurrentMonth = month.lengthOfMonth();
+        for (int i = 1; i <= lengthOfCurrentMonth; i++) {
             days.add(month.atDay(i));
         }
         return days;

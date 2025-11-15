@@ -7,25 +7,27 @@ import tgpr.restaurant.model.UserValidator;
 import tgpr.restaurant.view.ClientRegisterView;
 
 public class ClientRegisterController extends Controller<ClientRegisterView> {
-    String DEFAULT_PASSWORD = "Password1,";
+    User user;
 
     @Override
     public ClientRegisterView getView() {
         return new ClientRegisterView(this);
     }
 
-    public ErrorList check(String lastname, String firstname, String email, String number) {
+    public ErrorList check(String lastname, String firstname, String email, String password, String passwordConfirm, String number) {
         var errors = new ErrorList();
 
         errors.add(UserValidator.isValidLastName(lastname));
         errors.add(UserValidator.isValidFirstName(firstname));
         errors.add(UserValidator.isValidEmail(email));
+        errors.add(UserValidator.isValidPassword(password));
+        errors.add(UserValidator.isValidConfirmPassword(password, passwordConfirm));
         errors.add(UserValidator.isValidNumber(number));
 
         return errors;
     }
 
-    public void validate(String lastname, String firstname, String email, String number){
+    public void validate(String lastname, String firstname, String email, String password, String number){
 
         // change le numero pour le mettre au format demande
         // si commence par +32 le change pour qu'il commence par 0.
@@ -40,13 +42,18 @@ public class ClientRegisterController extends Controller<ClientRegisterView> {
                 number.substring(8);
 
         // assigne chaque variable au nouvel user
-        User user = new User();
+        user = new User();
         user.setLastName(lastname);
         user.setFirstName(firstname);
-        user.setEmail(email);
+        user.setEmail(email.toLowerCase());
         user.setPhone(formated);
-        user.setPassword(DEFAULT_PASSWORD);
+        user.setPassword(password);
         user.setRole(User.Role.Client);
         user.save();
 
-    }}
+    }
+
+    public void goToUsersPage(){
+        navigateTo(new UserChangeController(user));
+    }
+}
