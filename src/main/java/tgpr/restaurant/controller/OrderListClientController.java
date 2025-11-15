@@ -1,4 +1,5 @@
 package tgpr.restaurant.controller;
+import com.googlecode.lanterna.gui2.ActionListBox;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Window;
 import tgpr.framework.Controller;
@@ -9,6 +10,7 @@ import tgpr.restaurant.model.User;
 import tgpr.restaurant.view.OrderListClientView;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 public class OrderListClientController extends Controller<OrderListClientView> {
@@ -148,9 +150,18 @@ public class OrderListClientController extends Controller<OrderListClientView> {
         return Reservation.DoesReservationExists(rID) != null;
     }
 
-    public void deleteReservation(Reservation r){
-        if (askConfirmation("Vous étes sur de vouloir supprimer","suppression"))
+    public void deleteReservation(Reservation r, ActionListBox rListBox, List<Reservation> allR ) {
+        if (askConfirmation(
+                "\n" + "La modification n'est pas autorisée pour une réservation passée ou avec une commande associée."
+                        + "\n" + "La suppression reste toutefois possible."
+                        + "\n" + "\n" + "Voulez-vous supprimer cette réservation ?",
+                "suppression de réservation"))
+        {
             r.delete();
+            boolean showAll = true;
+//            allR = Reservation.getAll();
+            getView().updateReservationList(rListBox, allR, showAll);
+        }
     }
 }
 
