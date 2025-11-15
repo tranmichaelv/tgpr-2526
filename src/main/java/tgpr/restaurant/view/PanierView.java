@@ -4,7 +4,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.framework.Controller;
-import tgpr.framework.ViewManager;
 import tgpr.restaurant.controller.PanierController;
 import tgpr.restaurant.model.*;
 
@@ -118,15 +117,6 @@ public class PanierView extends DialogWindow {
             this.close();
         }
     }
-
-//    private void commander() {
-//        if(Security.isLogged()){
-//            // si user connecte alors commande sinon mets le message
-//            Controller.showInfo("Vous pouvez maintenant finaliser votre commande.");
-//        } else {
-//            Controller.showInfo("Vous devez vous connecter pour passer une commande !");
-//        }
-//    }
 
     private void commander() {
         if (Security.isLogged()) {

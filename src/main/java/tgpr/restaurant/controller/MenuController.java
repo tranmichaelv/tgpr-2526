@@ -15,10 +15,6 @@ public class MenuController extends Controller<MenuView> {
         return new MenuView(this);
     }
 
-//    public void back(){
-//        navigateTo(new SecurityLoginController());
-//    }
-
     /**
      * Ouvre la page de détails d’un menu sélectionné.
      * (ex. Menu Classique, Menu Enfant, etc.)
