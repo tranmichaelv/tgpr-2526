@@ -184,7 +184,7 @@ public class OrderListClientView extends BasicWindow {
 
 
         if (userlogged.getRole() == User.Role.Employee || userlogged.getRole() == User.Role.Boss) {
-            headers.add(new Label(String.format("%-18s", "Client")));
+            headers.add(new Label(String.format("%-15s", "Client")));
         }
 
         headers.add(new Label(String.format("%-12s", "Date")));
@@ -438,13 +438,13 @@ public class OrderListClientView extends BasicWindow {
         String paiement = String.valueOf(order.getPaymentMethod()); //
 
         if (userlloged.getRole() == User.Role.Client) {
-            return padOrTruncate(date, 16)
+            return " " +padOrTruncate(date, 13)
                     + padOrTruncate(tableInfo, 15)
-                    + padOrTruncate(service, 11)
-                    + padOrTruncate(pers, 9)
-                    + padOrTruncate(type, 12)
-                    + padOrTruncate(online, 12)
-                    + padOrTruncate(amount, 12)
+                    + padOrTruncate(service, 10)
+                    + padOrTruncate(pers, 7)
+                    + padOrTruncate(type, 13)
+                    + padOrTruncate(online, 10)
+                    + padOrTruncate(amount, 10)
                     + padOrTruncate(paiement, 12);
         } else if (userlloged.getRole() == User.Role.Employee || userlloged.getRole() == User.Role.Boss) {
             return " " + padOrTruncate(clientfullName, 16)
