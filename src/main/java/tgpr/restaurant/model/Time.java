@@ -11,7 +11,7 @@ public class Time {
         return LocalDateTime.now();
     }
 
-    public static String dateToString(LocalDateTime date ){
+    public static String dateToString(LocalDateTime date){
         // formate l'heure de facon donne
         DateTimeFormatter myFormatDate = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return date.format(myFormatDate);
@@ -20,6 +20,12 @@ public class Time {
     public static LocalDateTime dateStrToLocalDate(String date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return (LocalDateTime.parse(date, formatter));
+    }
+
+    public static String localDateToString(LocalDate date ){
+        // formate l'heure de facon donne
+        DateTimeFormatter myFormatDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return date.format(myFormatDate);
     }
 
     public static ClosingPeriod restaurantIsClosed(){

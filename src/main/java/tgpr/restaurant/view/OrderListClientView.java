@@ -270,7 +270,7 @@ public class OrderListClientView extends BasicWindow {
                             ),
                             " (" + r.getTable().getCapacity() + "p)",
                             r.getService().getName(),
-                            r.getReservationDate(),
+                            Time.localDateToString(r.getReservationDate()),
                             r.getNumberOfPeople(),
                             r.getOnline() ? "Oui" : "Non"
                     );
@@ -283,7 +283,7 @@ public class OrderListClientView extends BasicWindow {
                             ),
                             " (" + r.getTable().getCapacity() + "p)",
                             r.getService().getName(),
-                            r.getReservationDate(),
+                            Time.localDateToString(r.getReservationDate()),
                             r.getNumberOfPeople(),
                             r.getOnline() ? "Oui" : "Non"
                     );
