@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 public class OrderListClientView extends BasicWindow {
 
     // Made-up local date to test the feature (before merging with develop branch)
-    public static final LocalDate TODAY_DEMO_DATE = Time.getDateChosen().toLocalDate();
-    public static final LocalTime TODAY_DEMO_TIME = Time.getDateChosen().toLocalTime();
+    public LocalDate TODAY_DEMO_DATE = Time.getDateChosen().toLocalDate();
+    public LocalTime TODAY_DEMO_TIME = Time.getDateChosen().toLocalTime();
     private final OrderListClientController controller;
     private List<Order> ordersList = Order.getAll();
     private final List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model
@@ -50,6 +50,7 @@ public class OrderListClientView extends BasicWindow {
 
         // Title (will be changed according user's role)
         setTitle("Panel pour afficher les commandes en tant que " + userlogged.getRole());
+//        updateTitle(userlogged);
         setHints(List.of(Hint.EXPANDED));
 
         // Root Panel englobing every element
@@ -151,7 +152,7 @@ public class OrderListClientView extends BasicWindow {
         reservations.addComponent(new EmptySpace(new TerminalSize(0, 1)));
 
         // New reservation button
-        newReservation = new Button("Nouvelle réservation");
+        newReservation = new Button("Nouvelle réservation", this::reservation);
         reservations.addComponent(newReservation);
 
         // COMMANDES
@@ -237,17 +238,17 @@ public class OrderListClientView extends BasicWindow {
         String roleLabel;
 
         if (user.getRole().toString().equalsIgnoreCase("client")) {
-            roleLabel = "client";
+            roleLabel = "Client";
         } else if (user.getRole().toString().equalsIgnoreCase("employee")) {
-            roleLabel = "employee";
+            roleLabel = "Employee";
         } else if (user.getRole().toString().equalsIgnoreCase("boss")) {
-            roleLabel = "boss";
+            roleLabel = "Boss";
         } else {
             roleLabel = "unknown";
         }
 
         setTitle(String.format("Restaurant (%s, %s - %s) - Date simulée: %s %s",
-                user.getFirstName(),
+                user.getLastName(),
                 user.getFirstName(),
                 roleLabel,
                 TODAY_DEMO_DATE.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
