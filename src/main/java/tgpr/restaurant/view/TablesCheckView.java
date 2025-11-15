@@ -141,7 +141,7 @@ public class TablesCheckView extends DialogWindow {
         return Panel.horizontalPanel(
                 save,
                 delete,
-                new Button("Nouveau")
+                new Button("Nouveau", this::newTable)
         );
     }
 
@@ -172,6 +172,14 @@ public class TablesCheckView extends DialogWindow {
         controller.delete();
         reloadData();
         clearFieldsPanel();
+    }
+
+    private void newTable(){
+        clearFieldsPanel();
+        txtID.setText(String.valueOf(Table.nextId().getId()));
+        txtCapacity.setText("").setReadOnly(false);
+        txtLocation.setText("").setReadOnly(false);
+        controller.setTable(null);
     }
 
     private void clearFieldsPanel(){

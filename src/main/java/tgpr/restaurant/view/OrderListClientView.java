@@ -17,7 +17,6 @@ import tgpr.restaurant.model.OrderItem;
 import tgpr.restaurant.model.User;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -368,7 +367,7 @@ public class OrderListClientView extends BasicWindow {
                     visible = true;
                 }
             } else {
-                // Employé ou boss voit tout, filtré par nom &&  statut payé
+                // Employé ou boss voit tout, filtré par nom && statut payé
                 if (correspond && (showAll || !isPaid)) {
                     visible = true;
                 }
@@ -392,7 +391,7 @@ public class OrderListClientView extends BasicWindow {
         }
     }
 
-    // cette partie concerne le refreshOrders après les modification appliquées sur les commandes
+    // cette partie concerne le refreshOrders après les modifications appliquées sur les commandes
     public void refreshOrders() {
         ordersList.clear();
         ordersList.addAll(Order.getAll());
@@ -470,26 +469,24 @@ public class OrderListClientView extends BasicWindow {
 
     }
 
-    private Menu menuEmployee(Menu menu) {
-        MenuItem menuBook = new MenuItem("Réserver une table");
-        menu.add(menuBook);
-        MenuItem menuFood = new MenuItem("Enregistrer une commande", this::order);
-        menu.add(menuFood);
-        MenuItem menuCLient = new MenuItem("Enregistrer un client", this::clientRegister);
-        menu.add(menuCLient);
+    private void menuEmployee(Menu menu) {
+        menuEmployeeAndBoss(menu);
         MenuItem menuTables = new MenuItem("Voir les tables", this::tables);
         menu.add(menuTables);
 
-        return menu;
     }
 
-    private Menu menuBoss(Menu menu) {
+    private void menuEmployeeAndBoss(Menu menu) {
         MenuItem menuBook = new MenuItem("Réserver une table");
         menu.add(menuBook);
         MenuItem menuFood = new MenuItem("Enregistrer une commande", this::order);
         menu.add(menuFood);
         MenuItem menuCLient = new MenuItem("Enregistrer un client", this::clientRegister);
         menu.add(menuCLient);
+    }
+
+    private void menuBoss(Menu menu) {
+        menuEmployeeAndBoss(menu);
         MenuItem menuMenu = new MenuItem("Modifier la carte", this::changeMenu);
         menu.add(menuMenu);
         MenuItem menuClosing = new MenuItem("Gerer les periodes de fermeture", this::closing);
@@ -499,7 +496,6 @@ public class OrderListClientView extends BasicWindow {
         MenuItem menuTables = new MenuItem("Gerer les tables", this::tables);
         menu.add(menuTables);
 
-        return menu;
     }
 
     private void basket() {

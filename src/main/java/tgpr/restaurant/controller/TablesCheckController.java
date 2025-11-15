@@ -24,6 +24,10 @@ public class TablesCheckController extends Controller<TablesCheckView> {
     }
 
     public void save(String capacity, String location){
+        if(table == null) {
+            table = new Table();
+        }
+
         table.setCapacity(Integer.parseInt(capacity));
         table.setLocation(location);
         table.save();

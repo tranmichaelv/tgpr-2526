@@ -156,5 +156,12 @@ public class Table extends Model {
         ) != null;
     }
 
+    public static Table nextId(){
+        return queryOne(Table.class, "SELECT AUTO_INCREMENT as id, capacity, location " +
+                        "FROM information_schema.TABLES, tables " +
+                        "WHERE TABLE_SCHEMA = 'tgpr-2526-c03' " +
+                "AND TABLE_NAME = 'tables'", new Params());
+
+    }
 
 }

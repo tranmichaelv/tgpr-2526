@@ -24,11 +24,11 @@ public class TableValidator {
 
     public static Error isValidLocation(String location){
         if(location.isBlank()){
-            return new Error("Location requise",Table.Fields.Capacity);
+            return new Error("Location requise",Table.Fields.Location);
         }
 
         if(location.length() < 3 || location.length() > 50){
-            return new Error("Minimum de 3 et Maximum de 50 caractères.",Table.Fields.Capacity);
+            return new Error("Minimum de 3 et Maximum de 50 caractères.",Table.Fields.Location);
         }
 
         return Error.NOERROR;
