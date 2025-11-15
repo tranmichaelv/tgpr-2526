@@ -3,8 +3,6 @@ package tgpr.restaurant.controller;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.*;
 import tgpr.restaurant.view.OrderChangeView;
-
-import java.time.DayOfWeek;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +34,7 @@ public class OrderChangeController extends Controller<OrderChangeView>{
         return User.getAll().stream().filter(user -> user.getRole() == User.Role.Client).collect(Collectors.toList());
 
     }
-
+    // table disponible
     public List<Table> getAvailableTables() {
         if (order.getTakeAway()) return java.util.List.of();
 
@@ -67,7 +65,7 @@ public class OrderChangeController extends Controller<OrderChangeView>{
                 .sorted((a,b) -> Integer.compare(a.getCapacity(), b.getCapacity()))
                 .collect(Collectors.toList());
     }
-
+    // service disponible
     public List<Service> getAvailableServices() {
         var wd = Order.toWeekDay(order.getOrderDate());     // jour de la commande
         return Service.getAll().stream()
@@ -75,17 +73,17 @@ public class OrderChangeController extends Controller<OrderChangeView>{
                 .sorted((a,b) -> a.getStartTime().compareTo(b.getStartTime()))
                 .collect(Collectors.toList());
     }
-
+    // calcul le sous total
     public double getSousTotal() {
         return order.getOrderItems().stream()
                 .mapToDouble(item -> item.getQuantity() * item.getPrice())
                 .sum();
     }
-
+    // donne la réduction de la commande
     public double getReduction() {
         return order.getDiscount() != null ? order.getDiscount() : 0.0;
     }
-
+    // calcul le total de la commande
     public double getTotal() {
         return getSousTotal() - getReduction();
     }

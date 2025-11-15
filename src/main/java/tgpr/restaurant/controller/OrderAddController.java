@@ -14,18 +14,9 @@ public class OrderAddController extends Controller<OrderAddView> {
     public Order getOrder() {
         return order;
     }
-
-
-
     @Override
     public OrderAddView getView() {
         return new  OrderAddView(this);
     }
 
-    // méthode qui crée la commande
-    public void createOrder(){
-        if(order != null){
-            order.save();
-        }
-    }
 }
