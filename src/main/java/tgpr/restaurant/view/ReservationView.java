@@ -361,6 +361,37 @@ public class ReservationView extends DialogWindow {
                 confirm.setEnabled(false);
                 buttons.addComponent(cancel);
                 buttons.addComponent(confirm);
+            } else if (Security.isClient()){
+                Button cancel = new Button("Annuler");
+                cancel.addListener(_ -> close());
+                confirm = new Button("Confirmer", () -> {
+                    int numberOfPeople = Integer.parseInt(nbPeople.getText());
+                    String serviceName = midiSoir.getSelectedItem();
+                    String tableInfo = tableLabel.getText();
+
+                    String weekDay = selectedDate.getDayOfWeek()
+                            .getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
+
+                    Service service = Service.getByNameAndDay(serviceName, weekDay);
+                    Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
+
+                    if (table != null) {
+                        Reservation r = new Reservation(
+                                numberOfPeople,
+                                Security.getUser().getId(),
+                                table.getId(),
+                                service.getId(),
+                                true,
+                                selectedDate
+                        );
+                        r.save();
+                        close();
+                    }
+
+                });
+                confirm.setEnabled(false);
+                buttons.addComponent(cancel);
+                buttons.addComponent(confirm);
             } else {
                 Button cancel = new Button("Annuler");
                 cancel.addListener(_ -> close());
