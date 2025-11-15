@@ -270,4 +270,11 @@ public class Reservation extends Model {
         return queryList(Reservation.class, "select * from reservations " +
                 "where `table`=:table", new Params("table", table));
     }
+
+    public static User getIdUserByFullName(String lastName, String firstName) {
+        return queryOne(User.class, "select u.id from users u where u.last_name=:lastName and u.first_name=:firstName",
+                new Params()
+                        .add("lastName", lastName)
+                        .add("firstName", firstName));
+    }
 }

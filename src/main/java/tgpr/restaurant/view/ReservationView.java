@@ -33,8 +33,14 @@ public class ReservationView extends DialogWindow {
     private LocalDate selectedDate;
     private Button confirm;
     private Button targetDate;
-    public List<User> customers;
-    public ComboBox<String> clientBox;
+    private List<User> customers;
+    private ComboBox<String> clientBox;
+    private User selectedClient;
+    private String firstName;
+    private String lastName;
+    private List<User> clientList = new ArrayList<>();
+    private User selectedCustomer;
+    private int customerId;
 
 
     public ReservationView(ReservationController controller) {
@@ -60,8 +66,18 @@ public class ReservationView extends DialogWindow {
             for (User u : customers) {
                 if (u.isClient()) {
                     clientBox.addItem(u.getLastName() + ", " + u.getFirstName());
+                    clientList.add(u);
                 }
             }
+            if (!clientList.isEmpty()) {
+                clientBox.setSelectedIndex(0);
+                selectedCustomer = clientList.getFirst();
+            }
+            clientBox.addListener((selectedIndex, previousIndex, _) -> {
+                if (selectedIndex >= 0) {
+                    selectedCustomer = clientList.get(selectedIndex);
+                }
+            });
             clientBox.addTo(root);
         }
         createGridLayout().addTo(root);
@@ -242,7 +258,7 @@ public class ReservationView extends DialogWindow {
                                 || (date.isEqual(selectedDate) && selectedHour.isBefore(maxMidi) && midiSoir.getSelectedItem().equals("midi"))
                                 || (date.isEqual(selectedDate) && selectedHour.isBefore(maxSoir) && midiSoir.getSelectedItem().equals("soir"))
                     )
-                    && allTablesOccupied
+                    && allTablesOccupied && (!Security.isLogged() || (Security.isClient()) || ((!Security.isClient()) && Security.getUser().getId() == controller.getCustomerId(Security.getUser().getLastName(), Security.getUser().getFirstName())))
             ) {
                 dayButton.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.RED));
                 dayButton.setEnabled(false);
@@ -375,7 +391,7 @@ public class ReservationView extends DialogWindow {
                 confirm.setEnabled(false);
                 buttons.addComponent(cancel);
                 buttons.addComponent(confirm);
-            } else if (Security.isClient()){
+            } else {
                 Button cancel = new Button("Annuler");
                 cancel.addListener(_ -> close());
                 confirm = new Button("Confirmer", () -> {
@@ -390,9 +406,15 @@ public class ReservationView extends DialogWindow {
                     Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
 
                     if (table != null) {
-                        Reservation r = new Reservation(
+                        if (Security.isClient()) {
+                            customerId = Security.getUser().getId();
+                        } else {
+                            customerId = selectedCustomer.getId();
+                            }
+                            Reservation r = new Reservation(
                                 numberOfPeople,
-                                Security.getUser().getId(),
+                                // if security is client, we already have ID in security, otherwise we use selectedCustomer from Combobox
+                                customerId,
                                 table.getId(),
                                 service.getId(),
                                 true,
@@ -403,13 +425,6 @@ public class ReservationView extends DialogWindow {
                     }
 
                 });
-                confirm.setEnabled(false);
-                buttons.addComponent(cancel);
-                buttons.addComponent(confirm);
-            } else {
-                Button cancel = new Button("Annuler");
-                cancel.addListener(_ -> close());
-                confirm = new Button("Confirmer");
                 confirm.setEnabled(false);
                 buttons.addComponent(cancel);
                 buttons.addComponent(confirm);

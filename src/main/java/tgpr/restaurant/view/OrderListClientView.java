@@ -477,7 +477,7 @@ public class OrderListClientView extends BasicWindow {
     }
 
     private void menuEmployeeAndBoss(Menu menu) {
-        MenuItem menuBook = new MenuItem("Réserver une table");
+        MenuItem menuBook = new MenuItem("Réserver une table", this::reservation);
         menu.add(menuBook);
         MenuItem menuFood = new MenuItem("Enregistrer une commande", this::order);
         menu.add(menuFood);

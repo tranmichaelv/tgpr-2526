@@ -15,6 +15,7 @@ public class ReservationController extends Controller<DialogWindow> {
 
     private final ReservationView view = new ReservationView(this); // ReservationView has now access to this controller's methods
     private YearMonth currentMonth = YearMonth.from(Time.getDateChosen());
+    private User customer;
 
     @Override
     public DialogWindow getView() {
@@ -92,5 +93,11 @@ public class ReservationController extends Controller<DialogWindow> {
             view.showError("Veuillez entrer un nombre valide.");
             return false;
         }
+    }
+
+    // getting customerId by finding customer in the model with getIdUserByFullName method
+    public int getCustomerId(String lastName, String firstName) {
+        customer = Reservation.getIdUserByFullName(lastName, firstName);
+        return customer.getId();
     }
 }
