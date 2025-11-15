@@ -33,6 +33,9 @@ public class ReservationView extends DialogWindow {
     private LocalDate selectedDate;
     private Button confirm;
     private Button targetDate;
+    public List<User> customers;
+    public ComboBox<String> clientBox;
+
 
     public ReservationView(ReservationController controller) {
         super("Réserver une table");
@@ -49,6 +52,17 @@ public class ReservationView extends DialogWindow {
         // si l'utilisateur est un guest
         if (!Security.isLogged()) {
             createHeader().addTo(root);
+        } else if (!Security.isClient()) {
+            clientBox = new ComboBox<>();
+            clientBox.setPreferredSize(new TerminalSize(30, 1));
+
+            customers = User.getAll();
+            for (User u : customers) {
+                if (u.isClient()) {
+                    clientBox.addItem(u.getLastName() + ", " + u.getFirstName());
+                }
+            }
+            clientBox.addTo(root);
         }
         createGridLayout().addTo(root);
 
@@ -357,6 +371,37 @@ public class ReservationView extends DialogWindow {
                     }
                     ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, serviceName, tableInfo);
                     dialog.showDialog(getTextGUI());
+                });
+                confirm.setEnabled(false);
+                buttons.addComponent(cancel);
+                buttons.addComponent(confirm);
+            } else if (Security.isClient()){
+                Button cancel = new Button("Annuler");
+                cancel.addListener(_ -> close());
+                confirm = new Button("Confirmer", () -> {
+                    int numberOfPeople = Integer.parseInt(nbPeople.getText());
+                    String serviceName = midiSoir.getSelectedItem();
+                    String tableInfo = tableLabel.getText();
+
+                    String weekDay = selectedDate.getDayOfWeek()
+                            .getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
+
+                    Service service = Service.getByNameAndDay(serviceName, weekDay);
+                    Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
+
+                    if (table != null) {
+                        Reservation r = new Reservation(
+                                numberOfPeople,
+                                Security.getUser().getId(),
+                                table.getId(),
+                                service.getId(),
+                                true,
+                                selectedDate
+                        );
+                        r.save();
+                        close();
+                    }
+
                 });
                 confirm.setEnabled(false);
                 buttons.addComponent(cancel);

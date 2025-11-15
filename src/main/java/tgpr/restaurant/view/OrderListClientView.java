@@ -511,6 +511,7 @@ public class OrderListClientView extends BasicWindow {
         var win = ctrl.getView();
         win.setHints(Arrays.asList(Window.Hint.MODAL, Window.Hint.CENTERED));
         getTextGUI().addWindowAndWait(win);
+        refreshReservationList();
     }
 
     private void changeMenu() {
