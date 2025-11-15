@@ -31,7 +31,7 @@ public class OrderListClientView extends BasicWindow {
     public LocalTime TODAY_DEMO_TIME = Time.getDateChosen().toLocalTime();
     private final OrderListClientController controller;
     private List<Order> ordersList = Order.getAll();
-    private  List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model
+    private List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model
     private final Menu menuNav;
     private final Menu menuUser;
     private User userlloged;
@@ -291,28 +291,28 @@ public class OrderListClientView extends BasicWindow {
                 if (Security.isClient()) { // if security is client...
                     if (r.getClientId() == Security.getUser().getId()) { // ...they can see only their own reservations
                         reservationListBox.addItem(row, () -> {
-                                    if ((r.getReservationDate().isBefore(TODAY_DEMO_DATE) || controller.ReservationWithOrder(r.getId()))) { // if before today(demo) OR if with associated order
-                                        if (!Security.isBoss()) // user is not boss
-                                            controller.showInfo("Seule les réservations dans le futur " + "\n" + "et sans commande peuvent être modifiés" + "\n" + "ou supprimés");
-                                        else // user is boss
-                                            controller.deleteReservation(r, reservationListBox, reservationList);
-                                    } else { // if all the previous conditions are not respected (De Morgan), tabled can be modifie
-                                        editReservation(r);
-                                        refreshReservationList();
-                                    }
+                            if ((r.getReservationDate().isBefore(TODAY_DEMO_DATE) || controller.ReservationWithOrder(r.getId()))) { // if before today(demo) OR if with associated order
+                                if (!Security.isBoss()) // user is not boss
+                                    controller.showInfo("Seule les réservations dans le futur " + "\n" + "et sans commande peuvent être modifiés" + "\n" + "ou supprimés");
+                                else // user is boss
+                                    controller.deleteReservation(r, reservationListBox, reservationList);
+                            } else { // if all the previous conditions are not respected (De Morgan), tabled can be modifie
+                                editReservation(r);
+                                refreshReservationList();
+                            }
                         });
                     }
                 } else {
                     reservationListBox.addItem(row, () -> {
-                                if ((r.getReservationDate().isBefore(TODAY_DEMO_DATE) || controller.ReservationWithOrder(r.getId()))) { // if before today(demo) OR if with associated order
-                                    if (!Security.isBoss()) // user is not boss
-                                        controller.showInfo("Seule les réservations dans le futur " + "\n" + "et sans commande peuvent être modifiés" + "\n" + "ou supprimés");
-                                    else // user is boss
-                                        controller.deleteReservation(r, reservationListBox, reservationList);
-                                } else { // if all the previous conditions are not respected (De Morgan), tabled can be modified
-                                    editReservation(r);
-                                    refreshReservationList();
-                                }
+                        if ((r.getReservationDate().isBefore(TODAY_DEMO_DATE) || controller.ReservationWithOrder(r.getId()))) { // if before today(demo) OR if with associated order
+                            if (!Security.isBoss()) // user is not boss
+                                controller.showInfo("Seule les réservations dans le futur " + "\n" + "et sans commande peuvent être modifiés" + "\n" + "ou supprimés");
+                            else // user is boss
+                                controller.deleteReservation(r, reservationListBox, reservationList);
+                        } else { // if all the previous conditions are not respected (De Morgan), tabled can be modified
+                            editReservation(r);
+                            refreshReservationList();
+                        }
                     });
                 }
             }
@@ -348,7 +348,6 @@ public class OrderListClientView extends BasicWindow {
 
         //String filtreNom = clientNameBox.getText().trim().toLowerCase();
         String filtreNom = clientNameBox != null ? clientNameBox.getText().trim().toLowerCase() : "";
-
         boolean showAll = showAllOrders.isChecked(); // état de la checkbox
 
         for (Order order : ordersList) {
@@ -389,11 +388,6 @@ public class OrderListClientView extends BasicWindow {
                             controller.openDetails(order);
                     });
                 }
-            }
-
-            if (ordersListBox.getItemCount() == 0) {
-                ordersListBox.addItem("", () -> {
-                });
             }
         }
     }
@@ -546,8 +540,8 @@ public class OrderListClientView extends BasicWindow {
         controller.tables();
     }
 
-    private void refreshReservationList(){
-        reservationList=Reservation.getAll();
-        updateReservationList(reservationListBox,reservationList,false);
+    private void refreshReservationList() {
+        reservationList = Reservation.getAll();
+        updateReservationList(reservationListBox, reservationList, false);
     }
 }
