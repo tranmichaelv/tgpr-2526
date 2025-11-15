@@ -4,10 +4,7 @@ import com.googlecode.lanterna.gui2.ActionListBox;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Window;
 import tgpr.framework.Controller;
-import tgpr.restaurant.model.Order;
-import tgpr.restaurant.model.Reservation;
-import tgpr.restaurant.model.Security;
-import tgpr.restaurant.model.User;
+import tgpr.restaurant.model.*;
 import tgpr.restaurant.view.OrderListClientView;
 
 import java.util.Arrays;
@@ -108,6 +105,7 @@ public class OrderListClientController extends Controller<OrderListClientView> {
 //    }
     public void exit(){
         Security.logout();
+        Panier.vider();
         navigateTo(new SecurityLoginController());
     }
 
