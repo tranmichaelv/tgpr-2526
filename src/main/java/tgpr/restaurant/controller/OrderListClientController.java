@@ -139,6 +139,10 @@ public class OrderListClientController extends Controller<OrderListClientView> {
         navigateTo(new ClientRegisterController());
     }
 
+    public void tables(){
+        navigateTo(new TablesCheckController());
+    }
+
     // Method verifying if a reservation id exists in Order Tabel (by calling DoesReservationExists method in Reservation Model)
     public boolean ReservationWithOrder (int rID) {
         return Reservation.DoesReservationExists(rID) != null;

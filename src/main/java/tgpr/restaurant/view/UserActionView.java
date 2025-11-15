@@ -18,6 +18,7 @@ public class UserActionView extends DialogWindow {
         this.controller = controller;
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
+        setCloseWindowWithEscape(true);
 
         Panel root = Panel.gridPanel(1,
                 Margin.of(1,0,1,0),
