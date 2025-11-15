@@ -466,19 +466,30 @@ public class OrderChangeView extends BasicWindow {
             try { getTextGUI().updateScreen(); } catch (Exception ignored) {}
         }));
         buttons.addComponent(new EmptySpace(new TerminalSize(1, 0)));
-//        buttons.addComponent(new Button("Retour", this::close));
         buttons.addComponent(new Button("Retour", () -> {
-            if (Security.isClient()) {
-                if (controller instanceof OrderCreateController occ) {
-                    occ.goBackToList();
-                } else {
-                    this.close();
+            if (controller instanceof OrderCreateController occ && Security.isClient()) {
+
+                // 1) Si jamais la commande a déjà été créée en BD (id != 0),
+                //    on la supprime explicitement
+                Order o = occ.getOrder();
+                if (o.getId() != 0) {
+                    o.delete();
                 }
-            }
-            else {
+
+                // 2) On met creationFinalisee à true pour que close()
+                //    ne rappelle PAS resetToOriginal() (et ne retente
+                //    pas un delete ou autre chose)
+                creationFinalisee = true;
+
+                // 3) On navigue vers la liste client
+                occ.goBackToList();   // navigateTo(new OrderListClientController());
+
+            } else {
+                // Employé / boss : simple fermeture (fenêtre modale)
                 this.close();
             }
         }));
+
 
 
         infoSection.addTo(root);

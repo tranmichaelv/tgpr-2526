@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderCreateController extends OrderChangeController {
-    private boolean draftJustCreated = false;
 
     public OrderCreateController(Order order) {
         super(order);
@@ -59,9 +58,6 @@ public class OrderCreateController extends OrderChangeController {
         if (logged != null && logged.getRole() == User.Role.Employee) {
             o.setEmployeeId(logged.getId());
         }
-
-        o.save();
-        draftJustCreated = true;
     }
 
     // valide l'heure pour créer une commande
@@ -111,12 +107,7 @@ public class OrderCreateController extends OrderChangeController {
     }
 
     public void goBackToList() {
-        var logged = Security.getLoggedUser();
-        if (logged != null && logged.getRole() == User.Role.Client) {
-            navigateTo(new OrderListClientController());
-        } else {
-            navigateTo(new OrderListEmployeeController());
-        }
+        navigateTo(new OrderListClientController());
     }
 
     @Override
@@ -126,11 +117,6 @@ public class OrderCreateController extends OrderChangeController {
 
     @Override
     public void resetToOriginal() {
-        if (draftJustCreated) {
-            getOrder().delete();
-            draftJustCreated = false;
-        } else {
-            super.resetToOriginal();
-        }
+        super.resetToOriginal();
     }
 }
