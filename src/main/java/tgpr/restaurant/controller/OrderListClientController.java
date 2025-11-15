@@ -159,7 +159,7 @@ public class OrderListClientController extends Controller<OrderListClientView> {
         {
             r.delete();
             boolean showAll = true;
-//            allR = Reservation.getAll();
+            allR = Reservation.getAll();
             getView().updateReservationList(rListBox, allR, showAll);
         }
     }
