@@ -1,9 +1,11 @@
 package tgpr.restaurant.controller;
 
+import com.googlecode.lanterna.gui2.ActionListBox;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.Reservation;
 import tgpr.restaurant.model.Service;
 import tgpr.restaurant.model.Table;
+import tgpr.restaurant.view.OrderListClientView;
 import tgpr.restaurant.view.ReservationEditView;
 
 import java.time.LocalDate;
@@ -113,5 +115,7 @@ public class ReservationEditController extends Controller<ReservationEditView> {
     public void deleteReservation(Reservation r){
         if (askConfirmation("Vous étes sur de vouloir supprimer","suppression"))
             r.delete();
+        boolean showAll = true;
+
     }
 }

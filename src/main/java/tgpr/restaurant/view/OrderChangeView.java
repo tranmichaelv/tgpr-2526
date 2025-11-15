@@ -59,12 +59,50 @@ public class OrderChangeView extends BasicWindow {
         for (User u : clients) {
             clientBox.addItem(u.getLastName() + ", " + u.getFirstName());
         }
-        // sélectionne le client de la commande choisie comme affichage de base
+
+        // Sélectionne le client de la commande comme affichage de base
         int currentClientId = controller.getOrder().getClientId();
         int idx = IntStream.range(0, clients.size())
                 .filter(i -> clients.get(i).getId() == currentClientId)
-                .findFirst().orElse(-1);
-        if (idx >= 0) clientBox.setSelectedIndex(idx);
+                .findFirst()
+                .orElse(0); // si pas trouvé, on prend le premier client
+
+        if (!clients.isEmpty()) {
+            clientBox.setSelectedIndex(idx);
+        }
+
+         // Utilisateur connecté
+        User logged = Security.getLoggedUser();
+
+        if (logged != null
+                && logged.getRole() == User.Role.Client
+                && controller instanceof OrderCreateController) {
+
+            // forcer l'order à utiliser le client connecté
+            controller.getOrder().setClientId(logged.getId());
+
+            // s'il n'est pas dans la liste, on l'ajoute
+            int loggedIdx = IntStream.range(0, clients.size())
+                    .filter(i -> clients.get(i).getId() == logged.getId())
+                    .findFirst()
+                    .orElse(-1);
+
+            if (loggedIdx == -1) {
+                clients.add(logged);
+                clientBox.addItem(logged.getLastName() + ", " + logged.getFirstName());
+                loggedIdx = clients.size() - 1;
+            }
+            clientBox.setSelectedIndex(loggedIdx);
+
+            // on n'affiche pas le combo, on affiche un Label fixe
+            Label clientNameLabel =
+                    new Label(logged.getLastName() + ", " + logged.getFirstName());
+            clientLine.addComponent(clientNameLabel);
+
+        } else {
+            // cas employé / boss / modification, on affiche la combo normale
+            clientLine.addComponent(clientBox);
+        }
 
         clientBox.addListener(new ComboBox.Listener() {
             @Override
@@ -75,7 +113,6 @@ public class OrderChangeView extends BasicWindow {
             }
         });
 
-        clientLine.addComponent(clientBox);
         infoSection.addComponent(clientLine);
 
         Panel tableLine = new Panel(new LinearLayout(Direction.HORIZONTAL));
@@ -95,7 +132,7 @@ public class OrderChangeView extends BasicWindow {
             serviceBox.addItem(s.getName());
         }
 
-// Sélectionner le service courant (celui de la commande)
+        // sélectionner le service courant (celui de la commande)
         int currentServiceId = controller.getOrder().getServiceId();
         int selectedIdx = -1;
         for (int k = 0; k < services.size(); k++) {
@@ -375,6 +412,11 @@ public class OrderChangeView extends BasicWindow {
                 getTextGUI().addWindowAndWait(win);
 
                 this.close();
+                // ne ferme plus la page apres avoir commander avec un client
+                // redirect vers la liste des commandes
+                if (controller instanceof OrderCreateController occ && Security.isClient()) {
+                    occ.goBackToList();
+                }
 
             } catch (NumberFormatException e) {
                 MessageDialog.showMessageDialog(getTextGUI(), "Erreur",

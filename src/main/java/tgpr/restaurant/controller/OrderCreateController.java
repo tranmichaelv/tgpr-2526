@@ -30,12 +30,20 @@ public class OrderCreateController extends OrderChangeController {
         // valeur minimum pour NOT NULL
         if (o.getEffectivePeopleCount() == 0) o.setEffectivePeopleCount(1);
 
+        User logged = Security.getLoggedUser();
         // client par défaut
         if (o.getClientId() == 0) {
-            List<User> clients = User.getAll().stream()
-                    .filter(u -> u.getRole() == User.Role.Client)
-                    .collect(Collectors.toList());
-            if (!clients.isEmpty()) o.setClientId(clients.get(0).getId());
+            if (logged != null && logged.getRole() == User.Role.Client) {
+                // si un client est connecté, la commande est pour lui
+                o.setClientId(logged.getId());
+            } else {
+                List<User> clients = User.getAll().stream()
+                        .filter(u -> u.getRole() == User.Role.Client)
+                        .collect(Collectors.toList());
+                if (!clients.isEmpty()) {
+                    o.setClientId(clients.get(0).getId());
+                }
+            }
         }
 
         // service par défaut
@@ -48,7 +56,6 @@ public class OrderCreateController extends OrderChangeController {
             if (!svcs.isEmpty()) o.setServiceId(svcs.get(0).getId());
         }
 
-        User logged = Security.getLoggedUser();
         if (logged != null && logged.getRole() == User.Role.Employee) {
             o.setEmployeeId(logged.getId());
         }
@@ -101,6 +108,15 @@ public class OrderCreateController extends OrderChangeController {
         // Sinon, on forme un message identique à validate()
         String msg = String.join("\n", errors);
         throw new IllegalArgumentException(msg);
+    }
+
+    public void goBackToList() {
+        var logged = Security.getLoggedUser();
+        if (logged != null && logged.getRole() == User.Role.Client) {
+            navigateTo(new OrderListClientController());
+        } else {
+            navigateTo(new OrderListEmployeeController());
+        }
     }
 
     @Override
