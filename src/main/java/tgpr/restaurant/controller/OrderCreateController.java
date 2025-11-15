@@ -1,10 +1,7 @@
 package tgpr.restaurant.controller;
 
 import tgpr.framework.Controller;
-import tgpr.restaurant.model.Order;
-import tgpr.restaurant.model.Service;
-import tgpr.restaurant.model.Time;
-import tgpr.restaurant.model.User;
+import tgpr.restaurant.model.*;
 import tgpr.restaurant.view.OrderCreateView;
 
 import java.time.LocalDate;
@@ -51,6 +48,10 @@ public class OrderCreateController extends OrderChangeController {
             if (!svcs.isEmpty()) o.setServiceId(svcs.get(0).getId());
         }
 
+        User logged = Security.getLoggedUser();
+        if (logged != null && logged.getRole() == User.Role.Employee) {
+            o.setEmployeeId(logged.getId());
+        }
 
         o.save();
         draftJustCreated = true;

@@ -31,7 +31,7 @@ import java.io.IOException;
 /**
  * Screen is a fundamental layer in Lanterna, presenting the terminal as a bitmap-like surface where you can perform
  * smaller in-memory operations to a back-buffer, effectively painting out the terminal as you'd like it, and then call
- * {@code refresh} to have the screen automatically apply the changes in the back-buffer to the real terminal. The 
+ * {@code refreshOrders} to have the screen automatically apply the changes in the back-buffer to the real terminal. The
  * screen tracks what's visible through a front-buffer, but this is completely managed internally and cannot be expected
  * to know what the terminal looks like if it's being modified externally.
  * <p>
@@ -80,7 +80,7 @@ public interface Screen extends InputProvider, Scrollable, Closeable {
      * be used. This is effectively the same as calling 
      * <pre>fill(TerminalPosition.TOP_LEFT_CORNER, getSize(), TextColor.ANSI.Default)</pre>.
      * <p>
-     * Please note that calling this method will only affect the back buffer, you need to call refresh to make the 
+     * Please note that calling this method will only affect the back buffer, you need to call refreshOrders to make the
      * change visible.
      */
     void clear();
@@ -100,7 +100,7 @@ public interface Screen extends InputProvider, Scrollable, Closeable {
      * and refreshing the buffers, this method controls that location. If you pass null, it means that the terminal 
      * will attempt to hide the cursor (if supported by the terminal).
      *
-     * @param position TerminalPosition of the new position where the cursor should be placed after refresh(), or if 
+     * @param position TerminalPosition of the new position where the cursor should be placed after refreshOrders(), or if
      * {@code null}, hides the cursor
      */
     void setCursorPosition(TerminalPosition position);
@@ -152,7 +152,7 @@ public interface Screen extends InputProvider, Scrollable, Closeable {
 
     /**
      * Creates a new TextGraphics objects that is targeting this Screen for writing to. Any operations done on this
-     * TextGraphics will be affecting this screen. Remember to call {@code refresh()} on the screen to see your changes.
+     * TextGraphics will be affecting this screen. Remember to call {@code refreshOrders()} on the screen to see your changes.
      *
      * @return New TextGraphic object targeting this Screen
      */
@@ -195,7 +195,7 @@ public interface Screen extends InputProvider, Scrollable, Closeable {
     /**
      * This method will take the content from the back-buffer and move it into the front-buffer, making the changes
      * visible to the terminal in the process. The graphics workflow with Screen would involve drawing text and text-like
-     * graphics on the back buffer and then finally calling refresh(..) to make it visible to the user.
+     * graphics on the back buffer and then finally calling refreshOrders(..) to make it visible to the user.
      * @throws java.io.IOException If there was an underlying I/O error
      * @see RefreshType
      */
@@ -204,11 +204,11 @@ public interface Screen extends InputProvider, Scrollable, Closeable {
     /**
      * This method will take the content from the back-buffer and move it into the front-buffer, making the changes
      * visible to the terminal in the process. The graphics workflow with Screen would involve drawing text and text-like
-     * graphics on the back buffer and then finally calling refresh(..) to make it visible to the user.
+     * graphics on the back buffer and then finally calling refreshOrders(..) to make it visible to the user.
      * <p>
-     * Using this method call instead of {@code refresh()} gives you a little bit more control over how the screen will
+     * Using this method call instead of {@code refreshOrders()} gives you a little bit more control over how the screen will
      * be refreshed.
-     * @param refreshType What type of refresh to do
+     * @param refreshType What type of refreshOrders to do
      * @throws java.io.IOException If there was an underlying I/O error
      * @see RefreshType
      */
@@ -235,12 +235,12 @@ public interface Screen extends InputProvider, Scrollable, Closeable {
     void scrollLines(int firstLine, int lastLine, int distance);
 
     /**
-     * This enum represents the different ways a Screen can refresh the screen, moving the back-buffer data into the
+     * This enum represents the different ways a Screen can refreshOrders the screen, moving the back-buffer data into the
      * front-buffer that is being displayed.
      */
     enum RefreshType {
         /**
-         * Using automatic mode, the Screen will make a guess at which refresh type would be the fastest and use this one.
+         * Using automatic mode, the Screen will make a guess at which refreshOrders type would be the fastest and use this one.
          */
         AUTOMATIC,
         /**

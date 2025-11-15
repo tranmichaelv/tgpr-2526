@@ -12,6 +12,7 @@ public class OrderCheckController extends Controller<OrderCheckView> {
 
     private final Order order;
     private final OrderCheckView view;
+    private Runnable onCloseCallBack;
 
     public OrderCheckController(Order order) {
         this.order = order;
@@ -54,5 +55,14 @@ public class OrderCheckController extends Controller<OrderCheckView> {
         ));
         // Je passe par la vue pour accéder au TextGUI
         view.getTextGUI().addWindowAndWait(win);
+        view.close();
+        // refresh auto
+        if (onCloseCallBack != null) {
+            onCloseCallBack.run();
+        }
+    }
+
+    public void setOnCloseCallBack(Runnable callBack){
+        this.onCloseCallBack = callBack;
     }
 }

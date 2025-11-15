@@ -1,12 +1,10 @@
 package tgpr.restaurant.controller;
 
-import com.googlecode.lanterna.gui2.BasicWindow;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.Reservation;
 import tgpr.restaurant.model.Service;
 import tgpr.restaurant.model.Table;
 import tgpr.restaurant.view.ReservationEditView;
-import tgpr.restaurant.view.ReservationView;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -105,5 +103,15 @@ public class ReservationEditController extends Controller<ReservationEditView> {
             view.showError("Veuillez entrer un nombre valide.");
             return false;
         }
+    }
+
+    // Verifying if the reservation has an associated order (by calling DoesReservationExists method in Reservation Model)
+    public boolean ReservationWithOrder (int rID) {
+        return Reservation.DoesReservationExists(rID) != null;
+    }
+
+    public void deleteReservation(Reservation r){
+        if (askConfirmation("Vous étes sur de vouloir supprimer","suppression"))
+            r.delete();
     }
 }

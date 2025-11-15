@@ -10,7 +10,6 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import tgpr.restaurant.controller.ReservationController;
 import tgpr.restaurant.model.*;
 
-import javax.swing.border.EmptyBorder;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -31,14 +30,12 @@ public class ReservationView extends BasicWindow {
     private ComboBox<String> midiSoir;
     private Label tableLabel;
     private LocalDate selectedDate;
-    private LocalTime selectedHour;
     private Button confirm;
-    private Button targetDate = null ;
+    private Button targetDate;
 
     public ReservationView(ReservationController controller) {
 
         this.controller = controller;
-
 
         setTitle("Réserver une table");
         setHints(List.of(Hint.CENTERED));
@@ -50,12 +47,12 @@ public class ReservationView extends BasicWindow {
         root.addComponent(new EmptySpace(new TerminalSize(0,1))); // upper padding
 
         // si l'utilisateur est un guest
-        if (Security.isLogged()) {
+        if (!Security.isLogged()) {
             createHeader().addTo(root);
         }
         createGridLayout().addTo(root);
 
-        // The following Listeners will refresh the reservation whenever the service or the number of people is changed
+        // The following Listeners will refreshOrders the reservation whenever the service or the number of people is changed
         midiSoir.addListener((_, _, _)->{
             buildCalendarGrid();
             tableLabel.setText("(non attribuée)");
@@ -67,7 +64,8 @@ public class ReservationView extends BasicWindow {
         });
 
         createCalendarHeader().addTo(root);
-        root.addComponent(createCalendarGridPanel());
+        calendarGrid = createCalendarGridPanel();
+        root.addComponent(calendarGrid);
         root.addComponent(buttonsAtBottom());
 
         root.addComponent(new EmptySpace(new TerminalSize(0,1)));
@@ -214,13 +212,24 @@ public class ReservationView extends BasicWindow {
                 }
             } catch (Exception ignored) {}
 
+            selectedDate = Time.getDateChosen().toLocalDate();
+            LocalTime selectedHour = Time.getDateChosen().toLocalTime();
+            LocalTime maxMidi = LocalTime.of(11,30);
+            LocalTime maxSoir = LocalTime.of(18,30);
             // date colored in red if:
             /*
             a) a table corresponding to nbPeople or nbPeople + 1 exists
             b) all tables are occupied
-            c) date is not before today
+            c) date is not before today and not today OR date is today before 11:30 a.m. for "midi" OR date is today before 18:30 p.m for "soir"
              */
-            if (tablesExist && allTablesOccupied && !date.isBefore(Time.getDateChosen().toLocalDate())) {
+            if (tablesExist
+                    && (
+                        !date.isBefore(selectedDate) && !date.isEqual(selectedDate)
+                                || (date.isEqual(selectedDate) && selectedHour.isBefore(maxMidi) && midiSoir.getSelectedItem().equals("midi"))
+                                || (date.isEqual(selectedDate) && selectedHour.isBefore(maxSoir) && midiSoir.getSelectedItem().equals("soir"))
+                    )
+                    && allTablesOccupied
+            ) {
                 dayButton.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.RED));
                 dayButton.setEnabled(false);
             }
@@ -297,7 +306,7 @@ public class ReservationView extends BasicWindow {
 
     }
 
-    // method refresh to scroll calendar
+    // method refreshOrders to scroll calendar
     private void refreshCalendar() {
         monthLabel.setText(centerText(getFormattedMonth())); // updating month label
         buildCalendarGrid();
@@ -320,42 +329,48 @@ public class ReservationView extends BasicWindow {
     // buttons "Annuler" and "Confirmer la réservation". Will be reworked later (to match model's logic)
     private Panel buttonsAtBottom() {
         Panel buttons = new Panel(new LinearLayout(Direction.HORIZONTAL)).center();
-        if (!Security.isLogged()) {
-            Button cancel = new Button("Annuler");
             // if guest, "annuler" button will navigate back to homepage
-            cancel.addListener(_ -> controller.retour());
-            confirm = new Button("Confirmer la réservation", () -> {
-                int numberOfPeople = Integer.parseInt(nbPeople.getText());
-                String serviceName = midiSoir.getSelectedItem();
-                String tableInfo = tableLabel.getText();
+            if (!Security.isLogged()) {
+                Button cancel = new Button("Annuler");
+                cancel.addListener(_ -> controller.retour());
+                confirm = new Button("Confirmer la réservation", () -> {
+                    int numberOfPeople = Integer.parseInt(nbPeople.getText());
+                    String serviceName = midiSoir.getSelectedItem();
+                    String tableInfo = tableLabel.getText();
 
-                String weekDay = selectedDate.getDayOfWeek()
-                        .getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
+                    String weekDay = selectedDate.getDayOfWeek()
+                            .getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
 
-                Service service = Service.getByNameAndDay(serviceName, weekDay);
-                Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
+                    Service service = Service.getByNameAndDay(serviceName, weekDay);
+                    Table table = Reservation.findAvailableTable(numberOfPeople, selectedDate, service.getId());
 
-                if (table != null) {
-                    Reservation r = new Reservation(
-                            numberOfPeople,
-                            -1, // Temporary clientId
-                            table.getId(),
-                            service.getId(),
-                            true,
-                            selectedDate
-                    );
+                    if (table != null) {
+                        Reservation r = new Reservation(
+                                numberOfPeople,
+                                -1, // Temporary clientId
+                                table.getId(),
+                                service.getId(),
+                                true,
+                                selectedDate
+                        );
 
-                    Security.setPendingReservation(r); // the chosen reservation is temporary saved with setPendingReservation in Security class
-                }
+                        Security.setPendingReservation(r); // the chosen reservation is temporary saved with setPendingReservation in Security class
+                    }
 
 
-                ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, serviceName, tableInfo);
-                dialog.showDialog(getTextGUI());
-            });
-            confirm.setEnabled(false);
-            buttons.addComponent(cancel);
-            buttons.addComponent(confirm);
-        }
+                    ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, serviceName, tableInfo);
+                    dialog.showDialog(getTextGUI());
+                });
+                confirm.setEnabled(false);
+                buttons.addComponent(cancel);
+                buttons.addComponent(confirm);
+            } else {
+                Button cancel = new Button("Annuler");
+                cancel.addListener(_ -> close());
+                Button confirm = new Button("Confirmer");
+                buttons.addComponent(cancel);
+                buttons.addComponent(confirm);
+            }
         return buttons;
     }
 

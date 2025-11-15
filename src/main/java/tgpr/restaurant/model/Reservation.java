@@ -259,6 +259,13 @@ public class Reservation extends Model {
                         .add("serviceId", serviceId));
     }
 
+    // Checking if a Reservation has been converted to Order
+    public static Order DoesReservationExists(int ReservationId) {
+        return queryOne(Order.class,
+                "SELECT * FROM orders o WHERE o.reservation = :reservationID LIMIT 1",
+                new Params().add("reservationID", ReservationId));
+    }
+
     public static List<Reservation> getNumberOfReservationsByTable(int table){
         return queryList(Reservation.class, "select * from reservations " +
                 "where `table`=:table", new Params("table", table));
