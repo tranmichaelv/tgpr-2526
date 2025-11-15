@@ -42,7 +42,7 @@ public class OrderListClientView extends BasicWindow {
     private CheckBox showAllOrders;
     private CheckBox showAllReservations;
     private Button newReservation;
-    private ActionListBox reservationListBox = new ActionListBox(new TerminalSize(80, 7));
+    private ActionListBox reservationListBox = new ActionListBox(new TerminalSize(120, 7));
 
     public OrderListClientView(OrderListClientController controller, User userlogged) {
         this.controller = controller;
@@ -125,6 +125,9 @@ public class OrderListClientView extends BasicWindow {
         updateReservationList(reservationListBox, reservationList, false);
         // List of Labels representing the "header" of Reservations
         List<Label> ls = new ArrayList<>();
+        if (!Security.isClient()) {
+            ls.add(new Label(String.format("%-30s", "Client")));
+        }
         ls.add(new Label(String.format("%-15s", "Table")));
         ls.add(new Label(String.format("%-9s", "Service")));
         ls.add(new Label(String.format("%-12s", "Date")));
@@ -132,7 +135,7 @@ public class OrderListClientView extends BasicWindow {
         ls.add(new Label(String.format("%-8s", "En ligne")));
 
         // Panel displayReservationHeader
-        Panel displayReservationsHeader = new Panel(new GridLayout(5)); // nb column == nb labels == 5
+        Panel displayReservationsHeader = new Panel(new GridLayout(6)); // nb column == nb labels == 5 (6 if not client)
         // for each to add each label to displayReservationHeader
         for (Label field : ls) {
             field.addStyle(SGR.UNDERLINE);
@@ -181,7 +184,7 @@ public class OrderListClientView extends BasicWindow {
 
 
         if (userlogged.getRole() == User.Role.Employee || userlogged.getRole() == User.Role.Boss) {
-            headers.add(new Label(String.format("%-15s", "Client")));
+            headers.add(new Label(String.format("%-18s", "Client")));
         }
 
         headers.add(new Label(String.format("%-12s", "Date")));
@@ -257,17 +260,33 @@ public class OrderListClientView extends BasicWindow {
 
         for (Reservation r : allReservations) {
             if (showAll || !(r.getReservationDate().isBefore(TODAY_DEMO_DATE))) {
-                String row = String.format("%s%s%7s%16s%4s%8s",
-                        " Table " + (r.getTable().getId() < 10 ?
-                                r.getTable().getId() + " " :
-                                r.getTable().getId()
-                        ),
-                        " (" + r.getTable().getCapacity() + "p)",
-                        r.getService().getName(),
-                        r.getReservationDate(),
-                        r.getNumberOfPeople(),
-                        r.getOnline() ? "Oui" : "Non"
-                );
+                String row;
+                if (Security.isClient()) {
+                    row = String.format("%s%s%7s%16s%4s%8s",
+                            " Table " + (r.getTable().getId() < 10 ?
+                                    r.getTable().getId() + " " :
+                                    r.getTable().getId()
+                            ),
+                            " (" + r.getTable().getCapacity() + "p)",
+                            r.getService().getName(),
+                            r.getReservationDate(),
+                            r.getNumberOfPeople(),
+                            r.getOnline() ? "Oui" : "Non"
+                    );
+                } else {
+                    row = String.format(" %-30s%s%s%7s%16s%4s%8s",
+                            User.getByKey(r.getClientId()).getLastName() + ", " + User.getByKey(r.getClientId()).getFirstName(),
+                            " Table " + (r.getTable().getId() < 10 ?
+                                    r.getTable().getId() + " " :
+                                    r.getTable().getId()
+                            ),
+                            " (" + r.getTable().getCapacity() + "p)",
+                            r.getService().getName(),
+                            r.getReservationDate(),
+                            r.getNumberOfPeople(),
+                            r.getOnline() ? "Oui" : "Non"
+                    );
+                }
                 if (Security.isClient()) { // if security is client...
                     if (r.getClientId() == Security.getUser().getId()) { // ...they can see only their own reservations
                         reservationListBox.addItem(row, () -> {
