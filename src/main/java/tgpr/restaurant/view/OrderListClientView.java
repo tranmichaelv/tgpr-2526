@@ -507,7 +507,8 @@ public class OrderListClientView extends BasicWindow {
     }
 
     private void reservation() {
-        var win = new ReservationView(new ReservationController());
+        var ctrl = new ReservationController();
+        var win = ctrl.getView();
         win.setHints(Arrays.asList(Window.Hint.MODAL, Window.Hint.CENTERED));
         getTextGUI().addWindowAndWait(win);
     }

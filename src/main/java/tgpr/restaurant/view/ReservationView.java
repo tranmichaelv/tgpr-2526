@@ -353,11 +353,8 @@ public class ReservationView extends DialogWindow {
                                 true,
                                 selectedDate
                         );
-
                         Security.setPendingReservation(r); // the chosen reservation is temporary saved with setPendingReservation in Security class
                     }
-
-
                     ReservationConfirmationView dialog = new ReservationConfirmationView(selectedDate, numberOfPeople, serviceName, tableInfo);
                     dialog.showDialog(getTextGUI());
                 });
@@ -367,7 +364,8 @@ public class ReservationView extends DialogWindow {
             } else {
                 Button cancel = new Button("Annuler");
                 cancel.addListener(_ -> close());
-                Button confirm = new Button("Confirmer");
+                confirm = new Button("Confirmer");
+                confirm.setEnabled(false);
                 buttons.addComponent(cancel);
                 buttons.addComponent(confirm);
             }
