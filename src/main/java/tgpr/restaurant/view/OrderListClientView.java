@@ -298,8 +298,8 @@ public class OrderListClientView extends BasicWindow {
                                             controller.deleteReservation(r, reservationListBox, reservationList);
                                     } else { // if all the previous conditions are not respected (De Morgan), tabled can be modifie
                                         editReservation(r);
+                                        refreshReservationList();
                                     }
-                            refreshReservationList();
                         });
                     }
                 } else {
@@ -311,8 +311,8 @@ public class OrderListClientView extends BasicWindow {
                                         controller.deleteReservation(r, reservationListBox, reservationList);
                                 } else { // if all the previous conditions are not respected (De Morgan), tabled can be modified
                                     editReservation(r);
+                                    refreshReservationList();
                                 }
-                                refreshReservationList();
                     });
                 }
             }
