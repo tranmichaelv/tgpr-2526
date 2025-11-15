@@ -468,12 +468,18 @@ public class OrderChangeView extends BasicWindow {
         buttons.addComponent(new EmptySpace(new TerminalSize(1, 0)));
 //        buttons.addComponent(new Button("Retour", this::close));
         buttons.addComponent(new Button("Retour", () -> {
-            if (controller instanceof OrderCreateController occ) {
-                occ.goBackToList();
-            } else {
+            if (Security.isClient()) {
+                if (controller instanceof OrderCreateController occ) {
+                    occ.goBackToList();
+                } else {
+                    this.close();
+                }
+            }
+            else {
                 this.close();
             }
         }));
+
 
         infoSection.addTo(root);
         productsSection.addTo(root);
