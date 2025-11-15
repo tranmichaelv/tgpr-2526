@@ -110,6 +110,15 @@ public class OrderCreateController extends OrderChangeController {
         throw new IllegalArgumentException(msg);
     }
 
+    public void goBackToList() {
+        var logged = Security.getLoggedUser();
+        if (logged != null && logged.getRole() == User.Role.Client) {
+            navigateTo(new OrderListClientController());
+        } else {
+            navigateTo(new OrderListEmployeeController());
+        }
+    }
+
     @Override
     public OrderCreateView getView() {
         return new OrderCreateView(this);

@@ -412,6 +412,11 @@ public class OrderChangeView extends BasicWindow {
                 getTextGUI().addWindowAndWait(win);
 
                 this.close();
+                // ne ferme plus la page apres avoir commander avec un client
+                // redirect vers la liste des commandes
+                if (controller instanceof OrderCreateController occ) {
+                    occ.goBackToList();
+                }
 
             } catch (NumberFormatException e) {
                 MessageDialog.showMessageDialog(getTextGUI(), "Erreur",

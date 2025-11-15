@@ -3,12 +3,11 @@ package tgpr.restaurant.controller;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.framework.Controller;
-import tgpr.restaurant.model.ClosingPeriod;
-import tgpr.restaurant.model.Product;
-import tgpr.restaurant.model.Time;
-import tgpr.restaurant.model.Security;
+import tgpr.restaurant.model.*;
 import tgpr.restaurant.view.PanierView;
-import tgpr.restaurant.view.RestaurantClosedView;
+
+
+
 
 public class PanierController extends Controller<DialogWindow> {
 
@@ -116,18 +115,18 @@ public class PanierController extends Controller<DialogWindow> {
 
     public void openOrderCreate() {
         // Crée une commande vide
-        var order = new tgpr.restaurant.model.Order();
+        var order = new Order();
 
         // Définit le client connecté
-        if (tgpr.restaurant.model.Security.isLogged()) {
-            order.setClientId(tgpr.restaurant.model.Security.getUser().getId());
+        if (Security.isLogged()) {
+            order.setClientId(Security.getUser().getId());
         }
 
         // Définit la date (sinon  null)
-        order.setOrderDate(java.time.LocalDate.now());
+        order.setOrderDate(Time.getDateChosen().toLocalDate());
 
         // Récupère un service existant pour éviter l'erreur SQL
-        var allServices = tgpr.restaurant.model.Service.getAll();
+        var allServices = Service.getAll();
         if (!allServices.isEmpty()) {
             order.setServiceId(allServices.get(0).getId());
         }
@@ -150,8 +149,4 @@ public class PanierController extends Controller<DialogWindow> {
         // Ouvre la vue de création
         navigateTo(new OrderCreateController(order));
     }
-
-
-
-
 }
