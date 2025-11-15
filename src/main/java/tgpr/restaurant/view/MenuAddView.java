@@ -7,7 +7,6 @@ import tgpr.restaurant.model.Product;
 import java.util.List;
 
 public class MenuAddView extends DialogWindowProductAndMenu<MenuAddControler> {
-
     private static final List<Product.Type> SortableFields = List.of(Product.Type.Menu);
 
     public MenuAddView(MenuAddControler controller, Product product) {

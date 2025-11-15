@@ -13,8 +13,8 @@ import tgpr.restaurant.model.Panier;
 import java.util.List;
 
 public class SecurityConnectController extends Controller<SecurityConnectView> {
+
     // exit
-//    User user =
     public void exit() {
         System.exit(0);
     }

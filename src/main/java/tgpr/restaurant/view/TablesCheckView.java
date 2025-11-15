@@ -1,6 +1,5 @@
 package tgpr.restaurant.view;
 
-import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
@@ -12,18 +11,18 @@ import tgpr.restaurant.model.Table;
 import java.util.List;
 
 public class TablesCheckView extends DialogWindow {
-    ObjectTable<Table> tableTable;
-    TablesCheckController controller;
+    private ObjectTable<Table> tableTable;
+    private final TablesCheckController controller;
 
-    TextBox txtID = new TextBox(new TerminalSize(10,1)).setReadOnly(true);
-    TextBox txtCapacity = new TextBox(new TerminalSize(10,1)).setReadOnly(true);
-    TextBox txtLocation = new TextBox(new TerminalSize(30,1)).setReadOnly(true);
+    private final TextBox txtID = new TextBox(new TerminalSize(10,1)).setReadOnly(true);
+    private final TextBox txtCapacity = new TextBox(new TerminalSize(10,1)).setReadOnly(true);
+    private final TextBox txtLocation = new TextBox(new TerminalSize(30,1)).setReadOnly(true);
 
-    Label lblErrorCapacity = new Label("").setForegroundColor(TextColor.ANSI.RED);
-    Label lblErrorLocation = new Label("").setForegroundColor(TextColor.ANSI.RED);
+    private final Label lblErrorCapacity = new Label("").setForegroundColor(TextColor.ANSI.RED);
+    private final Label lblErrorLocation = new Label("").setForegroundColor(TextColor.ANSI.RED);
 
-    Button save = new Button("Sauvegarder", this::save).setEnabled(false);
-    Button delete = new Button("Supprimer", this::delete).setEnabled(false);
+    private final Button save = new Button("Sauvegarder", this::save).setEnabled(false);
+    private final Button delete = new Button("Supprimer", this::delete).setEnabled(false);
 
     public TablesCheckView(TablesCheckController controller) {
         super("Voir les tables");

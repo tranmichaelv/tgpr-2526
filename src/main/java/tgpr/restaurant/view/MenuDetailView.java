@@ -10,7 +10,6 @@ import tgpr.restaurant.model.Product;
 import java.util.List;
 
 public class MenuDetailView extends DialogWindow {
-
     private final MenuDetailController controller;
     private final Product produit;
 

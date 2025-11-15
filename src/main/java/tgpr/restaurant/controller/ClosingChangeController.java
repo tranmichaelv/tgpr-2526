@@ -4,16 +4,16 @@ import tgpr.framework.Controller;
 import tgpr.framework.ErrorList;
 import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.model.ClosingPeriodValidator;
-import tgpr.restaurant.view.ClosingChangeview;
+import tgpr.restaurant.view.ClosingChangeView;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public class ClosingChangeController extends Controller<ClosingChangeview> {
+public class ClosingChangeController extends Controller<ClosingChangeView> {
 
     @Override
-    public ClosingChangeview getView() {
-        return new ClosingChangeview(this);
+    public ClosingChangeView getView() {
+        return new ClosingChangeView(this);
     }
 
     public List<ClosingPeriod> listClosingPeriod(){

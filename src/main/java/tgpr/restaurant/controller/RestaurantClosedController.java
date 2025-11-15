@@ -5,14 +5,14 @@ import tgpr.restaurant.model.ClosingPeriod;
 import tgpr.restaurant.view.RestaurantClosedView;
 
 public class RestaurantClosedController extends Controller<RestaurantClosedView> {
-    private ClosingPeriod closingPeriod;
+    private final ClosingPeriod closingPeriod;
 
     public RestaurantClosedController(ClosingPeriod closingPeriod){
         this.closingPeriod = closingPeriod;
     }
     @Override
     public RestaurantClosedView getView() {
-        return new RestaurantClosedView(this, closingPeriod);
+        return new RestaurantClosedView(closingPeriod);
     }
 
 }

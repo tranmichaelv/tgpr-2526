@@ -9,7 +9,7 @@ import tgpr.framework.ErrorList;
 import java.util.List;
 
 /*
-    Ce model est une classe abstraite qui permet de regrouper les deux Dialogwindow
+    Ce model est une classe abstraite qui permet de regrouper les deux DialogWindow
     de menu et product add
  */
 

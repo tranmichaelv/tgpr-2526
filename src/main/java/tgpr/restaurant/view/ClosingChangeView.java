@@ -10,8 +10,7 @@ import tgpr.restaurant.model.ClosingPeriod;
 
 import java.util.List;
 
-public class ClosingChangeview extends DialogWindow {
-
+public class ClosingChangeView extends DialogWindow {
     private ClosingPeriod closingPeriod;
     private ObjectTable<ClosingPeriod> tableClosingPeriod;
     private final ClosingChangeController controller;
@@ -25,9 +24,11 @@ public class ClosingChangeview extends DialogWindow {
     private final Label lblErrorEndDate = new Label("");
     private final Label lblErrorReason = new Label("");
 
+    private final Button delete = new Button("Supprimer", this::delete).setEnabled(false);
+
     private boolean isFilling = false;
 
-    public ClosingChangeview(ClosingChangeController controller) {
+    public ClosingChangeView(ClosingChangeController controller) {
         super("Gestion de la periode de fermeture");
         this.controller = controller;
 
@@ -41,7 +42,7 @@ public class ClosingChangeview extends DialogWindow {
         Panel root = Panel.gridPanel(1, Margin.of(1,1,0,0));
         setComponent(root);
 
-        root.addComponent(creaTable());
+        root.addComponent(createTable());
         root.addComponent(createFieldsPanel());
         root.addComponent(createButtonPanel());
 
@@ -59,7 +60,7 @@ public class ClosingChangeview extends DialogWindow {
 
     }
 
-    private Component creaTable() {
+    private Component createTable() {
         // crée une table avec differentes colonnes
         tableClosingPeriod = new ObjectTable<>(
                 new ColumnSpec<>("Date debut", ClosingPeriod::getStartDateFormatted).setWidth(12),
@@ -76,8 +77,6 @@ public class ClosingChangeview extends DialogWindow {
             closingPeriod = tableClosingPeriod.getSelected();
             // remplis-les different txtbox avec les donnees
             fillFieldsPanel(closingPeriod);
-            // stocke les changements dans la liste et le renvoi
-//            reloadData();
             //  repart sur la ligne de l'élément stocké
             tableClosingPeriod.setSelected(closingPeriod);
         });
@@ -136,6 +135,8 @@ public class ClosingChangeview extends DialogWindow {
         lblErrorStartDate.setText("");
         lblErrorEndDate.setText("");
         lblErrorReason.setText("");
+
+        delete.setEnabled(false);
     }
 
     // remplis avec les informations given
@@ -158,6 +159,9 @@ public class ClosingChangeview extends DialogWindow {
         lblErrorEndDate.setText("");
         lblErrorReason.setText("");
 
+        // si closingPeriod -> peut supprimer
+        delete.setEnabled(true);
+
         isFilling = false;
     }
 
@@ -166,30 +170,22 @@ public class ClosingChangeview extends DialogWindow {
                 new Button("Ajouter",this::add),
                 new Button("Modifier",this::change),
                 new Button("Annuler", this::cancel),
-                new Button("Supprimer",this::delete),
+                delete,
                 new Button("Fermer", this::close)
         );
     }
 
     private void cancel(){
         clearFieldsPanel();
-        closingPeriod = null;
+        clearClosingPeriod();
     }
 
     private void delete(){
-        // si pas de closingPeriod -> impossible de supprimer
-        if(closingPeriod == null) {
-            controller.showAnError("supprimer");
-            // cherche l'erreur
-            check();
-        } else {
-            controller.delete(closingPeriod);
-            // mets le closingPeriod null pour pas garder celui qui vient d'etre supprimer
-            closingPeriod = null;
-
-            reloadData();
-            clearFieldsPanel();
-        }
+        controller.delete(closingPeriod);
+        reloadData();
+        clearFieldsPanel();
+        // mets le closingPeriod null pour pas garder celui qui vient d'etre supprimer
+        clearClosingPeriod();
     }
 
     private void checkStartDate(){
@@ -204,7 +200,6 @@ public class ClosingChangeview extends DialogWindow {
         lblErrorStartDate.setText(errorsStart.getFirstErrorMessage(ClosingPeriod.Fields.StartDate));
 
         // Si End a déjà une erreur affichée, vérifier si elle doit disparaître
-
         if(!txtEndDate.getText().isEmpty()) {
             var errorsEnd = controller.checkEndDate(
                     txtStartDate.getText(),
@@ -214,7 +209,7 @@ public class ClosingChangeview extends DialogWindow {
 
             lblErrorEndDate.setText(errorsEnd.getFirstErrorMessage(ClosingPeriod.Fields.EndDate));
 
-//             si plus d'erreur → effacer label
+            // si plus d'erreur → effacer label
             if (errorsEnd.isEmpty()) {
                 lblErrorEndDate.setText("");
             }
@@ -278,11 +273,10 @@ public class ClosingChangeview extends DialogWindow {
                     txtReason.getText(),
                     closingPeriod
             );
-
             reloadData();
             clearFieldsPanel();
+            clearClosingPeriod();
         }
-        closingPeriod = null;
     }
 
     private boolean hasErrors(){
@@ -306,7 +300,11 @@ public class ClosingChangeview extends DialogWindow {
             );
             reloadData();
             clearFieldsPanel();
+            clearClosingPeriod();
         }
+    }
+
+    private void clearClosingPeriod(){
         closingPeriod = null;
     }
 

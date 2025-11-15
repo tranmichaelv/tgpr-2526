@@ -7,7 +7,6 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import tgpr.framework.Configuration;
-import tgpr.framework.Error;
 import tgpr.restaurant.controller.SecurityConnectController;
 
 import java.util.List;

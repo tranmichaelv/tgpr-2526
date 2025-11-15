@@ -10,8 +10,8 @@ import tgpr.restaurant.model.User;
 import java.util.List;
 
 public class UserChangeview extends DialogWindow {
-    UserChangeController controller;
-    User userToFocus;
+    private final UserChangeController controller;
+    private final User userToFocus;
 
     private ObjectTable<User> table;
 

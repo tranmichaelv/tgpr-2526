@@ -1,18 +1,15 @@
 package tgpr.restaurant.controller;
 
 import tgpr.framework.Controller;
-import tgpr.framework.Params;
-import tgpr.restaurant.model.Order;
 import tgpr.restaurant.model.OrderItem;
 import tgpr.restaurant.model.Product;
-import tgpr.restaurant.view.OrderChangeView;
 import tgpr.restaurant.view.ProductCheckView;
 
 import java.util.List;
 
 public class ProductCheckController extends Controller<ProductCheckView> {
     int order;
-    String string; // permet de savoir sur quelle vue on se trouve
+    private final String string; // permet de savoir sur quelle vue on se trouve
 
     private Runnable onOrderChanged;
 

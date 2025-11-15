@@ -6,9 +6,6 @@ import tgpr.framework.Controller;
 import tgpr.restaurant.model.*;
 import tgpr.restaurant.view.PanierView;
 
-
-
-
 public class PanierController extends Controller<DialogWindow> {
 
     @Override

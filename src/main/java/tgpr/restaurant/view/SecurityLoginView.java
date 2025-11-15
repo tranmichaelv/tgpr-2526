@@ -10,7 +10,6 @@ import java.util.List;
 
 
 public class SecurityLoginView extends BasicWindow{
-
     private final SecurityLoginController controller;
     private Button btnLogin;
 

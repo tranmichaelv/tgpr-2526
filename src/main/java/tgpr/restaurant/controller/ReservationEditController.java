@@ -1,11 +1,9 @@
 package tgpr.restaurant.controller;
 
-import com.googlecode.lanterna.gui2.ActionListBox;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.Reservation;
 import tgpr.restaurant.model.Service;
 import tgpr.restaurant.model.Table;
-import tgpr.restaurant.view.OrderListClientView;
 import tgpr.restaurant.view.ReservationEditView;
 
 import java.time.LocalDate;
@@ -18,7 +16,7 @@ import java.util.Locale;
 public class ReservationEditController extends Controller<ReservationEditView> {
     public static final LocalDate TODAY_DEMO = LocalDate.of(2025, 8, 20);
     public Reservation reservation;
-    ReservationEditView view = new ReservationEditView(this);
+    private final ReservationEditView view = new ReservationEditView(this);
     private YearMonth currentMonth = YearMonth.from(TODAY_DEMO);
 
     @Override

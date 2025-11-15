@@ -8,9 +8,8 @@ import tgpr.restaurant.model.Time;
 import tgpr.restaurant.view.MenuDetailView;
 
 public class MenuDetailController extends Controller<MenuDetailView> {
-
     private final Product produit;
-    ClosingPeriod closingPeriod =  Time.restaurantIsClosed();
+    private final ClosingPeriod closingPeriod =  Time.restaurantIsClosed();
 
     public MenuDetailController(Product produit) {
         this.produit = produit;

@@ -5,7 +5,7 @@ import tgpr.restaurant.model.User;
 import tgpr.restaurant.view.UserDetailsView;
 
 public class UserDetailsController extends Controller<UserDetailsView> {
-    User user;
+    private final User user;
 
     public UserDetailsController(User user){
         this.user = user;
@@ -13,6 +13,6 @@ public class UserDetailsController extends Controller<UserDetailsView> {
 
     @Override
     public UserDetailsView getView() {
-        return new UserDetailsView(this, user);
+        return new UserDetailsView(user);
     }
 }

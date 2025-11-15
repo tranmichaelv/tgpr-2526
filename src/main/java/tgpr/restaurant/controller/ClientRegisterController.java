@@ -7,7 +7,7 @@ import tgpr.restaurant.model.UserValidator;
 import tgpr.restaurant.view.ClientRegisterView;
 
 public class ClientRegisterController extends Controller<ClientRegisterView> {
-    User user;
+    private User user;
 
     @Override
     public ClientRegisterView getView() {

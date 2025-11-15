@@ -8,7 +8,6 @@ import tgpr.restaurant.model.PanelProductAndMenu;
 import tgpr.restaurant.model.Product;
 import tgpr.restaurant.model.Security;
 
-import static tgpr.restaurant.model.Security.isEmployee;
 
 
 /// Pour utiliser ce code, il faut appeler le controlleur

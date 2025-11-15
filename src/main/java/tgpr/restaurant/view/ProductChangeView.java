@@ -7,7 +7,6 @@ import tgpr.restaurant.model.Product;
 import java.util.List;
 
 public class ProductChangeView extends DialogWindowProductAndMenu<ProductChangeController> {
-
     private static final List<Product.Type> SortableFields =
             List.of(Product.Type.Starter, Product.Type.Main, Product.Type.Dessert, Product.Type.Drink);
 
@@ -21,6 +20,4 @@ public class ProductChangeView extends DialogWindowProductAndMenu<ProductChangeC
     public List<Product.Type> getAvailableTypes() {
         return SortableFields;
     }
-
-
 }

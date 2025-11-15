@@ -4,7 +4,6 @@ import com.googlecode.lanterna.gui2.Panel;
 import tgpr.framework.Controller;
 import tgpr.restaurant.view.CartMenuManagementView;
 
-
 public class CartMenuManagementController extends Controller<CartMenuManagementView>{
 
     @Override

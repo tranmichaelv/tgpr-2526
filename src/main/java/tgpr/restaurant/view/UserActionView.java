@@ -8,7 +8,7 @@ import tgpr.restaurant.controller.UserActionController;
 import java.util.List;
 
 public class UserActionView extends DialogWindow {
-    UserActionController controller;
+    private final UserActionController controller;
 
     private Label titre;
     private ActionListBox listBox = new ActionListBox();

@@ -2,18 +2,15 @@ package tgpr.restaurant.view;
 
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import tgpr.restaurant.controller.UserDetailsController;
 import tgpr.restaurant.model.User;
 
 import java.util.List;
 
 public class UserDetailsView extends DialogWindow {
-    UserDetailsController controller;
-    User user;
+    private final User user;
 
-    public UserDetailsView(UserDetailsController controller, User user) {
+    public UserDetailsView(User user) {
         super("Voir les details de " + user.getLastName() + " " + user.getFirstName());
-        this.controller = controller;
         this.user = user;
 
         setHints(List.of(Hint.MODAL, Hint.CENTERED));

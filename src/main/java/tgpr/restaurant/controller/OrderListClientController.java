@@ -1,4 +1,5 @@
 package tgpr.restaurant.controller;
+
 import com.googlecode.lanterna.gui2.ActionListBox;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Window;
@@ -11,7 +12,6 @@ import tgpr.restaurant.view.OrderListClientView;
 
 import java.util.Arrays;
 import java.util.List;
-
 
 public class OrderListClientController extends Controller<OrderListClientView> {
 
@@ -107,7 +107,7 @@ public class OrderListClientController extends Controller<OrderListClientView> {
 //        showModal(win);
 //    }
     public void exit(){
-        Security.login(null);
+        Security.logout();
         navigateTo(new SecurityLoginController());
     }
 

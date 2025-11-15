@@ -69,12 +69,14 @@ public class ClientRegisterView extends DialogWindow {
 
         panel.addComponent(new Label("Mot de passe :"));
         txtPassword.addTo(panel)
+                .setMask('*')
                 .setTextChangeListener((txt, byUser) -> check());
         panel.addEmpty();
         lblErrorPassword.addTo(panel);
 
         panel.addComponent(new Label("Confirmer mot de passe :"));
         txtPasswordConfirm.addTo(panel)
+                .setMask('*')
                 .setTextChangeListener((txt, byUser) -> check());
         panel.addEmpty();
         lblErrorPasswordConfirm.addTo(panel);

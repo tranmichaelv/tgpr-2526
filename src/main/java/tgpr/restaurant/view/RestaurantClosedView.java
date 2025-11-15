@@ -1,21 +1,18 @@
 package tgpr.restaurant.view;
 
-import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import tgpr.restaurant.controller.RestaurantClosedController;
 import tgpr.restaurant.model.ClosingPeriod;
 
 import java.util.List;
 
 public class RestaurantClosedView extends DialogWindow {
-    RestaurantClosedController controller;
-    private Button back = new Button("Retour",this::back);
-    public RestaurantClosedView(RestaurantClosedController controller, ClosingPeriod closingPeriod) {
+    private final Button back = new Button("Retour",this::back);
+
+    public RestaurantClosedView(ClosingPeriod closingPeriod) {
         super("Restaurant ferme");
-        this.controller = controller;
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
 

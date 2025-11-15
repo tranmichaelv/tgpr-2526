@@ -12,7 +12,8 @@ public class Security {
     public static User getLoggedUser() {
         return loggedUser;
     }
-    // permet de se connecter
+
+    // connecte l'user
     public static void login(User user) {
         loggedUser = user;
     }
@@ -24,6 +25,7 @@ public class Security {
     public static boolean isLoggedUser(User user) {
         return loggedUser.equals(user);
     }
+
     // deconnecte l'user
     public static void logout() {
         login(null);

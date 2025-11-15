@@ -1,8 +1,6 @@
 package tgpr.restaurant.view;
 
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
@@ -12,7 +10,6 @@ import tgpr.restaurant.controller.SecurityConnectController;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 public class ReservationConfirmationView extends DialogWindow {
 

@@ -13,7 +13,6 @@ import java.util.Locale;
 import static org.apache.commons.text.WordUtils.capitalize;
 
 public class OrderPayView extends BasicWindow {
-
     private final OrderPayController controller;
 
     public OrderPayView(OrderPayController controller) {

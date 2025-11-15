@@ -1,14 +1,11 @@
 package tgpr.restaurant.controller;
 
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.User;
 import tgpr.restaurant.view.UserActionView;
-import tgpr.restaurant.view.UserDetailsView;
 
 public class UserActionController extends Controller<UserActionView> {
-    User user;
+    private final User user;
 
     public UserActionController(User user){
         this.user = user;

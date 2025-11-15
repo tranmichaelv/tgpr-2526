@@ -11,7 +11,6 @@ import tgpr.restaurant.model.Time;
 import java.util.List;
 
 public class MenuView extends DialogWindow {
-
     private final MenuController controller;
 
     public MenuView(MenuController controller) {

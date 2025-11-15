@@ -29,7 +29,6 @@ public class OrderListClientView extends BasicWindow {
 
     // Made-up local date to test the feature (before merging with develop branch)
     public static final LocalDate TODAY_DEMO_DATE = Time.getDateChosen().toLocalDate();
-    public static final LocalTime TODAY_DEMO_TIME = Time.getDateChosen().toLocalTime();
     private final OrderListClientController controller;
     private List<Order> ordersList = Order.getAll();
     private List<Reservation> reservationList = Reservation.getAll(); // using getAll method from model

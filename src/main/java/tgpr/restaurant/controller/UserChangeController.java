@@ -1,6 +1,5 @@
 package tgpr.restaurant.controller;
 
-import tgpr.framework.Configuration;
 import tgpr.framework.Controller;
 import tgpr.restaurant.model.User;
 import tgpr.restaurant.view.UserChangeview;
@@ -8,7 +7,7 @@ import tgpr.restaurant.view.UserChangeview;
 import java.util.List;
 
 public class UserChangeController extends Controller<UserChangeview> {
-    User userToFocus;
+    private final User userToFocus;
 
     public UserChangeController(User userToFocus){
         this.userToFocus = userToFocus;

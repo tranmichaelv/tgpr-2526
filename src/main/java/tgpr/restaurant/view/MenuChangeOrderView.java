@@ -13,7 +13,7 @@ public class MenuChangeOrderView extends DialogWindow {
     private final MenuChangeOrderController controller;
     private final String productName;
     private final int orderInMenu;
-    private TextBox txtnumberToChange;
+    private TextBox txtNumberToChange;
     private final Label lblErrorNumberToChange = new Label("");
     private final Button btnAccept = new Button("OK",this::changeOrder);
 
@@ -33,7 +33,7 @@ public class MenuChangeOrderView extends DialogWindow {
         root.addComponent(createButtonPanel());
 
 
-        txtnumberToChange.takeFocus();
+        txtNumberToChange.takeFocus();
     }
 
     private Panel createBodyPanel(){
@@ -41,14 +41,14 @@ public class MenuChangeOrderView extends DialogWindow {
         int texteLength = texte.length();
 
         Label lbltexte = new Label(texte);
-        txtnumberToChange = new TextBox(new TerminalSize(texteLength,1), String.valueOf(orderInMenu))
+        txtNumberToChange = new TextBox(new TerminalSize(texteLength,1), String.valueOf(orderInMenu))
                 .setTextChangeListener((txt, byUser) -> check());
 
         Panel panel = Panel.verticalPanel();
 
         lbltexte.addTo(panel);
         panel.addEmpty();
-        txtnumberToChange.addTo(panel);
+        txtNumberToChange.addTo(panel);
         lblErrorNumberToChange.setForegroundColor(TextColor.ANSI.RED).addTo(panel);
         return panel;
     }
@@ -61,7 +61,7 @@ public class MenuChangeOrderView extends DialogWindow {
     }
 
     private void check(){
-        var error = controller.check(txtnumberToChange.getText());
+        var error = controller.check(txtNumberToChange.getText());
         lblErrorNumberToChange.setText(error.getFirstErrorMessage(MenuItem.Fields.OrderInMenu));
 
         btnAccept.setEnabled(error.isEmpty());
@@ -72,7 +72,7 @@ public class MenuChangeOrderView extends DialogWindow {
     }
 
     private void changeOrder(){
-        controller.changeOrder(txtnumberToChange.getText());
+        controller.changeOrder(txtNumberToChange.getText());
         close();
     }
 }

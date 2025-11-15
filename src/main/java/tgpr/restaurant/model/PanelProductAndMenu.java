@@ -3,7 +3,6 @@ package tgpr.restaurant.model;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.ObjectTable;
 import com.googlecode.lanterna.gui2.Panel;
-import tgpr.framework.ViewManager;
 
 public abstract class PanelProductAndMenu<E> extends Panel {
     public ObjectTable<E> tableProduct;

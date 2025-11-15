@@ -1,7 +1,6 @@
 package tgpr.restaurant.controller;
 
 import tgpr.framework.Controller;
-import tgpr.framework.Error;
 import tgpr.framework.ErrorList;
 import tgpr.restaurant.model.Security;
 import tgpr.restaurant.model.User;
@@ -71,11 +70,9 @@ public class SecurityRegisterController extends Controller<SecurityRegisterView>
         var user = User.getByEmail(email); // mets un user si l'email est present
         if (user != null) {
             Security.login(user);
-            showError(new Error("c'est bon")); // à enlever c'est juste pour tester
-            //...
-            //...
-            //...
-            // pour se deconnecter, il y a la fonction logout presente dans security
+            navigateTo(new OrderListClientController());
+        } else {
+            showError("Problems detected !");
         }
     }
 }
