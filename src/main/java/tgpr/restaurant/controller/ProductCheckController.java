@@ -37,7 +37,7 @@ public class ProductCheckController extends Controller<ProductCheckView> {
 
     @Override
     public ProductCheckView getView() {
-        return new ProductCheckView(this, order,string);
+        return new ProductCheckView(this, order, string);
     }
 
     // retourne la liste de tous les produits

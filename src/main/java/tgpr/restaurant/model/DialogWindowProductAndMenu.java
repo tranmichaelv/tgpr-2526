@@ -49,11 +49,14 @@ public abstract class DialogWindowProductAndMenu<E> extends DialogWindow {
 
     private Panel createBody(){
         Panel panel = Panel.verticalPanel(1);
+
         createNamePanel().addTo(panel);
         createTypeTable().addTo(panel);
         createPricePanel().addTo(panel);
         createDescriptionPanel().addTo(panel);
         createButtonPanel().addTo(panel).center();
+
+        updateSaveButtonState();
         return panel;
     }
 
