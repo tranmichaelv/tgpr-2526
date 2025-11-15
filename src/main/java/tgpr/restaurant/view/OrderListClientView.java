@@ -259,6 +259,7 @@ public class OrderListClientView extends BasicWindow {
     public void updateReservationList(ActionListBox reservationListBox, List<Reservation> allReservations, boolean showAll) {
         reservationListBox.clearItems();
 
+        int pos = 0;
         for (Reservation r : allReservations) {
             if (showAll || !(r.getReservationDate().isBefore(TODAY_DEMO_DATE))) {
                 String row;
