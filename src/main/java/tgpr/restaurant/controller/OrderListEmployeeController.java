@@ -43,7 +43,7 @@ public class OrderListEmployeeController extends Controller<OrderListEmployeeVie
     }
 
     public void openActions(Order order) {
-        //  Crée contrôleur + vue actions sur la commande
+        //  Crée contrôleur + vue action sur la commande
         var ctrl = new OrderCheckController(order);
         var win = ctrl.getView(); // vue OrderDetailsView (BasicWindow)
 

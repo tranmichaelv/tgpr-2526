@@ -78,7 +78,7 @@ public class MenuChangeController extends Controller<MenuChangeView> {
     }
 
     public void changeMenu(){
-        navigateTo(new MenuAddControler(menu));
+        navigateTo(new MenuAddController(menu));
 
         if(menu.getArchived() || !menu.existsInDatabase()){
             view.close();
@@ -105,7 +105,7 @@ public class MenuChangeController extends Controller<MenuChangeView> {
                     List<MenuItem> menuList = MenuItem.getAllInMenu(product.getMenuId());
                     for (int i = orderInMenu - 1; i < menuList.size(); i++) {
                         MenuItem currentMenu = menuList.get(i);
-                        currentMenu.setOrderInMenu(i + 1); // si orderInMenu commence à 1
+                        currentMenu.setOrderInMenu(i + 1); // si orderInMenu commence à 1.
                         currentMenu.save();
                     }
                     popup.close();
@@ -122,7 +122,7 @@ public class MenuChangeController extends Controller<MenuChangeView> {
 
     }
 
-    public void desarchiveMenu(){
+    public void unarchiveMenu(){
         this.menu.setArchived(false);
         this.menu.save();
     }

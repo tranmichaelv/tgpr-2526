@@ -75,12 +75,12 @@ public class SecurityConnectView extends BasicWindow {
     // panel pour debug
     private Border createDebugPanel() {
         Panel panel = Panel.verticalPanel(LinearLayout.Alignment.Center,
-                new Button("Connexion admin par defaut",this::logAsDefaultAdmin),
-                new Button("Connexion employe par defaut",this::logAsDefaultEmploye),
-                new Button("Connexion client par defaut",this::logAsDefaultClient)
+                new Button("Connexion admin par défaut",this::logAsDefaultAdmin),
+                new Button("Connexion employé par défaut",this::logAsDefaultEmployee),
+                new Button("Connexion client par défaut",this::logAsDefaultClient)
         );
 
-        return panel.withBorder(Borders.singleLine(" A des fins de debogage "));
+        return panel.withBorder(Borders.singleLine(" A des fins de débogage "));
     }
 
     private void login() {
@@ -109,7 +109,7 @@ public class SecurityConnectView extends BasicWindow {
         controller.login(Configuration.get("default.client.mail"), Configuration.get("default.client.password"));
     }
 
-    private void logAsDefaultEmploye(){
+    private void logAsDefaultEmployee(){
         controller.login(Configuration.get("default.user.mail"), Configuration.get("default.user.password"));
     }
 }

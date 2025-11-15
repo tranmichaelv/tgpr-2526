@@ -18,8 +18,6 @@ public class PanierView extends DialogWindow {
         super("Restaurant - Mon Panier");
         this.controller = controller;
 
-        // verfie si le restaurant est ferme
-
         setTitle("Restaurant - Mon Panier");
 
         setHints(List.of(Hint.CENTERED,Hint.MODAL));
@@ -69,10 +67,10 @@ public class PanierView extends DialogWindow {
 
             for (Map.Entry<Product, Integer> entry : Panier.getProduits().entrySet()) {
                 Product produit = entry.getKey();
-                int quantite = entry.getValue();
-                double totalProduit = produit.getPrice() * quantite;
+                int quantity = entry.getValue();
+                double totalProduit = produit.getPrice() * quantity;
 
-                String ligne = index++ + ". " + produit.getName() + " x" + quantite + " - " +
+                String ligne = index++ + ". " + produit.getName() + " x" + quantity + " - " +
                         String.format("%.2f", totalProduit) + " €";
 
                 listBox.addItem(ligne, () -> controller.modifierQuantite(produit));
@@ -84,12 +82,12 @@ public class PanierView extends DialogWindow {
         }
 
         root.addComponent(new EmptySpace(new TerminalSize(0, 1)));
-        root.addComponent(creerBoutons());
+        root.addComponent(createButtons());
 
         return root;
     }
 
-    private Panel creerBoutons() {
+    private Panel createButtons() {
         Panel buttons = Panel.horizontalPanel();
 
         Button retour = new Button("Retour", this::close);

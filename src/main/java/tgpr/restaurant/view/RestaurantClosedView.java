@@ -12,12 +12,12 @@ public class RestaurantClosedView extends DialogWindow {
     private final Button back = new Button("Retour",this::back);
 
     public RestaurantClosedView(ClosingPeriod closingPeriod) {
-        super("Restaurant ferme");
+        super("Restaurant fermé");
 
         setHints(List.of(Hint.CENTERED, Hint.MODAL));
 
         Panel root = Panel.verticalPanel(1);
-        root.addComponent(new Label("Impossible de commander, nous sommes fermees entre le "
+        root.addComponent(new Label("Impossible de commander, nous sommes fermés entre le "
                 + closingPeriod.getStartDate() + " et le " + closingPeriod.getEndDate()));
         setComponent(root);
 

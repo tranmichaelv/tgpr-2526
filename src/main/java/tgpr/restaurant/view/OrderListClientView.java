@@ -76,7 +76,7 @@ public class OrderListClientView extends BasicWindow {
         }
 
 
-        // exemple du champs ou on peut saisir le nom dun client
+        // exemple du champ où on peut saisir le nom d'un client
         Panel clientNameFilter = new Panel(new LinearLayout(Direction.VERTICAL));
         clientNameFilter.addComponent(new Label("Filtrer par nom de client: "));
         clientNameBox = new TextBox(new TerminalSize(20, 1));
@@ -90,7 +90,7 @@ public class OrderListClientView extends BasicWindow {
         }
         /*if (userlloged.getRole() == User.Role.Boss || userlloged.getRole() == User.Role.Employee){
             Panel clientNameFilter = new Panel(new LinearLayout(Direction.VERTICAL));
-            clientNameFilter.addComponent(new Label("Filtrer par nom de client: "));
+            clientNameFilter.addComponent(new Label(" Filtrer par nom de client: "));
             clientNameBox = new TextBox(new TerminalSize(20, 1));
             clientNameBox.setTextChangeListener((newText, buUser) -> populateListBox());
             clientNameBox.addTo(root);
@@ -168,7 +168,7 @@ public class OrderListClientView extends BasicWindow {
         showAllOrders = new CheckBox("Afficher aussi les commandes terminées (payées)");
         orders.addComponent(showAllOrders);
 
-        // Quand je coche / décoche -> recharger la liste
+        // Quand je coche / décoche → recharger la liste.
         showAllOrders.addListener((checkBox) -> populateListBox());
 
         orders.addComponent(new EmptySpace(new TerminalSize(0, 1)));
@@ -418,7 +418,7 @@ public class OrderListClientView extends BasicWindow {
     public String toString(Order order) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        String clientfullName = order.getClient().getFirstName() + "," + order.getClient().getLastName();
+        String clientFullName = order.getClient().getFirstName() + "," + order.getClient().getLastName();
         String date = order.getOrderDate().format(formatter);
         String tableInfo = (order.getTable() != null)
                 ? "Table " + order.getTable().getId() + " (" + order.getTable().getCapacity() + "p)"
@@ -440,7 +440,7 @@ public class OrderListClientView extends BasicWindow {
                     + padOrTruncate(amount, 10)
                     + padOrTruncate(paiement, 12);
         } else if (userlloged.getRole() == User.Role.Employee || userlloged.getRole() == User.Role.Boss) {
-            return " " + padOrTruncate(clientfullName, 16)
+            return " " + padOrTruncate(clientFullName, 16)
                     + padOrTruncate(date, 13)
                     + padOrTruncate(tableInfo, 15)
                     + padOrTruncate(service, 10)
@@ -489,11 +489,11 @@ public class OrderListClientView extends BasicWindow {
         menuEmployeeAndBoss(menu);
         MenuItem menuMenu = new MenuItem("Modifier la carte", this::changeMenu);
         menu.add(menuMenu);
-        MenuItem menuClosing = new MenuItem("Gerer les periodes de fermeture", this::closing);
+        MenuItem menuClosing = new MenuItem("Gérer les périodes de fermeture", this::closing);
         menu.add(menuClosing);
-        MenuItem menuUser = new MenuItem("Gerer les utilisateurs", this::changeUser);
+        MenuItem menuUser = new MenuItem("Gérer les utilisateurs", this::changeUser);
         menu.add(menuUser);
-        MenuItem menuTables = new MenuItem("Gerer les tables", this::tables);
+        MenuItem menuTables = new MenuItem("Gérer les tables", this::tables);
         menu.add(menuTables);
 
     }

@@ -3,7 +3,6 @@ package tgpr.restaurant.view;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import tgpr.restaurant.model.Order;
 
 public abstract class OrderAddOrDelete<T> extends BasicWindow {
@@ -40,7 +39,7 @@ public abstract class OrderAddOrDelete<T> extends BasicWindow {
 
         root.addComponent(content, BorderLayout.Location.CENTER);
 
-        // bouttons yes no
+        // boutons yes no
         Panel bottomPanel = new Panel(new BorderLayout());
         Panel rightButtons = new Panel(new LinearLayout(Direction.HORIZONTAL));
 
@@ -76,6 +75,6 @@ public abstract class OrderAddOrDelete<T> extends BasicWindow {
         );
     }
 
-    // méthode pour mon boutton Yes
+    // méthode pour mon bouton Yes
     protected abstract void onYes();
 }

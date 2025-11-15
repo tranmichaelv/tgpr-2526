@@ -2,10 +2,7 @@ package tgpr.restaurant.view;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
-import tgpr.restaurant.controller.OrderChangeController;
 import tgpr.restaurant.controller.OrderCheckController;
-import tgpr.restaurant.controller.OrderDetailsController;
-import tgpr.restaurant.controller.OrderPayController;
 import tgpr.restaurant.model.Order;
 
 public class OrderCheckView extends BasicWindow {

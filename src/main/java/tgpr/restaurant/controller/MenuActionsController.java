@@ -28,14 +28,14 @@ public class MenuActionsController extends Controller<MenuActionsView> {
         menu.delete();
         // list des lignes restantes
         List<MenuItem> menuList = getMenuList();
-        // change l'orderInMenu des lignes restantes en fonctions de la ligne supprime
+        // change orderInMenu des lignes restantes en fonctions de la ligne supprime
         for (int i = orderInMenu - 1; i < menuList.size(); i++) {
             MenuItem currentMenu = menuList.get(i);
-            currentMenu.setOrderInMenu(i + 1); // si orderInMenu commence à 1
+            currentMenu.setOrderInMenu(i + 1); // si orderInMenu commence à 1.
             currentMenu.save();
         }
     }
-    // recupere le menu avec tous ses produits
+    // récupère le menu avec tous ses produits
     public List<MenuItem> getMenuList(){
         return MenuItem.getAllInMenu(menu.getMenuId());
     }

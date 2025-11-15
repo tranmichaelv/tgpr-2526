@@ -1,8 +1,6 @@
 package tgpr.restaurant.view;
 
-import com.googlecode.lanterna.gui2.BasicWindow;
 import tgpr.restaurant.controller.OrderCreateController;
-import tgpr.restaurant.model.Order;
 
 public class OrderCreateView extends OrderChangeView {
 

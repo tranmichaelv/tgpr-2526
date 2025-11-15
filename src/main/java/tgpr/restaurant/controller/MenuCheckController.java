@@ -18,13 +18,13 @@ public class MenuCheckController extends Controller<MenuCheckView> {
         return Product.getOrderMenuAll();
     }
 
-    // va vers le controlleur qui permet de modifier le produit sélectionné
+    // va vers le controller qui permet de modifier le produit sélectionné
     public void MenuChange(Product product){
         navigateTo(new MenuChangeController(product));
     }
 
     public void addNewMenu(){
-        navigateTo(new MenuAddControler(new Product()));
+        navigateTo(new MenuAddController(new Product()));
     }
 
 }

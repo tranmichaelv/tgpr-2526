@@ -36,11 +36,11 @@ public class ReservationEditController extends Controller<ReservationEditView> {
 
         for (int i = 1; i < startDayOfWeek; i++) {
             days.add(null);
-        } // for loop allowing us to reach the day of the week where the month starts
+        } // for loop allowing us to reach the day of the week when the month starts
 
         // adding current month's days
-        int lenghtOfCurrentMonth = month.lengthOfMonth();
-        for (int i = 1; i <= lenghtOfCurrentMonth; i++) {
+        int lengthOfCurrentMonth = month.lengthOfMonth();
+        for (int i = 1; i <= lengthOfCurrentMonth; i++) {
             days.add(month.atDay(i));
         }
         return days;
@@ -111,7 +111,7 @@ public class ReservationEditController extends Controller<ReservationEditView> {
     }
 
     public void deleteReservation(Reservation r){
-        if (askConfirmation("Vous étes sur de vouloir supprimer","suppression"))
+        if (askConfirmation("Vous êtes sur de vouloir supprimer","suppression"))
             r.delete();
         boolean showAll = true;
 

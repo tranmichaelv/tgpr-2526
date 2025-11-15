@@ -10,15 +10,15 @@ import tgpr.restaurant.model.Security;
 
 
 
-/// Pour utiliser ce code, il faut appeler le controlleur
+/// Pour utiliser ce code, il faut appeler le controller
 /// qui va retourner le panel de la vue :
 ///
 ///         Dans le controller :
-///         ProductCheckController productCheckController = new ProductCheckController();
-///         return productCheckController.getView();
+///         ProductCheckController productCheckController = new ProductCheckController() ;
+///         return productCheckController.getView() ;
 ///
 ///
-///         root.addComponent(controller.getProductCheckView());
+///         root.addComponent(controller.getProductCheckView()) ;
 
 
 
@@ -34,7 +34,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
         initTable(6);
         if(Security.isBoss() && view.equals("CarteMenuManagementView"))
             createButtonAddPanel("Ajouter produit", this::addNewProduct);
-        // action à éxecuter quand on appuie enter
+        // action à exécuter quand on appuie enter
         tableProduct.setSelectAction(() -> {
             // récupère le produit sélectionné
             var product = tableProduct.getSelected();
@@ -47,7 +47,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
                 tableProduct.setSelected(product);
             } else {
                 OrderItem existing = null;
-                // 0 autorisé si déjà présent suppression
+                // 0 autorisé si déjà présent → suppression
                 for(OrderItem productInOrder : OrderItem.getAllItemInOrder(order)){
                     if(product.equals(productInOrder.getProduct())){
                         existing = productInOrder;
@@ -86,7 +86,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
         }
     }
 
-    // crée une table avec differentes colonnes
+    // crée une table avec différentes colonnes
     @Override
     public ObjectTable<Product> createTable() {
         if(Security.isBoss() && view.equals("CarteMenuManagementView")){
@@ -114,17 +114,17 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
         if (view.equals("CarteMenuManagementView")) {
             // récupère l'objet couramment sélectionné en naviguant dessus
             var product = tableProduct.getSelected();
-            // va vers le controlleur qui permet de changer le produit
+            // va vers le controller qui permet de changer le produit
             controller.productChange(product);
             // stocke les changements dans la liste et le renvoi
             reloadData();
             // repart sur la ligne de l'élément stocké
             tableProduct.setSelected(product);
             // si pas patron alors le client doit pouvoir ajoute un nombre de product qu'il veut
-        } else {
-            //...
-            //...
-            //...
+//        } else {
+//            //...
+//            //...
+//            //...
         }
     }
 
@@ -135,7 +135,7 @@ public class ProductCheckView extends PanelProductAndMenu<Product> {
     }
 
     // demande la quantité pour un produit / menu
-    // doit etre positif sauf pour supprimer un produit déjà présent dans ma commande
+    // doit être positif sauf pour supprimer un produit déjà présent dans ma commande
     private Integer askQuantity(String title, String desc, int initial, boolean allowZero) {
         String pattern = allowZero ? "^(?:0|[1-9]\\d*)$" : "^[1-9]\\d*$";
         String s = new TextInputDialogBuilder()

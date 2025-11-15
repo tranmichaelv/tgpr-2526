@@ -25,7 +25,7 @@ public class MenuCheckView extends PanelProductAndMenu<Product> {
         tableProduct.add(menus);
     }
 
-    // crée une table avec differentes colonnes
+    // crée une table avec différentes colonnes
     @Override
     public ObjectTable<Product> createTable() {
         return new ObjectTable<>(
@@ -41,7 +41,7 @@ public class MenuCheckView extends PanelProductAndMenu<Product> {
     public void onProductSelected() {
         // récupère l'objet couramment sélectionné en naviguant dessus
         var product = tableProduct.getSelected();
-        // va vers le controlleur qui permet de changer le menu
+        // va vers le controller qui permet de changer le menu
         controller.MenuChange(product);
         // stocke les changements dans la liste et le renvoi
         reloadData();

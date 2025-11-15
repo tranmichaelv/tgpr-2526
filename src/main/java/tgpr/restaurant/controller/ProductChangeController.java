@@ -8,7 +8,7 @@ public class ProductChangeController extends Controller<ProductChangeView> {
     private final ProductChangeView view;
     private final Product product;
 
-    // mets le produit en parametre pour savoir de quel produit on modifie
+    // mets le produit en paramètre pour savoir de quel produit on modifie
     public ProductChangeController(Product product) {
         // produit a modifier
         this.product = product;

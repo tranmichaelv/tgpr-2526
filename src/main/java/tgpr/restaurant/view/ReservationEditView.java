@@ -188,7 +188,7 @@ public class ReservationEditView extends BasicWindow {
         List<LocalDate> calendarDays = controller.getCalendarDays(controller.getCurrentMonth());
         for (LocalDate date : calendarDays) {
             if (date == null) {
-                // skipping empty cases (to reach the day of the week where the month starts)
+                // skipping empty cases (to reach the day of the week when the month starts)
                 Label empty = new Label(" ");
                 empty.setPreferredSize(daySize);
                 calendarGrid.addComponent(empty);
@@ -207,7 +207,7 @@ public class ReservationEditView extends BasicWindow {
 
 
                 if (numberOfPeople > 0 && serviceName != null) {
-                    // saving the day of the week and service Id in the following variables
+                    // saving the day of the week and service ID in the following variables
                     String weekDay = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.FRENCH).toLowerCase();
                     Service service = Service.getByNameAndDay(serviceName, weekDay);
 
@@ -276,7 +276,7 @@ public class ReservationEditView extends BasicWindow {
                             || date.getDayOfWeek() == DayOfWeek.MONDAY
                             || (date.getDayOfWeek() == DayOfWeek.SUNDAY && midiSoir.getSelectedItem().equalsIgnoreCase("soir"))
                             /* Check pour la date du jour
-                            exemples:
+                            exemples :
                                 1) à 13h30, je ne pourrai plus réserver un service du midi pour le jour courant
                                 2) à 20h00, je ne pourrai plus réserver un service du soir pour le jour courant
                             */

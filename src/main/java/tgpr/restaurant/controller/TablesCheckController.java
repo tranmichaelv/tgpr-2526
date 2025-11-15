@@ -35,7 +35,10 @@ public class TablesCheckController extends Controller<TablesCheckView> {
     }
 
     public void delete(){
-        if((getNumberOfOrdersByTable(table.getId())  > 0 || getNumberOfReservationsByTable(table.getId()) > 0) && table != null) {
+        if((getNumberOfOrdersByTable(table.getId())  > 0 || getNumberOfReservationsByTable(table.getId()) > 0)) {
+            showError("Impossible de supprimer la table, " +
+                    "il y a une/des réservation(s) et/ou une/des commandes(s)");
+        } else {
             table.delete();
             setTable(null);
         }

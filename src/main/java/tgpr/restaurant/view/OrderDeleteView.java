@@ -1,6 +1,5 @@
 package tgpr.restaurant.view;
 
-import tgpr.restaurant.controller.OrderAddController;
 import tgpr.restaurant.controller.OrderDeleteController;
 
 public class OrderDeleteView extends OrderAddOrDelete<OrderDeleteController> {

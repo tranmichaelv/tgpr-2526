@@ -115,10 +115,10 @@ public class MenuDetailView extends DialogWindow {
 
         // --- Totaux dynamiques ---
         double totalPlats = produit.getTotalPrice();
-        double economie = produit.getEconomy();
+        double economy = produit.getEconomy();
 
         panel.addComponent(new Label("Total des plats à l’unité : " + String.format("%.2f", totalPlats) + " €"));
-        panel.addComponent(new Label("Économie réalisée : " + String.format("%.2f", economie) + " €"));
+        panel.addComponent(new Label("Économie réalisée : " + String.format("%.2f", economy) + " €"));
 
         return panel;
     }
