@@ -68,15 +68,6 @@ public class PanierController extends Controller<DialogWindow> {
             Controller.navigateTo(new PanierController());
         }));
 
-
-
-        //  Supprimer
-//        boutons.addComponent(new Button("Supprimer", () -> {
-//            tgpr.restaurant.model.Panier.supprimerProduit(produit);
-//            popup.close();
-//            Controller.navigateTo(new PanierController());
-//        }));
-
         // Bouton "Supprimer" : supprime complètement le produit du panier
         boutons.addComponent(new Button("Supprimer", () -> {
             tgpr.restaurant.model.Panier.supprimerProduit(produit);
@@ -99,16 +90,6 @@ public class PanierController extends Controller<DialogWindow> {
     public void connect(){
         navigateTo(new SecurityConnectController());
     }
-
-
-
-
-
-//    public void openOrderCreate() {
-//        // créer une nouvelle commande vide (brouillon)
-//        var order = new tgpr.restaurant.model.Order();
-//        navigateTo(new OrderCreateController(order));
-//    }
 
     public void openOrderCreate() {
         // Crée une commande vide

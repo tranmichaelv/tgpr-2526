@@ -77,18 +77,19 @@ public class OrderPayView extends BasicWindow {
 
         Panel totals = new Panel(new GridLayout(2));
 
-// Sous-total (noir)
+        // Sous-total (noir)
         Label lblSousTotal = new Label("Sous-total:");
         lblSousTotal.setForegroundColor(TextColor.ANSI.BLACK);
         Label valSousTotal = new Label(String.format(Locale.FRANCE, "%.2f €", sousTotal));
         valSousTotal.setForegroundColor(TextColor.ANSI.BLACK);
 
-
+        // Remise (rouge)
         Label lblRemise = new Label("Remise:");
         lblRemise.setForegroundColor(TextColor.ANSI.RED);
         Label valRemise = new Label(String.format(Locale.FRANCE, "-%.2f €", Math.abs(remise)));
         valRemise.setForegroundColor(TextColor.ANSI.RED);
 
+        // Total (vert)
         Label lblTotal = new Label("Total:");
         lblTotal.addStyle(SGR.BOLD);
         lblTotal.setForegroundColor(TextColor.ANSI.GREEN);

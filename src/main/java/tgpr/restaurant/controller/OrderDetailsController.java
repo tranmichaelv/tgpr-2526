@@ -20,8 +20,4 @@ public class OrderDetailsController extends Controller<OrderDetailsView> {
         return new OrderDetailsView(this);
     }
 
-//    @Override
-//    public OrderDetailsView getView() {
-//        return new OrderDetailsView(this);
-//    }
 }

@@ -24,24 +24,28 @@ public class OrderCheckController extends Controller<OrderCheckView> {
         return view;
     }
 
+    // ouvre la vue OrderChange
     public void openChangeView() {
         var ctrl = new OrderChangeController(order);
         var win = ctrl.getView();
         showModal(win);
     }
 
+    // ouvre OrderPay
     public void openRegisterPaymentView() {
         var ctrl = new OrderPayController(order);
         var win = ctrl.getView();
         showModal(win);
     }
 
+    // ouvre OrderDetail
     public void openDetailsView() {
         var ctrl = new OrderDetailsController(order);
         var win = ctrl.getView();
         showModal(win);
     }
 
+    // ouvre OrderDelete
     public void openCancelOrderView() {
         var ctrl = new OrderDeleteController(order);
         var win = ctrl.getView();

@@ -149,8 +149,4 @@ public class MenuView extends DialogWindow {
 
         return buttonPanel;
     }
-
-//    private void back(){
-//        controller.back();
-//    }
 }
