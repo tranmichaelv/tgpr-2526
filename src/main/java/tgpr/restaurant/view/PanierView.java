@@ -131,8 +131,6 @@ public class PanierView extends DialogWindow {
 
     private void commander() {
         if (Security.isLogged()) {
-            // Si l'utilisateur est connecté → on ouvre la création de commande
-            this.close();
             controller.openOrderCreate();
         } else {
             Controller.showInfo("Vous devez vous connecter pour passer une commande !");
