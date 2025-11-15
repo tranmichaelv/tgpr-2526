@@ -29,8 +29,6 @@ public class PanierController extends Controller<DialogWindow> {
 
 
         // Récupère la quantité actuelle du produit dans le panier
-        //int quantiteActuelle = tgpr.restaurant.model.Panier.getProduits().get(produit);
-
         Integer quantiteActuelle = tgpr.restaurant.model.Panier.getProduits().get(produit);
         if (quantiteActuelle == null) {
             // Le produit n'est plus dans le panier → on ferme tout et on recharge
