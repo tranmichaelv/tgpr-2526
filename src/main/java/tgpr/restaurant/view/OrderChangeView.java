@@ -414,7 +414,7 @@ public class OrderChangeView extends BasicWindow {
                 this.close();
                 // ne ferme plus la page apres avoir commander avec un client
                 // redirect vers la liste des commandes
-                if (controller instanceof OrderCreateController occ) {
+                if (controller instanceof OrderCreateController occ && Security.isClient()) {
                     occ.goBackToList();
                 }
 

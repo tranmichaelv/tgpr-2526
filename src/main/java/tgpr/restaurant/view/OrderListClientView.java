@@ -230,7 +230,6 @@ public class OrderListClientView extends BasicWindow {
 
     public void newOrder() {
         controller.openCreateNewOrder();
-        refreshOrders();
     }
 
     // displaying title according to User's type
