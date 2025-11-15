@@ -33,6 +33,9 @@ public class ReservationView extends DialogWindow {
     private LocalDate selectedDate;
     private Button confirm;
     private Button targetDate;
+    public List<User> customers;
+    public ComboBox<String> clientBox;
+
 
     public ReservationView(ReservationController controller) {
         super("Réserver une table");
@@ -49,6 +52,17 @@ public class ReservationView extends DialogWindow {
         // si l'utilisateur est un guest
         if (!Security.isLogged()) {
             createHeader().addTo(root);
+        } else if (!Security.isClient()) {
+            clientBox = new ComboBox<>();
+            clientBox.setPreferredSize(new TerminalSize(30, 1));
+
+            customers = User.getAll();
+            for (User u : customers) {
+                if (u.isClient()) {
+                    clientBox.addItem(u.getLastName() + ", " + u.getFirstName());
+                }
+            }
+            clientBox.addTo(root);
         }
         createGridLayout().addTo(root);
 
